@@ -1,9 +1,12 @@
 :root {
     --color-signature: #ffffff;
     --color-menu-items: linear-gradient(to right, #bdc3c7, #2c3e50);
+    --delay-hover-end: 0.1s;
+    --delay-hover: 0s;
 }
 
 .navbar-edit {
+    z-index: 999;
     background: transparent;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
@@ -19,7 +22,7 @@
     height: 1.5rem;
 }
 
-.signature-icon,
+.signature>svg,
 .signature>span {
     color: var(--color-signature);
     transition: filter 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
@@ -30,7 +33,7 @@
     cursor: pointer;
 }
 
-.signature:hover>.signature-icon {
+.signature:hover>svg {
     filter: drop-shadow(1px 1px 4px #ffffff);
 }
 
@@ -45,6 +48,7 @@
     cursor: pointer;
     color: var(--color-menu-items);
     transition: all 0.4s ease;
+    transition-delay: var(--delay-hover-end);
 }
 
 .menu-list-items>li::after {
@@ -56,20 +60,24 @@
     width: 0;
     background: #697680;
     background: linear-gradient(204deg, rgba(105, 118, 128, 1) 24%, rgba(223, 235, 245, 1) 72%);
-    transition: width 0.4s ease;
+    transition: width 0.8s ease 0.5s;
+    transition-delay: var(--delay-hover-end);
 }
+
 .menu-list-items>li:hover::after,
-.menu-list-items > .active::after {
+.menu-list-items>.active::after {
     width: 100%;
+    transition-delay: var(--delay-hover);
 }
 
 .menu-list-items>li:hover,
 .active {
-    text-shadow: 0 0 6px #ffffff;
+    text-shadow: 0 0 2px #ffffff;
     background: #697680;
     background: linear-gradient(204deg, rgba(105, 118, 128, 1) 24%, rgba(223, 235, 245, 1) 72%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    transition-delay: var(--delay-hover);
 }
 
 
