@@ -1,0 +1,76 @@
+:root {
+    --color-signature: #ffffff;
+    --color-menu-items: linear-gradient(to right, #bdc3c7, #2c3e50);
+}
+
+.navbar-edit {
+    background: transparent;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Signature */
+.signature {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 2rem;
+}
+
+.signature>svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.signature-icon,
+.signature>span {
+    color: var(--color-signature);
+    transition: filter 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+}
+
+.signature:hover>span {
+    text-shadow: 1px 1px 4px #ffffff;
+    cursor: pointer;
+}
+
+.signature:hover>.signature-icon {
+    filter: drop-shadow(1px 1px 4px #ffffff);
+}
+
+/* Signature */
+/* Menu */
+.menu-list-items>li {
+    position: relative;
+    padding: 10px;
+    font-weight: 500;
+    font-size: 1.15rem;
+    list-style: none;
+    cursor: pointer;
+    color: var(--color-menu-items);
+    transition: all 0.4s ease;
+}
+
+.menu-list-items>li::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background: #697680;
+    background: linear-gradient(204deg, rgba(105, 118, 128, 1) 24%, rgba(223, 235, 245, 1) 72%);
+    transition: width 0.4s ease;
+}
+.menu-list-items>li:hover::after,
+.menu-list-items > .active::after {
+    width: 100%;
+}
+
+.menu-list-items>li:hover,
+.active {
+    text-shadow: 0 0 6px #ffffff;
+    background: #697680;
+    background: linear-gradient(204deg, rgba(105, 118, 128, 1) 24%, rgba(223, 235, 245, 1) 72%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* Menu */
