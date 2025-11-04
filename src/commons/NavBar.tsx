@@ -22,7 +22,7 @@ export default function Navbar({
     <div className="navbar-edit sticky top-0 w-full backdrop-blur-md">
       <div className="flex justify-between max-w-4/5 mx-auto py-4 items-center">
         <div className="flex items-center gap-2 signature" onClick={onScrollToHome}>
-          <span className="blink-text text-nav">FuZa portfolio</span>
+          <span className="blink-text text-nav">FuZa's portfolio</span>
           <FontAwesomeIcon className="text-nav" icon={faCode} />
         </div>
         <div className="menu flex items-center max-w-1/3">
