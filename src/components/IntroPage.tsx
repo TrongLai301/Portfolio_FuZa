@@ -1,5 +1,5 @@
 import Skill from "./Skill"
-import About from "./about"
+import About from "./About";
 import { useScroll } from "../commons/ScrollContext";
 import Contact from "./Contact";
 import Home from "./Home";

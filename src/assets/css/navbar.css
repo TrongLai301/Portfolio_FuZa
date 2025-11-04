@@ -72,7 +72,6 @@
 
 .menu-list-items>li:hover,
 .active {
-    text-shadow: 0 0 2px #ffffff;
     background: #697680;
     background: linear-gradient(204deg, rgba(105, 118, 128, 1) 24%, rgba(223, 235, 245, 1) 72%);
     -webkit-background-clip: text;
