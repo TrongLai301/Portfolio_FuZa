@@ -10,7 +10,7 @@ function App() {
       <ScrollProvider>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route path="portfolio" index element={<IntroPage />} />
+            <Route index element={<IntroPage />} />
           </Route>
         </Routes>
       </ScrollProvider>

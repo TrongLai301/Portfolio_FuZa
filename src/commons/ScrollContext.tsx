@@ -17,13 +17,19 @@ export const ScrollProvider = ({ children }: { children: React.ReactNode }) => {
 
   const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
-    const top = ref.current.getBoundingClientRect().top + window.pageYOffset - 90;
-    window.scrollTo({ top, behavior: "smooth" });
+      const top =
+        ref.current.getBoundingClientRect().top + window.pageYOffset - 90;
+      console.log("top:" + top);
+      console.log("current top:" + ref.current.getBoundingClientRect().top);
+      console.log("offset:" + window.pageYOffset);
+      window.scrollTo({ top, behavior: "smooth" });
     }
   };
 
   return (
-    <ScrollContext.Provider value={{ homeRef, aboutRef, skillRef, contactRef, scrollTo }}>
+    <ScrollContext.Provider
+      value={{ homeRef, aboutRef, skillRef, contactRef, scrollTo }}
+    >
       {children}
     </ScrollContext.Provider>
   );
