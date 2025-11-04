@@ -9,6 +9,8 @@ import {
   faCss3Alt,
   faSquareJs,
   faReact,
+  faFacebook,
+  faInstagram,
 } from "@fortawesome/free-brands-svg-icons";
 import { Link } from "react-router-dom";
 import nilou from "../assets/image/nilouPr4.png";
@@ -20,21 +22,21 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
 
   async function animation(
     element: Element | null | undefined,
-    index: number | null,
+    delay: number | null,
     animation: string,
     isRemove: boolean
   ): Promise<void> {
     if (element instanceof Element) {
       element.classList.add(animation);
-      if (index != null) {
-        element.setAttribute("style", `--i:${index}`);
+      if (delay != null) {
+        element.setAttribute("style", `--i:${delay}s`);
         element.classList.add("delay");
       }
       if (isRemove) {
         await new Promise<void>((resolve) => {
           const handleEnd = () => {
             element.classList.remove(animation);
-            if (index != null) element.classList.remove("delay");
+            if (delay != null) element.classList.remove("delay");
             element.removeEventListener("animationend", handleEnd);
             resolve();
           };
@@ -59,9 +61,9 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
     const leftdiv = animationLeft.current?.querySelectorAll(".animation");
     leftdiv?.forEach((box, index) => {
       if (box.classList.contains("animation-up-left")) {
-        animation(box, index, "fade-in-up-left", true);
+        animation(box, null, "fade-in-up-left", true);
       } else {
-        animation(box, index, "fade-in-up", true);
+        animation(box, index * 0.1, "fade-in-up", true);
       }
     });
     const avt = animationRight.current?.querySelector(".big-avt");
@@ -72,9 +74,10 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
 
     const orbits = animationRight.current?.querySelectorAll(".orbit-item");
     orbits?.forEach((orbit, index) => {
-      animation(orbit, index, "fade-in-up", true).then(() => {
-        animation(orbit, index, "animation-up-down", false);
+      animation(orbit, index * 0.1, "fade-in-up", true).then(() => {
+        animation(orbit, index * 0.2, "animation-up-down", false);
       });
+      handleMouseenter(orbit);
     });
   }, []);
 
@@ -82,13 +85,13 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
     <section className="snap-start" id="home" ref={ref}>
       <div className="flex items-center" style={{ minHeight: "90vh" }}>
         <div className="w-2/5" ref={animationLeft}>
-          <div className="animation animation-up-left flex items-center mb-2.5">
+          <div className="animation animation-up-left flex items-center">
             <span className="main-text">
               <span className="text-secondary-1 ">Hello,</span>
               <span className="text-secondary-2"> I'm FuZa</span>
             </span>
           </div>
-          <div className="animation typewriter mb-2.5 ">
+          <div className="animation typewriter mb-8 ">
             <TypeIt
               options={{ loop: true }}
               getBeforeInit={(instance) => {
@@ -108,10 +111,14 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
               }}
             />
           </div>
-          <div className="animation mb-6 ">
-            <span className=" text-lg">Some fact about me</span>
+          <div className="animation mb-8 ">
+            <span className=" text-lg">
+              A passionate developer who loves building modern and responsive
+              web applications using React, Java, and JavaScript.
+            </span>
           </div>
-          <div className=" flex gap-5 ">
+          <div className=" flex gap-4 items-center">
+            <span className="animation ">Follow me:</span>
             <Link to="https://github.com/TrongLai301" target="_blank">
               <div className="animation contact-icon flex justify-center items-center">
                 <FontAwesomeIcon icon={faGithub} />
@@ -123,6 +130,16 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
             >
               <div className="animation contact-icon flex justify-center items-center">
                 <FontAwesomeIcon icon={faLinkedin} />
+              </div>
+            </Link>
+            <Link to="https://www.facebook.com/lai.trong.1671" target="_blank">
+              <div className="animation contact-icon flex justify-center items-center">
+                <FontAwesomeIcon icon={faFacebook} />
+              </div>
+            </Link>
+            <Link to="https://www.instagram.com/tronglai_04/" target="_blank">
+              <div className="animation contact-icon flex justify-center items-center">
+                <FontAwesomeIcon icon={faInstagram} />
               </div>
             </Link>
           </div>
