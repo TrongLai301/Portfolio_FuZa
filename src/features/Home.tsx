@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useRef } from "react";
 import "../assets/css/home.css";
 import TypeIt from "typeit-react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faGithub,
   faLinkedin,
@@ -11,12 +11,13 @@ import {
   faReact,
   faFacebook,
   faInstagram,
+  faTiktok
 } from "@fortawesome/free-brands-svg-icons";
-import { Link } from "react-router-dom";
+import SocialIcon from "../components/SocialIcon";
+import OrbitIcon from "../components/OrbitIcon";
 import nilou from "../assets/image/nilouPr4.png";
-import nilou1 from "../assets/image/OpacityNilou.png";
 
-const Home = forwardRef<HTMLDivElement>((props, ref) => {
+const Home = forwardRef<HTMLDivElement>((_, ref) => {
   const animationLeft = useRef<HTMLDivElement | null>(null);
   const animationRight = useRef<HTMLDivElement | null>(null);
 
@@ -29,7 +30,7 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
     if (element instanceof Element) {
       element.classList.add(animation);
       if (delay != null) {
-        element.setAttribute("style", `--i:${delay}s`);
+        (element as HTMLElement).style.setProperty("--i", `${delay}s`);
         element.classList.add("delay");
       }
       if (isRemove) {
@@ -100,11 +101,11 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
                   .pause(2500)
                   .delete()
                   .pause(800)
-                  .type("Front-End")
+                  .type("Full-stack")
                   .pause(2500)
                   .delete()
                   .pause(800)
-                  .type("Back-End")
+                  .type("Love Anime")
                   .pause(2500);
 
                 return instance;
@@ -119,29 +120,14 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
           </div>
           <div className=" flex gap-4 items-center">
             <span className="animation ">Follow me:</span>
-            <Link to="https://github.com/TrongLai301" target="_blank">
-              <div className="animation contact-icon flex justify-center items-center">
-                <FontAwesomeIcon icon={faGithub} />
-              </div>
-            </Link>
-            <Link
+            <SocialIcon to="https://github.com/TrongLai301" icon={faGithub} />
+            <SocialIcon
               to="https://www.linkedin.com/in/tr%E1%BB%8Dng-l%E1%BA%A1i-61a183316/"
-              target="_blank"
-            >
-              <div className="animation contact-icon flex justify-center items-center">
-                <FontAwesomeIcon icon={faLinkedin} />
-              </div>
-            </Link>
-            <Link to="https://www.facebook.com/lai.trong.1671" target="_blank">
-              <div className="animation contact-icon flex justify-center items-center">
-                <FontAwesomeIcon icon={faFacebook} />
-              </div>
-            </Link>
-            <Link to="https://www.instagram.com/tronglai_04/" target="_blank">
-              <div className="animation contact-icon flex justify-center items-center">
-                <FontAwesomeIcon icon={faInstagram} />
-              </div>
-            </Link>
+              icon={faLinkedin}
+            />
+            <SocialIcon to="https://www.facebook.com/lai.trong.1671" icon={faFacebook} />
+            <SocialIcon to="https://www.instagram.com/tronglai_04/" icon={faInstagram} />
+            <SocialIcon to="https://www.tiktok.com/@fuza04" icon={faTiktok} />
           </div>
         </div>
         <div className="w-3/5" ref={animationRight}>
@@ -149,18 +135,14 @@ const Home = forwardRef<HTMLDivElement>((props, ref) => {
             <div id="bigAvt" className="big-avt avt-size">
               <img src={nilou} alt="nilou..." className=" avt-size" />
             </div>
-            <div className="orbit-item flex justify-center items-center position-1">
-              <FontAwesomeIcon icon={faHtml5} />
-            </div>
-            <div className="orbit-item flex justify-center items-center position-2">
-              <FontAwesomeIcon icon={faCss3Alt} />
-            </div>
-            <div className="orbit-item flex justify-center items-center position-3">
-              <FontAwesomeIcon icon={faSquareJs} />
-            </div>
-            <div className="orbit-item flex justify-center items-center position-4">
-              <FontAwesomeIcon icon={faReact} />
-            </div>
+            {[faHtml5, faCss3Alt, faSquareJs, faReact].map((icon, index, arr) => (
+              <OrbitIcon 
+                key={index} 
+                icon={icon} 
+                angle={(index * 360) / arr.length - 45} 
+                radius={180} 
+              />
+            ))}
           </div>
         </div>
       </div>

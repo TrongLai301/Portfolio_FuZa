@@ -12,6 +12,7 @@
     background: linear-gradient(to bottom, #333333, #ffffff);
     filter: drop-shadow(2px 4px 8px black);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -223,22 +224,17 @@
     box-shadow: 0 0 15px 2px rgb(226, 226, 226);
 }
 
-.position-1 {
-    top: 85%;
-    left: 70%;
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
 }
-
-.position-2 {
-    top: -15%;
-    left: 75%;
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent; 
 }
-
-.position-3 {
-    top: 77%;
-    left: -30%;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #536976; 
+    border-radius: 10px;
 }
-
-.position-4 {
-    top: 5%;
-    left: -25%;
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #c8c8c8; 
 }

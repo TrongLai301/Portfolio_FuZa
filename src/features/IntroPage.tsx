@@ -1,5 +1,5 @@
-import Skill from "./Skill"
-import About from "./About";
+import Skill from "./Skill";
+import About from "./About/About";
 import { useScroll } from "../commons/ScrollContext";
 import Contact from "./Contact";
 import Home from "./Home";
@@ -11,7 +11,7 @@ export default function IntroPage() {
       <Home ref={homeRef} />
       <About ref={aboutRef} />
       <Skill ref={skillRef} />
-      <Contact ref={contactRef}/>
+      <Contact ref={contactRef} />
     </div>
-  )
+  );
 }
