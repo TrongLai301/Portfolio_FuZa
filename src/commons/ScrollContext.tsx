@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef } from "react";
+import { createContext, useContext } from "react";
 
 type ScrollContextType = {
   homeRef: React.RefObject<HTMLDivElement | null>;
@@ -7,33 +7,7 @@ type ScrollContextType = {
   contactRef: React.RefObject<HTMLDivElement | null>;
   scrollTo: (ref: React.RefObject<HTMLDivElement | null>) => void;
 };
-const ScrollContext = createContext<ScrollContextType | null>(null);
-
-export const ScrollProvider = ({ children }: { children: React.ReactNode }) => {
-  const homeRef = useRef<HTMLDivElement | null>(null);
-  const aboutRef = useRef<HTMLDivElement | null>(null);
-  const skillRef = useRef<HTMLDivElement | null>(null);
-  const contactRef = useRef<HTMLDivElement | null>(null);
-
-  const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
-    if (ref.current) {
-      const top =
-        ref.current.getBoundingClientRect().top + window.pageYOffset - 90;
-      console.log("top:" + top);
-      console.log("current top:" + ref.current.getBoundingClientRect().top);
-      console.log("offset:" + window.pageYOffset);
-      window.scrollTo({ top, behavior: "smooth" });
-    }
-  };
-
-  return (
-    <ScrollContext.Provider
-      value={{ homeRef, aboutRef, skillRef, contactRef, scrollTo }}
-    >
-      {children}
-    </ScrollContext.Provider>
-  );
-};
+export const ScrollContext = createContext<ScrollContextType | null>(null);
 
 export const useScroll = () => {
   const context = useContext(ScrollContext);
