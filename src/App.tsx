@@ -42,7 +42,7 @@ function MainApp() {
 
 function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
       <Toaster position="top-right" richColors />
       <EnterProvider>
         <MainApp />
