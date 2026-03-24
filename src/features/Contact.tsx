@@ -41,18 +41,18 @@ const Contact = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="w-[90%] md:max-w-6xl mx-auto flex flex-col items-center" ref={containerRef}>
         
         {/* Title */}
-        <div className="animation opacity-0 text-center mb-24 relative z-10 w-full" style={{ animationFillMode: "both" }}>
+        <div className="animation opacity-0 text-center mb-10 md:mb-24 relative z-10 w-full" style={{ animationFillMode: "both" }}>
           <span className="main-text">
             <span className="text-secondary-1 text-white">Contact</span>
             <span className="text-secondary-2"> Me</span>
           </span>
-          <p className="text-gray-400 mt-4 text-lg font-medium tracking-wide">
+          <p className="text-gray-400 mt-4 text-sm md:text-lg font-medium tracking-wide max-w-2xl mx-auto px-4">
             Feel free to reach out. I'm always open to discussing new projects or creative ideas.
           </p>
         </div>
 
         {/* Cards Container */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-12 w-full mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-4 lg:gap-12 w-full mt-8">
           <ContactCard 
              type="call"
              title="Call me"

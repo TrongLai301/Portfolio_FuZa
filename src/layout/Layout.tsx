@@ -15,7 +15,7 @@ export default function Layout() {
         onScrollToSkill={() => scrollTo(skillRef)}
         onScrollToContact={() => scrollTo(contactRef)}
       />
-      <div className="w-full max-w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full lg:max-w-4/5 lg:mx-auto lg:px-8">
         <div className="min-h-screen relative">
           <div className="">
             <Outlet />

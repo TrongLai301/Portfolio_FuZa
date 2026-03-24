@@ -34,7 +34,7 @@ export const getValorantAccount = async (name: string, tag: string) => {
     
     const data = await response.json();
     return data.data; // API trả về payload bọc trong object "data"
-  } catch (error) {
+  } catch {
     toast.error("Failed to load Valorant account info");
     return null;
   }
@@ -59,7 +59,7 @@ export const getValorantMMR = async (name: string, tag: string, region: string =
 
     const data = await response.json();
     return data.data; // Chứa currenttierpatched, rr, images.large...
-  } catch (error) {
+  } catch {
     toast.error("Failed to load Valorant MMR info");
     return null;
   }
@@ -81,7 +81,7 @@ export const getValorantMMRv2 = async (name: string, tag: string, region: string
 
     const data = await response.json();
     return data.data; // Chứa current_data và by_season để trích xuất Win/Loss
-  } catch (error) {
+  } catch {
     toast.error("Failed to load Valorant MMR V2 info");
     return null;
   }

@@ -96,7 +96,7 @@ export default function MusicPlayer() {
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="animation music-player-bar relative w-full max-w-[500px] mx-auto mt-8 p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl overflow-hidden group hover:border-white/20 transition-all duration-500">
+    <div className="animation music-player-bar relative w-full max-w-[320px] md:max-w-[380px] lg:max-w-[500px] mx-auto mt-4 md:mt-8 p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl overflow-hidden group hover:border-white/20 transition-all duration-500">
       {/* Hidden Audio Element */}
       <audio
         ref={audioRef}
@@ -106,7 +106,7 @@ export default function MusicPlayer() {
         onEnded={handleNext}
       />
 
-      <div className="flex items-center gap-4 mt-4">
+      <div className="flex items-center gap-2 md:gap-4 mt-2 md:mt-4">
         {/* Album Art */}
         <div className="relative shrink-0">
           <div
@@ -115,7 +115,7 @@ export default function MusicPlayer() {
           <img
             src={currentSong.cover}
             alt="Song Cover"
-            className={`w-14 h-14 rounded-xl object-cover border border-white/20 relative z-10 transition-transform duration-500 ${isPlaying ? "scale-105" : "scale-100"}`}
+            className={`w-10 h-10 md:w-14 md:h-14 rounded-xl object-cover border border-white/20 relative z-10 transition-transform duration-500 ${isPlaying ? "scale-105" : "scale-100"}`}
           />
         </div>
 
@@ -123,7 +123,7 @@ export default function MusicPlayer() {
         <div className="flex-1 flex flex-col gap-2">
           {/* Title and Metadata Icon */}
           <div className="flex items-center gap-2">
-            <h4 className="text-cyan-300 font-bold text-lg tracking-wide drop-shadow-[0_0_8px_rgba(103,232,249,0.5)] truncate max-w-[180px]">
+            <h4 className="text-cyan-300 font-bold text-sm md:text-lg tracking-wide drop-shadow-[0_0_8px_rgba(103,232,249,0.5)] truncate max-w-[100px] md:max-w-[180px]">
               {currentSong.title}
             </h4>
             <FontAwesomeIcon
@@ -156,7 +156,7 @@ export default function MusicPlayer() {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-4 ml-2">
+        <div className="flex items-center gap-2 md:gap-4 ml-1 md:ml-2">
           <button
             onClick={handlePrev}
             className="text-white/40 hover:text-cyan-300 transition-colors duration-300"
@@ -165,7 +165,7 @@ export default function MusicPlayer() {
           </button>
           <button
             onClick={togglePlay}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 hover:bg-cyan-400 hover:text-white transition-all duration-300 shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 hover:bg-cyan-400 hover:text-white transition-all duration-300 shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_20px_rgba(34,211,238,0.4)]"
           >
             <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} size="xs" />
           </button>

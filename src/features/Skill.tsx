@@ -83,7 +83,7 @@ const Skill = forwardRef<HTMLDivElement>((_, ref) => {
           {/* First Marquee Layer */}
           <ul className="flex items-center justify-center animate-marquee min-w-full shrink-0">
             {skillsData.map((skill, index) => (
-              <li key={skill.name + index} className="mx-6 py-10 px-4">
+              <li key={skill.name + index} className="mx-2 md:mx-4 lg:mx-6 py-10 px-4">
                 <SkillCard 
                   name={skill.name}
                   icon={skill.icon}
@@ -95,7 +95,7 @@ const Skill = forwardRef<HTMLDivElement>((_, ref) => {
           {/* Second Duplicate Marquee Layer for seamless loop */}
           <ul className="flex items-center justify-center animate-marquee min-w-full shrink-0" aria-hidden="true">
             {skillsData.map((skill, index) => (
-              <li key={skill.name + "-dup-" + index} className="mx-6 py-10 px-4">
+              <li key={skill.name + "-dup-" + index} className="mx-2 md:mx-4 lg:mx-6 py-10 px-4">
                 <SkillCard 
                   name={skill.name}
                   icon={skill.icon}

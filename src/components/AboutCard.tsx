@@ -48,7 +48,7 @@ const AboutCard = forwardRef<HTMLDivElement, AboutCardProps>(
       <div 
         ref={setRefs}
         onClick={onClick}
-        className="opacity-0 group relative w-full h-[400px] min-h-[400px] shrink-0 bg-[#1a1d2e] rounded-2xl overflow-hidden cursor-pointer shadow-[1px_1px_4px_0px_#000000] hover:shadow-[0_0_4px_2px_#f6eaea] transition-all duration-500 hover:scale-[1.04] hover:z-10"
+        className="opacity-0 group relative w-full h-[180px] md:h-[280px] lg:h-[400px] shrink-0 bg-[#1a1d2e] rounded-2xl overflow-hidden cursor-pointer shadow-[1px_1px_4px_0px_#000000] hover:shadow-[0_0_4px_2px_#f6eaea] transition-all duration-500 hover:scale-[1.04] hover:z-10"
         style={{ animationDelay: `${delay}s`, animationFillMode: "both" }}
       >
         <img 
