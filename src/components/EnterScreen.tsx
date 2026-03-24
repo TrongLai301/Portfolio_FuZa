@@ -1,4 +1,4 @@
-import { useEnter } from "../commons/EnterContext";
+import { useEnter } from "../commons/useEnterContext";
 
 export default function EnterScreen() {
   const { isEntered, enter } = useEnter();

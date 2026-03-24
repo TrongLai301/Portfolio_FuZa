@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./layout/Layout";
 import IntroPage from "./features/IntroPage";
 import { ScrollProvider } from "./commons/ScrollProvider";
-import { EnterProvider, useEnter } from "./commons/EnterContext";
+import { EnterProvider } from "./commons/EnterContext";
+import { useEnter } from "./commons/useEnterContext";
 import EnterScreen from "./components/EnterScreen";
 import catUmbrella from "./assets/video/catUmbrella.mp4"
 function MainApp() {

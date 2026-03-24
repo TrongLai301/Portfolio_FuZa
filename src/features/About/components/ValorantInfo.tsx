@@ -45,7 +45,7 @@ export default function ValorantInfo() {
           rr: mmrData?.ranking_in_tier,
           playerCard: accountData?.card?.small,
         });
-      } catch (err) {
+      } catch {
         toast.error("Failed to sync Valorant data");
       } finally {
         setLoading(false);
@@ -63,10 +63,10 @@ export default function ValorantInfo() {
   const displayAvatar = liveData.playerCard || profile.playerCard;
 
   return (
-    <div className="animation fade-in-up w-full h-full p-4 md:p-6 overflow-y-auto custom-scrollbar flex flex-col gap-8">
+    <div className="animation fade-in-up w-full h-full p-2 md:p-6 pb-10 overflow-y-auto custom-scrollbar flex flex-col gap-6">
       
-      {/* Header Profile - Lấy cảm hứng từ Konect.gg */}
-      <div className="flex flex-col md:flex-row items-center md:items-stretch gap-8 bg-[#1a1d2e] bg-opacity-70 p-8 rounded-4xl border border-gray-700 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+      {/* Header Profile */}
+      <div className="flex flex-col md:flex-row items-center md:items-stretch gap-4 md:gap-8 bg-[#1a1d2e] bg-opacity-70 p-4 md:p-8 rounded-2xl md:rounded-4xl border border-gray-700 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
         
         {/* Left: Avatar */}
         <div className="relative shrink-0 flex items-center justify-center">
@@ -74,19 +74,19 @@ export default function ValorantInfo() {
           <img 
             src={displayAvatar} 
             alt="Avatar" 
-            className={`w-36 h-36 relative z-10 rounded-2xl border-2 border-[#536976] object-cover transition-all duration-700 shadow-[0_0_15px_rgba(83,105,118,0.6)] ${loading ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
+            className={`w-24 h-24 md:w-36 md:h-36 relative z-10 rounded-2xl border-2 border-[#536976] object-cover transition-all duration-700 shadow-[0_0_15px_rgba(83,105,118,0.6)] ${loading ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
           />
         </div>
 
         {/* Center: Info */}
-        <div className="flex flex-col justify-center flex-1 text-center md:text-left gap-4">
+        <div className="flex flex-col justify-center flex-1 text-center md:text-left gap-3">
           <div>
-            <h2 className="text-5xl font-black text-white tracking-wider uppercase mb-3 drop-shadow-lg">{ingame}</h2>
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-              <span className={`px-4 py-1.5 bg-[#292E49] text-gray-200 font-bold rounded-xl text-sm border border-gray-600 shadow-sm transition-opacity duration-700 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+            <h2 className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-black text-white tracking-wider uppercase mb-2 drop-shadow-lg truncate">{ingame}</h2>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+              <span className={`px-3 py-1 bg-[#292E49] text-gray-200 font-bold rounded-xl text-xs md:text-sm border border-gray-600 shadow-sm transition-opacity duration-700 ${loading ? 'opacity-0' : 'opacity-100'}`}>
                 Level {displayLevel}
               </span>
-              <span className="px-4 py-1.5 bg-[#292E49] text-gray-200 font-bold rounded-xl text-sm border border-gray-600 shadow-sm">
+              <span className="px-3 py-1 bg-[#292E49] text-gray-200 font-bold rounded-xl text-xs md:text-sm border border-gray-600 shadow-sm">
                 {profile.mainRole}
               </span>
             </div>
@@ -94,13 +94,13 @@ export default function ValorantInfo() {
         </div>
 
         {/* Right: Rank Display */}
-        <div className="flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-gray-600 pt-6 md:pt-0 md:pl-8 shrink-0">
+        <div className="flex flex-row md:flex-col items-center justify-center gap-3 border-t md:border-t-0 md:border-l border-gray-600 pt-4 md:pt-0 md:pl-8 shrink-0">
           <img 
             src={displayRankIcon} 
             alt={displayRankName} 
-            className={`w-28 h-28 drop-shadow-[0_0_10px_rgba(83,105,118,0.5)] mb-4 transition-all duration-700 ${loading ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
+            className={`w-16 h-16 md:w-28 md:h-28 drop-shadow-[0_0_10px_rgba(83,105,118,0.5)] transition-all duration-700 ${loading ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
           />
-          <span className={`px-5 py-1.5 bg-linear-to-r from-[#292E49] to-[#536976] text-white font-extrabold rounded-xl uppercase text-sm border border-gray-500 shadow-[0_0_15px_rgba(83,105,118,0.4)] tracking-wide whitespace-nowrap transition-opacity duration-700 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+          <span className={`px-3 md:px-5 py-1.5 bg-linear-to-r from-[#292E49] to-[#536976] text-white font-extrabold rounded-xl uppercase text-xs md:text-sm border border-gray-500 shadow-[0_0_15px_rgba(83,105,118,0.4)] tracking-wide whitespace-nowrap transition-opacity duration-700 ${loading ? 'opacity-0' : 'opacity-100'}`}>
             {displayRankName}{displayRR}
           </span>
         </div>
@@ -110,18 +110,18 @@ export default function ValorantInfo() {
         {/* Settings / Config */}
         <div className="bg-[#1a1d2e] bg-opacity-70 rounded-4xl border border-gray-700 backdrop-blur-md flex flex-col shadow-lg overflow-hidden">
           {/* Header & Tabs */}
-          <div className="p-6 md:p-8 pb-0">
-            <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-3 uppercase tracking-wide">
-              <span className="w-2.5 h-7 bg-[#536976] rounded-full inline-block shadow-[0_0_8px_rgba(83,105,118,0.8)]"></span>
+          <div className="p-4 md:p-8 pb-0">
+            <h3 className="text-lg md:text-2xl font-black text-white mb-4 md:mb-6 flex items-center gap-3 uppercase tracking-wide">
+              <span className="w-2 h-5 md:w-2.5 md:h-7 bg-[#536976] rounded-full inline-block shadow-[0_0_8px_rgba(83,105,118,0.8)]"></span>
               Settings
             </h3>
             
-            <div className="flex bg-[#0f111a] rounded-lg p-1 border border-gray-700 mb-6">
+            <div className="flex bg-[#0f111a] rounded-lg p-1 border border-gray-700 mb-4 md:mb-6">
               {(["config", "graphics"] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-2 px-4 rounded-md text-sm md:text-base font-bold uppercase tracking-wider transition-all duration-300 ${
+                  className={`flex-1 py-1.5 md:py-2 px-3 md:px-4 rounded-md text-xs md:text-base font-bold uppercase tracking-wider transition-all duration-300 ${
                     activeTab === tab 
                       ? "bg-white text-black shadow-[0_0_10px_rgba(255,255,255,0.3)]" 
                       : "text-gray-400 hover:text-white hover:bg-white/5"
@@ -186,9 +186,9 @@ export default function ValorantInfo() {
         </div>
 
         {/* Gear */}
-        <div className="bg-[#1a1d2e] bg-opacity-70 p-6 md:p-8 rounded-4xl border border-gray-700 backdrop-blur-md flex flex-col shadow-lg">
-          <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-3 uppercase tracking-wide">
-            <span className="w-2.5 h-7 bg-[#536976] rounded-full inline-block shadow-[0_0_8px_rgba(83,105,118,0.8)]"></span>
+        <div className="bg-[#1a1d2e] bg-opacity-70 p-4 md:p-8 rounded-2xl md:rounded-4xl border border-gray-700 backdrop-blur-md flex flex-col shadow-lg">
+          <h3 className="text-lg md:text-2xl font-black text-white mb-4 md:mb-6 flex items-center gap-3 uppercase tracking-wide">
+            <span className="w-2 h-5 md:w-2.5 md:h-7 bg-[#536976] rounded-full inline-block shadow-[0_0_8px_rgba(83,105,118,0.8)]"></span>
             Gaming Gear
           </h3>
           <div className="flex flex-col gap-4">
@@ -200,9 +200,9 @@ export default function ValorantInfo() {
       </div>
 
       {/* Agents Tier List */}
-      <div className="bg-[#1a1d2e] bg-opacity-70 p-6 md:p-8 rounded-4xl border border-gray-700 backdrop-blur-md shadow-lg mb-8">
-        <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-3 uppercase tracking-wide">
-          <span className="w-2.5 h-7 bg-[#536976] rounded-full inline-block shadow-[0_0_8px_rgba(83,105,118,0.8)]"></span>
+      <div className="bg-[#1a1d2e] bg-opacity-70 p-4 md:p-8 rounded-2xl md:rounded-4xl border border-gray-700 backdrop-blur-md shadow-lg mb-8">
+        <h3 className="text-lg md:text-2xl font-black text-white mb-4 md:mb-6 flex items-center gap-3 uppercase tracking-wide">
+          <span className="w-2 h-5 md:w-2.5 md:h-7 bg-[#536976] rounded-full inline-block shadow-[0_0_8px_rgba(83,105,118,0.8)]"></span>
           Most Played Agents
         </h3>
         <div className="flex flex-col gap-4">
@@ -216,9 +216,9 @@ export default function ValorantInfo() {
 }
 
 const SettingItem = ({ label, value }: { label: string, value: string }) => (
-  <div className="bg-[#292E49] p-4 rounded-2xl border border-gray-600 flex flex-col justify-center items-start shadow-md hover:border-[#536976] hover:shadow-[0_0_10px_rgba(83,105,118,0.5)] transition-all duration-300">
-    <span className="text-gray-400 text-xs md:text-sm font-bold uppercase tracking-widest mb-1.5">{label}</span>
-    <span className="text-white font-black text-lg md:text-xl drop-shadow-sm">{value}</span>
+  <div className="bg-[#292E49] p-3 md:p-4 rounded-xl md:rounded-2xl border border-gray-600 flex flex-col justify-center items-start shadow-md hover:border-[#536976] hover:shadow-[0_0_10px_rgba(83,105,118,0.5)] transition-all duration-300">
+    <span className="text-gray-400 text-[10px] md:text-sm font-bold uppercase tracking-widest mb-1 md:mb-1.5">{label}</span>
+    <span className="text-white font-black text-sm md:text-xl drop-shadow-sm">{value}</span>
   </div>
 );
 
@@ -230,15 +230,15 @@ const SettingGraphicItem = ({ label, value }: { label: string, value: string }) 
 );
 
 const GearItem = ({ name, value }: { name: string, value: string }) => (
-  <div className="flex justify-between items-center bg-[#292E49] px-5 py-4 rounded-2xl border border-gray-600 shadow-md hover:border-[#536976] hover:shadow-[0_0_10px_rgba(83,105,118,0.5)] transition-all duration-300">
-    <span className="text-gray-300 font-bold tracking-wide">{name}</span>
-    <span className="text-white font-bold text-right text-sm md:text-base bg-[#1a1d2e] px-3 py-1 rounded-lg border border-gray-600">{value}</span>
+  <div className="flex justify-between items-center bg-[#292E49] px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl border border-gray-600 shadow-md hover:border-[#536976] hover:shadow-[0_0_10px_rgba(83,105,118,0.5)] transition-all duration-300">
+    <span className="text-gray-300 font-bold tracking-wide text-xs md:text-base">{name}</span>
+    <span className="text-white font-bold text-right text-[10px] md:text-base bg-[#1a1d2e] px-2 md:px-3 py-1 rounded-lg border border-gray-600">{value}</span>
   </div>
 );
 
 const TierRow = ({ tier, color, agents }: { tier: string, color: string, agents: {id: string, name: string, img: string}[] }) => (
-  <div className="flex items-stretch bg-[#292E49] rounded-2xl border border-gray-600 shadow-md">
-    <div className={`w-16 md:w-20 ${color} rounded-l-2xl flex items-center justify-center font-black text-3xl md:text-4xl text-white shadow-[inset_0_0_15px_rgba(0,0,0,0.3)] border-r border-gray-700`}>
+  <div className="flex items-stretch bg-[#292E49] rounded-xl md:rounded-2xl border border-gray-600 shadow-md">
+    <div className={`w-12 md:w-20 ${color} rounded-l-xl md:rounded-l-2xl flex items-center justify-center font-black text-2xl md:text-4xl text-white shadow-[inset_0_0_15px_rgba(0,0,0,0.3)] border-r border-gray-700`}>
       {tier}
     </div>
     <div className="flex flex-wrap items-center gap-4 p-4 flex-1">

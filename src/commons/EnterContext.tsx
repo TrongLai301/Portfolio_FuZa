@@ -1,14 +1,5 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-
-interface EnterContextType {
-  isEntered: boolean;
-  enter: () => void;
-}
-
-const EnterContext = createContext<EnterContextType>({
-  isEntered: false,
-  enter: () => {},
-});
+import { useState, useEffect, type ReactNode } from "react";
+import { EnterContext } from "./useEnterContext";
 
 export function EnterProvider({ children }: { children: ReactNode }) {
   const [isEntered, setIsEntered] = useState(false);
@@ -33,5 +24,3 @@ export function EnterProvider({ children }: { children: ReactNode }) {
     </EnterContext.Provider>
   );
 }
-
-export const useEnter = () => useContext(EnterContext);

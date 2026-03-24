@@ -295,3 +295,82 @@
 .marquee-container:hover .animate-marquee {
     animation-play-state: paused;
 }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    :root {
+        --font-size-text: 40px;
+        --ti-cursor-font-size: 20px;
+        --size-frame-icon: 28px;
+    }
+
+    .orbit-container {
+        width: 240px;
+        height: 240px;
+        margin: 30px auto;
+    }
+
+    .avt-size {
+        width: 190px;
+        height: 190px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --font-size-text: 36px;
+        --ti-cursor-font-size: 18px;
+        --size-frame-icon: 32px;
+    }
+
+    .orbit-container {
+        width: 220px;
+        height: 220px;
+        margin: 30px auto;
+    }
+
+    .avt-size {
+        width: 180px;
+        height: 180px;
+    }
+
+    /* Adjust orbit radius via OrbitIcon inline styles handled in JS,
+       but make orbit items slightly smaller */
+    .orbit-item {
+        width: 40px;
+        height: 40px;
+    }
+
+    .orbit-item svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .skill-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .skill-icon > svg {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --font-size-text: 28px;
+        --ti-cursor-font-size: 16px;
+    }
+
+    .orbit-container {
+        width: 180px;
+        height: 180px;
+        margin: 20px auto;
+    }
+
+    .avt-size {
+        width: 150px;
+        height: 150px;
+    }
+}

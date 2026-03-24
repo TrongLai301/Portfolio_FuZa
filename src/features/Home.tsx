@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import "../assets/css/home.css";
 import TypeIt from "typeit-react";
 
@@ -21,6 +21,19 @@ import nilou from "../assets/image/nilouPr4.png";
 const Home = forwardRef<HTMLDivElement>((_, ref) => {
   const animationLeft = useRef<HTMLDivElement | null>(null);
   const animationRight = useRef<HTMLDivElement | null>(null);
+  const [orbitRadius, setOrbitRadius] = useState(
+    window.innerWidth < 768 ? 100 : window.innerWidth < 1024 ? 130 : 180
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) setOrbitRadius(100);
+      else if (window.innerWidth < 1024) setOrbitRadius(130);
+      else setOrbitRadius(180);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   async function animation(
     element: Element | null | undefined,
@@ -90,9 +103,10 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <section className="snap-start" id="home" ref={ref}>
-      <div className="flex items-center" style={{ minHeight: "90vh" }}>
-        <div className="w-2/5" ref={animationLeft}>
-          <div className="animation animation-up-left flex items-center">
+      <div className="flex flex-col-reverse md:flex-row items-center gap-8 md:gap-0" style={{ minHeight: "90vh" }}>
+        {/* Left: Text content */}
+        <div className="w-full md:w-2/5 text-center md:text-left px-4 md:px-0" ref={animationLeft}>
+          <div className="animation animation-up-left flex items-center justify-center md:justify-start">
             <span className="main-text">
               <span className="text-secondary-1 ">Hello,</span>
               <span className="text-secondary-2"> I'm FuZa</span>
@@ -118,14 +132,14 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
               }}
             />
           </div>
-          <div className="animation mb-8 ">
-            <span className=" text-lg">
+          <div className="animation mb-6">
+            <span className="text-xs md:text-sm lg:text-base">
               A passionate developer who loves building modern and responsive
               web applications using React, Java, and JavaScript.
             </span>
           </div>
-          <div className=" flex gap-4 items-center">
-            <span className="animation ">Follow me:</span>
+          <div className="flex gap-2 md:gap-3 lg:gap-4 items-center justify-center md:justify-start flex-wrap">
+            <span className="animation text-xs md:text-sm lg:text-base whitespace-nowrap">Follow me:</span>
             <SocialIcon to="https://github.com/TrongLai301" icon={faGithub} />
             <SocialIcon
               to="https://www.linkedin.com/in/tr%E1%BB%8Dng-l%E1%BA%A1i-61a183316/"
@@ -136,7 +150,8 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
             <SocialIcon to="https://www.tiktok.com/@fuza04" icon={faTiktok} />
           </div>
         </div>
-        <div className="w-3/5" ref={animationRight}>
+        {/* Right: Avatar + Music Player */}
+        <div className="w-full md:w-3/5" ref={animationRight}>
           <div className="orbit-container">
             <div id="bigAvt" className="big-avt avt-size">
               <img src={nilou} alt="nilou..." className=" avt-size" />
@@ -146,7 +161,7 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
                 key={index} 
                 icon={icon} 
                 angle={(index * 360) / arr.length - 45} 
-                radius={180} 
+                radius={orbitRadius} 
               />
             ))}
           </div>

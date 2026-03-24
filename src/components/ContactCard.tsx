@@ -39,13 +39,13 @@ export default function ContactCard({ type, title, description, buttonText, butt
 
   return (
     <div 
-      className={`animation opacity-0 relative bg-[rgba(15,20,40,0.65)] backdrop-blur-md border border-white/15 rounded-2xl p-8 pt-16 flex flex-col items-center text-center shadow-[0_10px_30px_-15px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-2 group ${theme.hoverBorder} ${theme.hoverShadow}`}
+      className={`animation opacity-0 relative bg-[rgba(15,20,40,0.65)] backdrop-blur-md border border-white/15 rounded-2xl p-6 lg:p-8 pt-12 md:pt-14 lg:pt-16 flex flex-col items-center text-center shadow-[0_10px_30px_-15px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-2 group ${theme.hoverBorder} ${theme.hoverShadow}`}
       style={{ animationFillMode: "both" }}
     >
       <div className={`absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full flex items-center justify-center text-white border-4 border-[#0a0f20] group-hover:scale-110 transition-transform duration-300 ${theme.iconBg} ${theme.iconShadow}`}>
         <FontAwesomeIcon icon={icon} className="text-3xl" />
       </div>
-      <h3 className="text-2xl font-bold text-white mb-3">{title}</h3>
+      <h3 className="text-xl md:text-2xl font-bold text-white mb-3">{title}</h3>
       <p className="text-gray-300 text-sm mb-6 grow">
         {description}
       </p>

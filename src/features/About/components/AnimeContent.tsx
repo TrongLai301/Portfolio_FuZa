@@ -14,7 +14,7 @@ export default function AnimeContent() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 content-start gap-6 p-4 h-full overflow-y-auto overflow-x-hidden custom-scrollbar">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 content-start gap-3 md:gap-6 p-2 md:p-4 pb-10 h-full overflow-y-auto overflow-x-hidden custom-scrollbar">
       {mockAnimes.map((anime, index) => (
         <AboutCard
           key={anime.id}
