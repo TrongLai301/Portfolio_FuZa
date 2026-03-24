@@ -3,8 +3,9 @@ import GeneralContent from "./components/GeneralContent";
 import AnimeContent from "./components/AnimeContent";
 import GameContent from "./components/GameContent";
 import ValorantInfo from "./components/ValorantInfo";
+import CelebrateContent from "./components/CelebrateContent";
 
-type Tab = "general" | "anime" | "game" | "valorant";
+type Tab = "general" | "anime" | "game" | "valorant" | "celebrates";
 
 const About = forwardRef<HTMLDivElement>((_, ref) => {
   const [activeTab, setActiveTab] = useState<Tab>("general");
@@ -51,6 +52,8 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
         return <GameContent />;
       case "valorant":
         return <ValorantInfo />;
+      case "celebrates":
+        return <CelebrateContent />;
       default:
         return null;
     }
@@ -81,7 +84,7 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
         >
           {/* Menu Tabs */}
           <div className="flex justify-start items-end -mb-px relative z-10">
-            {(["general", "anime", "game", "valorant"] as const).map((tab) => (
+            {(["general", "anime", "game", "valorant", "celebrates"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}

@@ -9,9 +9,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import muaDangRoi from "../assets/audio/MuaDangRoi.mp3";
-import imgMuaDangRoi from "../assets/image/muadangroi.jpg";
+import imgMuaDangRoi from "../assets/image/commons/muadangroi.jpg";
 import mrUBuon from "../assets/audio/MrUBuon.mp3";
-import imgMrUBuon from "../assets/image/mrUbuon.jpg";
+import imgMrUBuon from "../assets/image/commons/mrUbuon.jpg";
+import giaoHuongAnhDo from "../assets/audio/giaoHuongAnhDo.mp3";
+import imgGiaoHuongAnhDo from "../assets/image/commons/thankDo.jpg";
 
 export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -23,6 +25,11 @@ export default function MusicPlayer() {
 
   // Data for UI representation
   const playlist = [
+    {
+      title: "Giao hưởng Thank Độ",
+      url: giaoHuongAnhDo,
+      cover: imgGiaoHuongAnhDo,
+    },
     {
       title: "Mr. U buồn",
       url: mrUBuon,
@@ -110,7 +117,7 @@ export default function MusicPlayer() {
         {/* Album Art */}
         <div className="relative shrink-0">
           <div
-            className={`absolute inset-0 bg-cyan-400/20 blur-xl rounded-lg transition-opacity duration-500 ${isPlaying ? "opacity-100" : "opacity-0"}`}
+            className={`absolute inset-0 bg-indigo-500/20 blur-xl rounded-lg transition-opacity duration-500 ${isPlaying ? "opacity-100" : "opacity-0"}`}
           ></div>
           <img
             src={currentSong.cover}
@@ -123,7 +130,7 @@ export default function MusicPlayer() {
         <div className="flex-1 flex flex-col gap-2">
           {/* Title and Metadata Icon */}
           <div className="flex items-center gap-2">
-            <h4 className="text-cyan-300 font-bold text-sm md:text-lg tracking-wide drop-shadow-[0_0_8px_rgba(103,232,249,0.5)] truncate max-w-[100px] md:max-w-[180px]">
+            <h4 className="text-indigo-300 font-bold text-sm md:text-lg tracking-wide drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] truncate max-w-[100px] md:max-w-[180px]">
               {currentSong.title}
             </h4>
             <FontAwesomeIcon
@@ -143,7 +150,7 @@ export default function MusicPlayer() {
               onClick={handleProgressClick}
             >
               <div
-                className="absolute left-0 top-0 h-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)] transition-all duration-100 ease-linear"
+                className="absolute left-0 top-0 h-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)] transition-all duration-100 ease-linear"
                 style={{ width: `${progressPercent}%` }}
               ></div>
               {/* Hover effect for progress bar */}
@@ -159,19 +166,19 @@ export default function MusicPlayer() {
         <div className="flex items-center gap-2 md:gap-4 ml-1 md:ml-2">
           <button
             onClick={handlePrev}
-            className="text-white/40 hover:text-cyan-300 transition-colors duration-300"
+            className="text-white/40 hover:text-indigo-400 transition-colors duration-300"
           >
             <FontAwesomeIcon icon={faStepBackward} size="xs" />
           </button>
           <button
             onClick={togglePlay}
-            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 hover:bg-cyan-400 hover:text-white transition-all duration-300 shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all duration-300 shadow-[0_0_15px_rgba(99,102,241,0.2)] hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]"
           >
             <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} size="xs" />
           </button>
           <button
             onClick={handleNext}
-            className="text-white/40 hover:text-cyan-300 transition-colors duration-300"
+            className="text-white/40 hover:text-indigo-400 transition-colors duration-300"
           >
             <FontAwesomeIcon icon={faStepForward} size="xs" />
           </button>

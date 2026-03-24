@@ -1,4 +1,4 @@
-import diamond2 from "../../assets/image/diamond_Rank.webp";
+import diamond2 from "../../assets/image/commons/diamond_Rank.webp";
 
 export interface Anime {
   id: string;
@@ -214,9 +214,9 @@ export const mockValorantProfile: ValorantProfile = {
       color: "bg-[#536976]",
       agents: [
         {
-          id: "omen",
-          name: "Omen",
-          img: "https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/displayicon.png",
+          id: "jett",
+          name: "Jett",
+          img: "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/displayicon.png",
         },
         {
           id: "Miks",
@@ -224,11 +224,140 @@ export const mockValorantProfile: ValorantProfile = {
           img: "https://media.valorant-api.com/agents/7c8a4701-4de6-9355-b254-e09bc2a34b72/displayicon.png",
         },
         {
-          id: "jett",
-          name: "Jett",
-          img: "https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/displayicon.png",
+          id: "Sage",
+          name: "Sage",
+          img: "https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/displayicon.png",
         },
       ],
     },
   ],
 };
+import okhi07122025 from "../../assets/image/celebrates/okhi07122025.jpeg";
+import zt29072025 from "../../assets/image/celebrates/zt29072025.jpg";
+import okhi02052025 from "../../assets/image/celebrates/okhi02052025.jpg";
+import hagiang30012024 from "../../assets/image/celebrates/hagiangdot1_30012024.jpg";
+import okhi06072024 from "../../assets/image/celebrates/okhi06072024.png";
+import sn02032023 from "../../assets/image/celebrates/SN02032023.jpg";
+import chilon17052022 from "../../assets/image/celebrates/Hoichilon17052022.jpg";
+import hoguom23122022 from "../../assets/image/celebrates/hoguom23122022.jpg";
+import anhLop04072022 from "../../assets/image/celebrates/anhLop04072022.jpg";
+import sapa11072022 from "../../assets/image/celebrates/sapa11072022.jpg";
+import refuntromxoai16052022 from "../../assets/image/celebrates/refuntromxoai16052022.jpg";
+import tamdao17022024 from "../../assets/image/celebrates/tamdao17022024.jpg";
+import hagiang24112025 from "../../assets/image/celebrates/hagiang24112025.jpeg";
+import thachthat27122025 from "../../assets/image/celebrates/thachThat27122025.jpg";
+import photobook26122025 from "../../assets/image/celebrates/photobook26122025.jpg";
+import catba02092025 from "../../assets/image/celebrates/catba02092025.jpg";
+import tronnhadisapa30042022 from "../../assets/image/celebrates/tronnhadisapa30042022.jpg";
+
+export interface CelebratePhoto {
+  id: string;
+  imageSrc: string;
+  date: string;
+  caption?: string;
+}
+
+export const mockCelebrations: CelebratePhoto[] = [
+  {
+    id: "c1",
+    imageSrc: thachthat27122025,
+    date: "27-11-2025",
+    caption: "Nghỉ dưỡng ở Thạch Thất",
+  },
+  {
+    id: "c2",
+    imageSrc: photobook26122025,
+    date: "26-12-2025",
+    caption: "Đánh lẻ photobook",
+  },
+  {
+    id: "c3",
+    imageSrc: okhi07122025,
+    date: "07-12-2025",
+    caption: "Ổ khỉ meeting",
+  },
+  {
+    id: "c4",
+    imageSrc: hagiang24112025,
+    date: "24-11-2025",
+    caption: "Hà giang đợt 2",
+  },
+  {
+    id: "c5",
+    imageSrc: catba02092025,
+    date: "02-09-2025",
+    caption: "Đánh lẻ cát bà",
+  },
+  {
+    id: "c6",
+    imageSrc: zt29072025,
+    date: "29-07-2025",
+    caption: "ZT và ninh bình của cô ấy",
+  },
+  {
+    id: "c7",
+    imageSrc: okhi02052025,
+    date: "02-05-2025",
+    caption: "Ổ khỉ meeting",
+  },
+  {
+    id: "c8",
+    imageSrc: okhi06072024,
+    date: "06-07-2024",
+    caption: "Gen1 ổ khỉ",
+  },
+  {
+    id: "c9",
+    imageSrc: tamdao17022024,
+    date: "17-02-2024",
+    caption: "Lần đầu gặp ZT",
+  },
+  {
+    id: "c10",
+    imageSrc: hagiang30012024,
+    date: "30-01-2024",
+    caption: "Hà giang đợt 1",
+  },
+  {
+    id: "c11",
+    imageSrc: sn02032023,
+    date: "02-03-2023",
+    caption: "Sinh nhật đầu tiên ở Hà nội",
+  },
+  {
+    id: "c12",
+    imageSrc: hoguom23122022,
+    date: "23-12-2022",
+    caption: "Trại thương điên meeting",
+  },
+  {
+    id: "c13",
+    imageSrc: chilon17052022,
+    date: "17-05-2022",
+    caption: "Anh xem chỉ lớn, nói là không làm",
+  },
+  {
+    id: "c14",
+    imageSrc: anhLop04072022,
+    date: "04-07-2022",
+    caption: "Ảnh lớp của ae tôi",
+  },
+  {
+    id: "c15",
+    imageSrc: sapa11072022,
+    date: "11-07-2022",
+    caption: "Sapa ngày không em",
+  },
+  {
+    id: "c16",
+    imageSrc: refuntromxoai16052022,
+    date: "16-05-2022",
+    caption: "Trộm xoài cũng vui",
+  },
+  {
+    id: "c17",
+    imageSrc: tronnhadisapa30042022,
+    date: "30-04-2022",
+    caption: "Trốn nhà đi sapa",
+  },
+];

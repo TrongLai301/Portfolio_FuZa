@@ -21,7 +21,7 @@ export default function AnimeDetail({ anime, onBack }: AnimeDetailProps) {
       <div className="w-full md:w-2/3 flex flex-col justify-start">
         <button 
           onClick={onBack}
-          className="mb-4 self-start px-4 py-1.5 bg-[#1a1d2e] hover:bg-[#536976] text-white rounded-lg transition-colors border border-gray-500 shadow-md flex items-center gap-2 text-sm"
+          className="mb-4 self-start px-4 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/30 text-indigo-300 rounded-lg transition-colors border border-indigo-500/30 shadow-md flex items-center gap-2 text-sm"
         >
           <span>&larr; Back to List</span>
         </button>
@@ -31,19 +31,19 @@ export default function AnimeDetail({ anime, onBack }: AnimeDetailProps) {
         </h2>
         
         <div className="flex flex-wrap items-center gap-4 mb-8 text-gray-300">
-          <span className="bg-[#1a1d2e] px-4 py-1.5 rounded-full text-base font-bold border border-gray-600 shadow-sm">
+          <span className="bg-indigo-500/10 px-4 py-1.5 rounded-full text-base font-bold border border-indigo-500/30 text-indigo-200 shadow-sm">
             Released: {anime.year}
           </span>
           <div className="flex flex-wrap gap-2">
             {anime.genres.map((g) => (
-              <span key={g} className="bg-linear-to-r from-[#292E49] to-[#536976] px-4 py-1.5 rounded-full text-sm font-semibold text-white shadow-sm">
+              <span key={g} className="bg-linear-to-r from-indigo-600/40 to-purple-600/40 px-4 py-1.5 rounded-full text-sm font-semibold text-white border border-indigo-500/20 shadow-sm">
                 {g}
               </span>
             ))}
           </div>
         </div>
 
-        <div className="mt-2 bg-[#1a1d2e] bg-opacity-60 p-4 md:p-8 rounded-2xl md:rounded-3xl border border-gray-600 backdrop-blur-lg shadow-lg">
+        <div className="mt-2 bg-indigo-500/5 p-4 md:p-8 rounded-2xl md:rounded-3xl border border-indigo-500/20 backdrop-blur-lg shadow-lg">
           <h3 className="text-lg md:text-2xl font-semibold mb-3 text-secondary-1">Description</h3>
           <p className="text-gray-300 leading-relaxed text-sm md:text-lg text-justify">
             {anime.description}

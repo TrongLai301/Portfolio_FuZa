@@ -18,7 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SocialIcon from "../components/SocialIcon";
 import OrbitIcon from "../components/OrbitIcon";
 import MusicPlayer from "../components/MusicPlayer";
-import nilou from "../assets/image/nilouPr4.png";
+import nilou from "../assets/image/commons/nilouPr4.png";
 import { hitVisitCount } from "../services/visitorApi";
 
 const Home = forwardRef<HTMLDivElement>((_, ref) => {
@@ -195,7 +195,7 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
               <div className="absolute -top-3 right-4 z-20 flex items-center gap-2 px-3 py-1 rounded-full bg-[#1a1a1a]/80 backdrop-blur-xl border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] animate-visitor-entrance">
                 <FontAwesomeIcon
                   icon={faEye}
-                  className="text-cyan-400 text-[10px]"
+                  className="text-indigo-400 text-[10px]"
                 />
                 <span className="text-white/90 text-xs font-bold font-mono tracking-tight">
                   {visitorCount.toLocaleString()}
