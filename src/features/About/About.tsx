@@ -34,10 +34,10 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
 
   const getTabClass = (tab: Tab) => {
     const isActive = activeTab === tab;
-    return `px-8 py-3 text-lg font-semibold transition-colors duration-300 cursor-pointer rounded-t-xl border border-b-0 ${
+    return `px-8 py-3 text-lg font-semibold transition-all duration-300 cursor-pointer rounded-t-xl border border-b-0 relative z-10 -mb-px ${
       isActive
-        ? "border-gray-600 bg-[#292E49] bg-opacity-40 backdrop-blur-md text-white z-10 relative"
-        : "border-transparent text-gray-400 hover:text-white hover:bg-gray-800/30"
+        ? "border-white/15 bg-[rgba(15,20,40,0.80)] text-white"
+        : "border-transparent text-gray-400 hover:text-white hover:bg-white/5 hover:border-white/10"
     }`;
   };
 
@@ -70,45 +70,30 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
             <span className="text-secondary-1">About</span>
             <span className="text-secondary-2"> Me</span>
           </span>
+          <p className="text-gray-400 mt-4 text-base font-medium tracking-wide">
+            Here's some information & personal interests about me.
+          </p>
         </div>
-
         {/* Layout Khung */}
-        <div 
+        <div
           className="animation opacity-0 w-full relative"
           style={{ animationDelay: "0.2s", animationFillMode: "both" }}
         >
           {/* Menu Tabs */}
           <div className="flex justify-start items-end -mb-px relative z-10">
-            <button
-              onClick={() => setActiveTab("general")}
-              className={getTabClass("general")}
-            >
-              General
-            </button>
-            <button
-              onClick={() => setActiveTab("anime")}
-              className={getTabClass("anime")}
-            >
-              Anime
-            </button>
-            <button
-              onClick={() => setActiveTab("game")}
-              className={getTabClass("game")}
-            >
-              Game
-            </button>
-            <button
-              onClick={() => setActiveTab("valorant")}
-              className={getTabClass("valorant")}
-            >
-              Valorant
-            </button>
+            {(["general", "anime", "game", "valorant"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={getTabClass(tab)}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
           </div>
 
           {/* Dynamic Content Area (Frame) */}
-          <div
-            className="transition-all duration-500 w-full h-[960px] border border-gray-600 rounded-2xl rounded-tl-none bg-[#292E49] bg-opacity-40 backdrop-blur-md p-8 shadow-[1px_1px_8px_0px_rgba(0,0,0,0.5)] relative z-0"
-          >
+          <div className="transition-all duration-500 w-full h-[960px] border border-white/15 rounded-2xl rounded-tl-none bg-[rgba(15,20,40,0.80)] p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] relative z-0">
             {renderContent()}
           </div>
         </div>

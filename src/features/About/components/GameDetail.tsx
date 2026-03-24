@@ -32,7 +32,7 @@ export default function GameDetail({ game, onBack }: GameDetailProps) {
         
         <div className="flex flex-wrap items-center gap-4 mb-8 text-gray-300">
           <span className="bg-[#1a1d2e] px-4 py-1.5 rounded-full text-base font-bold border border-gray-600 shadow-sm">
-            Năm phát hành: {game.year}
+            Released: {game.year}
           </span>
           <div className="flex flex-wrap gap-2">
             {game.genres.map((g) => (
@@ -44,7 +44,7 @@ export default function GameDetail({ game, onBack }: GameDetailProps) {
         </div>
 
         <div className="mt-2 bg-[#1a1d2e] bg-opacity-60 p-8 rounded-3xl border border-gray-600 backdrop-blur-lg shadow-lg">
-          <h3 className="text-2xl font-semibold mb-4 text-secondary-1">Mô tả (Synopsis)</h3>
+          <h3 className="text-2xl font-semibold mb-4 text-secondary-1">Description</h3>
           <p className="text-gray-300 leading-relaxed text-lg text-justify">
             {game.description}
           </p>

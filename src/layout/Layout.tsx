@@ -17,7 +17,6 @@ export default function Layout() {
       />
       <div className="w-full max-w-4/5 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="min-h-screen relative">
-          <div className="fixed inset-0 -z-1 bg-partternCraft" />
           <div className="">
             <Outlet />
           </div>
