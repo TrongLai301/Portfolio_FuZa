@@ -15,6 +15,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import SocialIcon from "../components/SocialIcon";
 import OrbitIcon from "../components/OrbitIcon";
+import MusicPlayer from "../components/MusicPlayer";
 import nilou from "../assets/image/nilouPr4.png";
 
 const Home = forwardRef<HTMLDivElement>((_, ref) => {
@@ -80,6 +81,11 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
       });
       handleMouseenter(orbit);
     });
+
+    const musicPlayer = animationRight.current?.querySelector(".music-player-bar");
+    if (musicPlayer) {
+      animation(musicPlayer, 0.8, "fade-in-up", true);
+    }
   }, []);
 
   return (
@@ -144,6 +150,7 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
               />
             ))}
           </div>
+          <MusicPlayer />
         </div>
       </div>
     </section>

@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { mockValorantProfile } from "../mockData";
 import { getValorantAccount, getValorantMMR } from "../../../services/valorantApi";
@@ -45,7 +46,7 @@ export default function ValorantInfo() {
           playerCard: accountData?.card?.small,
         });
       } catch (err) {
-        console.error("API Sync failed", err);
+        toast.error("Failed to sync Valorant data");
       } finally {
         setLoading(false);
       }

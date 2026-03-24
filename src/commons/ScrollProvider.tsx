@@ -10,10 +10,7 @@ export const ScrollProvider = ({ children }: { children: React.ReactNode }) => {
   const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
       const top =
-        ref.current.getBoundingClientRect().top + window.pageYOffset - 90;
-      console.log("top:" + top);
-      console.log("current top:" + ref.current.getBoundingClientRect().top);
-      console.log("offset:" + window.pageYOffset);
+      ref.current.getBoundingClientRect().top + window.pageYOffset - 90;
       window.scrollTo({ top, behavior: "smooth" });
     }
   };
