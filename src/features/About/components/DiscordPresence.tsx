@@ -260,6 +260,17 @@ export default function DiscordPresence() {
     <div className="relative group mt-14 sm:mt-0">
       <div className="absolute -inset-0.5 bg-linear-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
       <div className="relative p-6 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-2xl flex flex-col gap-6 shadow-2xl">
+        {/* Top-right Discord Icon with Tooltip */}
+        <div className="absolute top-4 right-5 group/discord-link z-30">
+          <FontAwesomeIcon 
+            icon={faDiscord} 
+            className="text-white/20 group-hover/discord-link:text-[#5865F2] transition-colors cursor-help text-lg" 
+          />
+          <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-[#111214] text-white text-[10px] font-bold rounded shadow-xl opacity-0 group-hover/discord-link:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 transform translate-y-1 group-hover/discord-link:translate-y-0">
+            Discord status
+            <div className="absolute top-full right-2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-[#111214]"></div>
+          </div>
+        </div>
         {loading ? (
           <div className="animate-pulse space-y-6">
             <div className="flex flex-row items-start gap-4 sm:gap-6 w-full">

@@ -246,7 +246,7 @@ import refuntromxoai16052022 from "../../assets/image/celebrates/refuntromxoai16
 import tamdao17022024 from "../../assets/image/celebrates/tamdao17022024.jpg";
 import hagiang24112025 from "../../assets/image/celebrates/hagiang24112025.jpeg";
 import thachthat27122025 from "../../assets/image/celebrates/thachThat27122025.jpg";
-import photobook26122025 from "../../assets/image/celebrates/photobook26122025.jpg";
+import photobooth26122025 from "../../assets/image/celebrates/photobooth26122025.jpg";
 import catba02092025 from "../../assets/image/celebrates/catba02092025.jpg";
 import tronnhadisapa30042022 from "../../assets/image/celebrates/tronnhadisapa30042022.jpg";
 
@@ -255,6 +255,7 @@ export interface CelebratePhoto {
   imageSrc: string;
   date: string;
   caption?: string;
+  description?: string;
 }
 
 export const mockCelebrations: CelebratePhoto[] = [
@@ -263,101 +264,118 @@ export const mockCelebrations: CelebratePhoto[] = [
     imageSrc: thachthat27122025,
     date: "27-11-2025",
     caption: "Nghỉ dưỡng ở Thạch Thất",
+    description: "Một chuyến đi thư giãn tuyệt vời cùng bạn bè tại khu nghỉ dưỡng Thạch Thất. Không khí trong lành và những phút giây giải trí không thể nào quên.",
   },
   {
     id: "c2",
-    imageSrc: photobook26122025,
+    imageSrc: photobooth26122025,
     date: "26-12-2025",
-    caption: "Đánh lẻ photobook",
+    caption: "Đánh lẻ photobooth",
+    description: "Lưu giữ những khoảnh khắc đẹp nhất qua những khung hình photobook chất lượng. Mỗi trang sách là một câu chuyện cảm xúc.",
   },
   {
     id: "c3",
     imageSrc: okhi07122025,
     date: "07-12-2025",
     caption: "Ổ khỉ meeting",
+    description: "Buổi họp mặt cuối năm của biệt đội Ổ Khỉ. Rất nhiều tiếng cười và những kế hoạch mới cho năm sau.",
   },
   {
     id: "c4",
     imageSrc: hagiang24112025,
     date: "24-11-2025",
     caption: "Hà giang đợt 2",
+    description: "Trải nghiệm cung đường Hà Giang hùng vĩ lần thứ 2. Vẫn là những cao nguyên đá và những nụ cười trẻ thơ làm say đắm lòng người.",
   },
   {
     id: "c5",
     imageSrc: catba02092025,
     date: "02-09-2025",
     caption: "Đánh lẻ cát bà",
+    description: "Chuyến đi biển Cát Bà ngẫu hứng. Tận hưởng hương vị biển cả và sự tĩnh lặng của vịnh Lan Hạ.",
   },
   {
     id: "c6",
     imageSrc: zt29072025,
     date: "29-07-2025",
     caption: "ZT và ninh bình của cô ấy",
+    description: "Khám phá vẻ đẹp Tràng An và Hang Múa. Một hành trình đầy kỷ niệm cùng những người thân yêu.",
   },
   {
     id: "c7",
     imageSrc: okhi02052025,
     date: "02-05-2025",
     caption: "Ổ khỉ meeting",
+    description: "Meeting ngẫu hứng giữa cái nắng hè. Câu chuyện vẫn nối dài không dứt.",
   },
   {
     id: "c8",
     imageSrc: okhi06072024,
     date: "06-07-2024",
     caption: "Gen1 ổ khỉ",
+    description: "Những thành viên đầu tiên đặt nền móng cho Ổ Khỉ. Giai đoạn khó khăn nhưng đầy nhiệt huyết.",
   },
   {
     id: "c9",
     imageSrc: tamdao17022024,
     date: "17-02-2024",
     caption: "Lần đầu gặp ZT",
+    description: "Khoảnh khắc quan trọng đánh dấu lần đầu tiên gặp gỡ ZT tại Tam Đảo trong sương mù.",
   },
   {
     id: "c10",
     imageSrc: hagiang30012024,
     date: "30-01-2024",
     caption: "Hà giang đợt 1",
+    description: "Lần đầu chinh phục Mã Pì Lèng và cảm nhận cái lạnh của cực Bắc Tổ quốc.",
   },
   {
     id: "c11",
     imageSrc: sn02032023,
     date: "02-03-2023",
     caption: "Sinh nhật đầu tiên ở Hà nội",
+    description: "Cảm giác đón sinh nhật xa nhà lần đầu tiên, ấm áp trong vòng tay bạn bè mới.",
   },
   {
     id: "c12",
     imageSrc: hoguom23122022,
     date: "23-12-2022",
     caption: "Trại thương điên meeting",
+    description: "Buổi tối đi dạo Hồ Gươm, chia sẻ những câu chuyện điên rồ nhất của tuổi trẻ.",
   },
   {
     id: "c13",
     imageSrc: chilon17052022,
     date: "17-05-2022",
     caption: "Anh xem chỉ lớn, nói là không làm",
+    description: "Câu chuyện vui về những lời hứa 'bay bổng' và thực tế hài hước của đám bạn thân.",
   },
   {
     id: "c14",
     imageSrc: anhLop04072022,
     date: "04-07-2022",
     caption: "Ảnh lớp của ae tôi",
+    description: "Kỷ niệm ngày bế giảng, chia tay mái trường với bao hoài bão.",
   },
   {
     id: "c15",
     imageSrc: sapa11072022,
     date: "11-07-2022",
     caption: "Sapa ngày không em",
+    description: "Dạo quanh thị trấn mờ sương, tận hưởng cảm giác một mình bình yên.",
   },
   {
     id: "c16",
     imageSrc: refuntromxoai16052022,
     date: "16-05-2022",
     caption: "Trộm xoài cũng vui",
+    description: "Chuyện nghịch ngợm thời sinh viên, những tiếng cười sảng khoái dưới gốc xoài.",
   },
   {
     id: "c17",
     imageSrc: tronnhadisapa30042022,
     date: "30-04-2022",
     caption: "Trốn nhà đi sapa",
+    description: "Quyết định táo bạo nhất năm, bỏ sau lưng mọi lo âu để tìm đến Fansipan.",
   },
 ];

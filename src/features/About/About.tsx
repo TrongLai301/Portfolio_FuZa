@@ -35,7 +35,7 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
 
   const getTabClass = (tab: Tab) => {
     const isActive = activeTab === tab;
-    return `px-2 sm:px-4 md:px-8 py-2 md:py-3 text-xs sm:text-sm md:text-lg font-semibold transition-all duration-300 cursor-pointer rounded-t-xl border border-b-0 relative z-10 -mb-px whitespace-nowrap ${
+    return `px-2 sm:px-3 md:px-5 py-1.5 md:py-2 text-[10px] sm:text-xs md:text-sm font-semibold transition-all duration-300 cursor-pointer rounded-t-xl border border-b-0 relative z-10 -mb-px whitespace-nowrap ${
       isActive
         ? "border-white/15 bg-[rgba(15,20,40,0.80)] text-white"
         : "border-transparent text-gray-400 hover:text-white hover:bg-white/5 hover:border-white/10"
@@ -84,7 +84,9 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
         >
           {/* Menu Tabs */}
           <div className="flex justify-start items-end -mb-px relative z-10">
-            {(["general", "anime", "game", "valorant", "celebrates"] as const).map((tab) => (
+            {(
+              ["general", "anime", "game", "valorant", "celebrates"] as const
+            ).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -96,7 +98,7 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
           </div>
 
           {/* Dynamic Content Area (Frame) */}
-          <div className="transition-all duration-500 w-full h-[calc(100svh-320px)] md:h-[960px] border border-white/15 rounded-2xl rounded-tl-none bg-[rgba(15,20,40,0.80)] p-4 md:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] relative z-0 overflow-hidden">
+          <div className="transition-all duration-500 w-full h-[520px] md:h-[680px] border border-white/15 rounded-2xl rounded-tl-none bg-[rgba(15,20,40,0.80)] p-4 md:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] relative z-0 overflow-hidden">
             {renderContent()}
           </div>
         </div>
