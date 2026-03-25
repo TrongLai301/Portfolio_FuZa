@@ -7,7 +7,7 @@ import { ScrollProvider } from "./commons/ScrollProvider";
 import { EnterProvider } from "./commons/EnterContext";
 import { useEnter } from "./commons/useEnterContext";
 import EnterScreen from "./components/EnterScreen";
-import catUmbrella from "./assets/video/catUmbrella.mp4"
+import catUmbrella from "./assets/video/catUmbrella.mp4";
 function MainApp() {
   const { isEntered } = useEnter();
 
@@ -15,16 +15,16 @@ function MainApp() {
     <>
       {/* Global Animated Background Video */}
       <div className="fixed inset-0 -z-50 bg-[#0a0a0a]">
-         <video 
-           autoPlay 
-           loop 
-           muted 
-           playsInline 
-           className="w-full h-full object-cover opacity-30"
-         >
-           {/* Abstract galaxy/particles background video from reliable CDN */}
-           <source src={catUmbrella} type="video/mp4" />
-         </video>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover opacity-30"
+        >
+          {/* Abstract galaxy/particles background video from reliable CDN */}
+          <source src={catUmbrella} type="video/mp4" />
+        </video>
       </div>
 
       <EnterScreen />
