@@ -7,6 +7,9 @@ export default defineConfig(({ mode }) => ({
   // base only applies when building for production (GitHub Pages)
   // locally (npm run dev), base stays as '/' so localhost:5173/ works normally
   base: mode === 'production' ? '/Portfolio_FuZa/' : '/',
+  server: {
+    host: true
+  },
   plugins: [
     react(),
     tailwindcss()
