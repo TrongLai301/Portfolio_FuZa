@@ -14,6 +14,8 @@ import mrUBuon from "../assets/audio/MrUBuon.mp3";
 import imgMrUBuon from "../assets/image/commons/mrUbuon.jpg";
 import giaoHuongAnhDo from "../assets/audio/giaoHuongAnhDo.mp3";
 import imgGiaoHuongAnhDo from "../assets/image/commons/thankDo.jpg";
+import motChutThoi from "../assets/audio/motChutThoi.mp3";
+import imgMotChutThoi from "../assets/image/commons/motChutThoi.jpg";
 
 export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -26,9 +28,9 @@ export default function MusicPlayer() {
   // Data for UI representation
   const playlist = [
     {
-      title: "Giao hưởng Thank Độ",
-      url: giaoHuongAnhDo,
-      cover: imgGiaoHuongAnhDo,
+      title: "Một chút thôi",
+      url: motChutThoi,
+      cover: imgMotChutThoi,
     },
     {
       title: "Mr. U buồn",
@@ -40,6 +42,11 @@ export default function MusicPlayer() {
       url: muaDangRoi,
       cover: imgMuaDangRoi,
     },
+    {
+      title: "Giao hưởng Thank Độ",
+      url: giaoHuongAnhDo,
+      cover: imgGiaoHuongAnhDo,
+    }
   ];
 
   const currentSong = playlist[currentSongIndex];
