@@ -3,21 +3,24 @@ import { faGamepad, faCamera } from "@fortawesome/free-solid-svg-icons";
 import { faBilibili } from "@fortawesome/free-brands-svg-icons";
 import DiscordPresence from "./DiscordPresence";
 
-export default function GeneralContent() {
+export default function GeneralContent({ onTabChange }: { onTabChange: (tab: any) => void }) {
   const interests = [
     {
       icon: faBilibili,
       label: "Anime",
+      tab: "anime",
       desc: "Exploring favorite anime series — from action-packed battles to deep psychological stories.",
     },
     {
       icon: faGamepad,
       label: "Gaming",
+      tab: "game",
       desc: "Competing in intense games, especially Valorant. Always chasing the next rank.",
     },
     {
       icon: faCamera,
       label: "Celebrates",
+      tab: "celebrates",
       desc: "Capturing unforgettable memories with friends — road trips, hangouts, and every adventure in between.",
     },
   ];
@@ -61,11 +64,12 @@ export default function GeneralContent() {
           {interests.map((item) => (
             <div
               key={item.label}
-              className="flex flex-col gap-2 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all duration-300"
+              onClick={() => onTabChange(item.tab)}
+              className="flex flex-col gap-2 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all duration-300 cursor-pointer group"
             >
               <div className="flex items-center gap-3">
-                <FontAwesomeIcon icon={item.icon} className="text-xl md:text-2xl text-indigo-400" />
-                <span className="text-white font-bold text-sm md:text-base">
+                <FontAwesomeIcon icon={item.icon} className="text-xl md:text-2xl text-indigo-400 group-hover:scale-110 transition-transform" />
+                <span className="text-white font-bold text-sm md:text-base group-hover:text-indigo-400 transition-colors">
                   {item.label}
                 </span>
               </div>

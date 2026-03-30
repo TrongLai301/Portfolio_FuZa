@@ -8,16 +8,10 @@ import {
   faSnowflake,
 } from "@fortawesome/free-solid-svg-icons";
 
-import muaDangRoi from "../assets/audio/MuaDangRoi.mp3";
-import imgMuaDangRoi from "../assets/image/commons/muadangroi.jpg";
-import mrUBuon from "../assets/audio/MrUBuon.mp3";
-import imgMrUBuon from "../assets/image/commons/mrUbuon.jpg";
-import giaoHuongAnhDo from "../assets/audio/giaoHuongAnhDo.mp3";
-import imgGiaoHuongAnhDo from "../assets/image/commons/thankDo.jpg";
-import motChutThoi from "../assets/audio/motChutThoi.mp3";
-import imgMotChutThoi from "../assets/image/commons/motChutThoi.jpg";
+import { useMusic } from "../hooks/useMusic";
 
 export default function MusicPlayer() {
+  const { songs, loading } = useMusic();
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -25,44 +19,45 @@ export default function MusicPlayer() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Data for UI representation
-  const playlist = [
-    {
-      title: "Một chút thôi",
-      url: motChutThoi,
-      cover: imgMotChutThoi,
-    },
-    {
-      title: "Mr. U buồn",
-      url: mrUBuon,
-      cover: imgMrUBuon,
-    },
-    {
-      title: "Mưa Đang Rơi",
-      url: muaDangRoi,
-      cover: imgMuaDangRoi,
-    },
-    {
-      title: "Giao hưởng Thank Độ",
-      url: giaoHuongAnhDo,
-      cover: imgGiaoHuongAnhDo,
-    }
-  ];
+  // Map database songs to original playlist format
+  const playlist = songs.map(s => ({
+    title: s.title,
+    artist: s.artist,
+    url: s.audio_url,
+    cover: s.cover_url
+  }));
 
-  const currentSong = playlist[currentSongIndex];
+  const hasSongs = playlist.length > 0;
+  const currentSong = hasSongs ? playlist[currentSongIndex] : {
+    title: loading ? "Synchronizing..." : "No frequency found",
+    artist: loading ? "Universe is connecting..." : "Please configure in Admin",
+    url: "",
+    cover: ""
+  };
 
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.play().catch((e) => {
           console.error("Audio auto-play blocked by browser:", e);
-          setIsPlaying(false); // Reset UI if browser blocks auto-play
+          setIsPlaying(false);
         });
       } else {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, currentSongIndex]);
+  }, [isPlaying, currentSongIndex, currentSong.url]); // Thêm url vào đây để bài hát mới tự chơi khi load xong
+
+  // Phím Enter để play/pause
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        setIsPlaying((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const togglePlay = () => setIsPlaying(!isPlaying);
 
@@ -136,15 +131,22 @@ export default function MusicPlayer() {
         {/* Info & Progress */}
         <div className="flex-1 flex flex-col gap-2">
           {/* Title and Metadata Icon */}
-          <div className="flex items-center gap-2">
-            <h4 className="text-indigo-300 font-bold text-sm md:text-lg tracking-wide drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] truncate max-w-[100px] md:max-w-[180px]">
-              {currentSong.title}
-            </h4>
-            <FontAwesomeIcon
-              icon={faSnowflake}
-              className={`text-white/40 text-[10px] ${isPlaying ? "animate-spin" : ""}`}
-              style={{ animationDuration: "3s" }}
-            />
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+                <h4 className="text-indigo-300 font-bold text-sm md:text-lg tracking-wide drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] truncate max-w-[100px] md:max-w-[180px]">
+                    {currentSong.title}
+                </h4>
+                <FontAwesomeIcon
+                    icon={faSnowflake}
+                    className={`text-white/40 text-[10px] ${isPlaying ? "animate-spin" : ""}`}
+                    style={{ animationDuration: "3s" }}
+                />
+            </div>
+            {currentSong.artist && (
+                <p className="text-white/30 text-[10px] md:text-[12px] font-medium mt-[-2px]">
+                    {currentSong.artist}
+                </p>
+            )}
           </div>
 
           {/* Time & Progress Bar */}
