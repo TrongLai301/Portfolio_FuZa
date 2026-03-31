@@ -1,14 +1,23 @@
+import { useRef } from "react";
 import { useEnter } from "../commons/useEnterContext";
 
 export default function EnterScreen() {
   const { isEntered, enter } = useEnter();
+  const hasEnteredRef = useRef(false);
+
+  const handleEnter = () => {
+    if (hasEnteredRef.current) return;
+    hasEnteredRef.current = true;
+    enter();
+  };
 
   if (isEntered) return null;
 
   return (
     <div 
       className="fixed inset-0 z-9999 flex items-center justify-center cursor-pointer transition-opacity duration-1000"
-      onClick={enter}
+      onClick={handleEnter}
+      onTouchEnd={handleEnter}
     >
       {/* Lớp sương mù trong suốt đè lên background */}
       <div className="absolute inset-0 bg-black/20 backdrop-blur-md transition-opacity"></div>

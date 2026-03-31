@@ -8,10 +8,10 @@ import {
   faSnowflake,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { useMusic } from "../hooks/useMusic";
+import { usePortfolio } from "../commons/PortfolioContext";
 
 export default function MusicPlayer() {
-  const { songs, loading } = useMusic();
+  const { songs, loading } = usePortfolio();
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);

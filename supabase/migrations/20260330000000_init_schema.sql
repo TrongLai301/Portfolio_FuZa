@@ -151,6 +151,19 @@ CREATE TABLE IF NOT EXISTS valorant_most_played_agents (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 7. BẢNG LIÊN KẾT MẠNG XÃ HỘI (SOCIAL LINKS)
+CREATE TABLE IF NOT EXISTS social_links (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  url TEXT NOT NULL,
+  icon_name TEXT NOT NULL,
+  color_code VARCHAR(10),
+  display_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- === TỰ ĐỘNG CẬP NHẬT THỜI GIAN (TRIGGER) ===
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -192,5 +205,8 @@ BEGIN
   END IF;
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_v_agents_updated_at') THEN
     CREATE TRIGGER update_v_agents_updated_at BEFORE UPDATE ON valorant_most_played_agents FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_social_links_updated_at') THEN
+    CREATE TRIGGER update_social_links_updated_at BEFORE UPDATE ON social_links FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
   END IF;
 END $$;

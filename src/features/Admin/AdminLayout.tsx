@@ -11,6 +11,7 @@ import {
   LogoutOutlined,
   BulbOutlined,
   RocketOutlined,
+  GlobalOutlined,
 } from "@ant-design/icons";
 import "../../assets/css/admin.css";
 
@@ -34,6 +35,7 @@ const AdminLayout: React.FC = () => {
     { key: "/admin/media", icon: <PlayCircleOutlined />, label: <NavLink to="/admin/media">Media</NavLink> },
     { key: "/admin/celebrations", icon: <CameraOutlined />, label: <NavLink to="/admin/celebrations">Celebrations</NavLink> },
     { key: "/admin/valorant", icon: <RocketOutlined />, label: <NavLink to="/admin/valorant">Valorant Profile</NavLink> },
+    { key: "/admin/social", icon: <GlobalOutlined />, label: <NavLink to="/admin/social">Social Links</NavLink> },
   ];
 
   return (

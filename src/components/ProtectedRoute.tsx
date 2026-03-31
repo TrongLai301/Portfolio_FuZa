@@ -5,6 +5,13 @@ import { useAuth } from "../commons/AuthContext";
 const ProtectedRoute: React.FC = () => {
   const { user, loading } = useAuth();
 
+  // Debug log for production
+  React.useEffect(() => {
+    if (!loading) {
+      console.log("[ProtectedRoute] Status:", user ? "Authenticated" : "Unauthenticated");
+    }
+  }, [user, loading]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">

@@ -56,10 +56,10 @@ export default function ValorantInfo() {
 
   if (!dbData && !loading) {
     return (
-        <div className="w-full h-full flex flex-col items-center justify-center gap-6 bg-black/20 backdrop-blur-sm rounded-4xl border border-white/5 m-6 py-20 grayscale opacity-40">
-            <div className="text-6xl mb-4">🛸</div>
-            <p className="text-white font-black uppercase tracking-[0.2em] text-xl">Tactical Profile Not Found</p>
-            <p className="text-white/50 text-sm max-w-xs text-center">No Valorant frequency has been modulated in the administration terminal.</p>
+        <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-black/20 backdrop-blur-sm rounded-2xl md:rounded-4xl border border-white/5 py-10 md:py-20 grayscale opacity-40 text-center px-4">
+            <div className="text-4xl md:text-6xl mb-2 md:mb-4">🛸</div>
+            <p className="text-white font-black uppercase tracking-[0.2em] text-lg md:text-xl">Tactical Profile Not Found</p>
+            <p className="text-white/50 text-xs md:text-sm max-w-xs mx-auto">No Valorant frequency has been modulated in the administration terminal.</p>
         </div>
     );
   }

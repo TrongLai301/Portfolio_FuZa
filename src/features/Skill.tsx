@@ -1,31 +1,18 @@
 import { forwardRef, useEffect, useRef, useState } from "react";
 import SkillCard from "../components/SkillCard";
-import { skillService, type Skill as SkillType } from "../services/skillService";
 import * as BrandIcons from "@fortawesome/free-brands-svg-icons";
 import * as SolidIcons from "@fortawesome/free-solid-svg-icons";
+import { usePortfolio } from "../commons/PortfolioContext";
 
 // Helper to get FA icon by string name
 const getIcon = (iconName: string) => {
-  // @ts-ignore
-  return BrandIcons[iconName] || SolidIcons[iconName] || SolidIcons.faCircleQuestion;
+  return (BrandIcons as any)[iconName] || (SolidIcons as any)[iconName] || SolidIcons.faCircleQuestion;
 };
 
 const Skill = forwardRef<HTMLDivElement>((_, ref) => {
+  const { skills } = usePortfolio();
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const [skills, setSkills] = useState<SkillType[]>([]);
-
-  useEffect(() => {
-    const loadSkills = async () => {
-      try {
-        const data = await skillService.getSkills();
-        setSkills(data);
-      } catch (err) {
-        console.error("Failed to load skills:", err);
-      }
-    };
-    loadSkills();
-  }, []);
 
   useEffect(() => {
     if (hasAnimated || !containerRef.current) return;

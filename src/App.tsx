@@ -1,6 +1,6 @@
 import "./App.css";
 import { Toaster } from "sonner";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Layout from "./layout/Layout";
 import IntroPage from "./features/IntroPage";
 import { ScrollProvider } from "./commons/ScrollProvider";
@@ -10,6 +10,7 @@ import EnterScreen from "./components/EnterScreen";
 import catUmbrella from "./assets/video/catUmbrella.mp4";
 import { AuthProvider } from "./commons/AuthContext";
 import Login from "./features/Admin/Login";
+import SocialLinksManager from "./features/Admin/SocialLinksManager";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./features/Admin/AdminLayout";
 import Dashboard from "./features/Admin/Dashboard";
@@ -19,6 +20,7 @@ import MediaManager from "./features/Admin/MediaManager/index";
 import CelebrationsManager from "./features/Admin/CelebrationsManager/index";
 import ValorantManager from "./features/Admin/ValorantManager/index";
 import { ConfigProvider, theme } from "antd";
+import { PortfolioProvider } from "./commons/PortfolioContext";
 
 function MainApp() {
   const { isEntered } = useEnter();
@@ -49,37 +51,35 @@ function MainApp() {
       </div>
 
       <Routes>
-        {/* Public Login Route (Independent of Enter Screen) */}
+        {/* Public Login Route */}
         <Route path="/login" element={<Login />} />
 
         {/* Protected Admin Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<ProtectedRoute />}>
+          <Route element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-            {/* Future Admin sub-routes will go here */}
             <Route path="skills" element={<SkillsManager />} />
             <Route path="music" element={<MusicManager />} />
             <Route path="media" element={<MediaManager />} />
             <Route path="celebrations" element={<CelebrationsManager />} />
             <Route path="valorant" element={<ValorantManager />} />
+            <Route path="social" element={<SocialLinksManager />} />
           </Route>
         </Route>
 
-        {/* Main Portfolio Interaction */}
-        <Route path="*" element={
-          <>
-            <EnterScreen />
-            {isEntered && (
-              <ScrollProvider>
-                <Routes>
-                  <Route path="/" element={<Layout />}>
-                    <Route index element={<IntroPage />} />
-                  </Route>
-                </Routes>
-              </ScrollProvider>
-            )}
-          </>
-        } />
+        {/* Main Portfolio Routes */}
+        <Route path="/" element={
+          !isEntered ? <EnterScreen /> : (
+            <ScrollProvider>
+              <Layout />
+            </ScrollProvider>
+          )
+        }>
+          <Route index element={<IntroPage />} />
+        </Route>
+
+        {/* Fallback to Main Portfolio */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </ConfigProvider>
   );
@@ -91,7 +91,9 @@ function App() {
       <Toaster position="top-right" richColors />
       <AuthProvider>
         <EnterProvider>
-          <MainApp />
+          <PortfolioProvider>
+            <MainApp />
+          </PortfolioProvider>
         </EnterProvider>
       </AuthProvider>
     </Router>
