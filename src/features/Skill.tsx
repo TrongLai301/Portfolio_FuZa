@@ -6,7 +6,7 @@ import * as SolidIcons from "@fortawesome/free-solid-svg-icons";
 
 // Helper to get FA icon by string name
 const getIcon = (iconName: string) => {
-  // @ts-ignore
+  // @ts-expect-error - Dynamic Icon lookup using string names for fontawesome icons
   return BrandIcons[iconName] || SolidIcons[iconName] || SolidIcons.faCircleQuestion;
 };
 

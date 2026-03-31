@@ -1,6 +1,6 @@
 import "./App.css";
 import { Toaster } from "sonner";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Layout from "./layout/Layout";
 import IntroPage from "./features/IntroPage";
 import { ScrollProvider } from "./commons/ScrollProvider";
@@ -49,14 +49,13 @@ function MainApp() {
       </div>
 
       <Routes>
-        {/* Public Login Route (Independent of Enter Screen) */}
+        {/* Public Login Route */}
         <Route path="/login" element={<Login />} />
 
         {/* Protected Admin Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<ProtectedRoute />}>
+          <Route element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-            {/* Future Admin sub-routes will go here */}
             <Route path="skills" element={<SkillsManager />} />
             <Route path="music" element={<MusicManager />} />
             <Route path="media" element={<MediaManager />} />
@@ -65,21 +64,19 @@ function MainApp() {
           </Route>
         </Route>
 
-        {/* Main Portfolio Interaction */}
-        <Route path="*" element={
-          <>
-            <EnterScreen />
-            {isEntered && (
-              <ScrollProvider>
-                <Routes>
-                  <Route path="/" element={<Layout />}>
-                    <Route index element={<IntroPage />} />
-                  </Route>
-                </Routes>
-              </ScrollProvider>
-            )}
-          </>
-        } />
+        {/* Main Portfolio Routes */}
+        <Route path="/" element={
+          !isEntered ? <EnterScreen /> : (
+            <ScrollProvider>
+              <Layout />
+            </ScrollProvider>
+          )
+        }>
+          <Route index element={<IntroPage />} />
+        </Route>
+
+        {/* Fallback to Main Portfolio */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </ConfigProvider>
   );

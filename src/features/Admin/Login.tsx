@@ -9,12 +9,20 @@ import {
   BugOutlined
 } from "@ant-design/icons";
 import { toast } from "sonner";
+import { useAuth } from "../../commons/AuthContext";
 
 const { Title, Text } = Typography;
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  React.useEffect(() => {
+    if (user) {
+      navigate("/admin");
+    }
+  }, [user, navigate]);
 
   const onFinish = async (values: any) => {
     setLoading(true);

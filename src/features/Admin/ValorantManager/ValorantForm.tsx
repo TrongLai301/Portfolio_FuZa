@@ -9,7 +9,8 @@ import {
   TeamOutlined,
   PlusOutlined,
   MinusCircleOutlined,
-  VideoCameraOutlined
+  VideoCameraOutlined,
+  ApiOutlined
 } from "@ant-design/icons";
 import type { ValorantData } from "../../../services/valorantService";
 
@@ -43,7 +44,20 @@ const ValorantForm: React.FC<ValorantFormProps> = ({ initialData, onSubmit, subm
 
   const onFinish = (values: any) => {
     const resolution = `${values.graphics.resolution_w || ''}x${values.graphics.resolution_h || ''}`;
-    const { resolution_w, resolution_h, ...cleanGraphics } = values.graphics;
+    const cleanGraphics = { ...values.graphics };
+    delete cleanGraphics.resolution_w;
+    delete cleanGraphics.resolution_h;
+
+    // Auto-transform UUID to URL if it doesn't start with http
+    const processedAgents = values.agents?.map((agent: any) => {
+      if (agent.agent_image && !agent.agent_image.startsWith('http')) {
+        return {
+          ...agent,
+          agent_image: `https://media.valorant-api.com/agents/${agent.agent_image}/displayicon.png`
+        };
+      }
+      return agent;
+    });
 
     onSubmit({
       ...values,
@@ -54,7 +68,8 @@ const ValorantForm: React.FC<ValorantFormProps> = ({ initialData, onSubmit, subm
       graphics: {
         ...cleanGraphics,
         resolution
-      }
+      },
+      agents: processedAgents
     });
   };
 
@@ -155,33 +170,50 @@ const ValorantForm: React.FC<ValorantFormProps> = ({ initialData, onSubmit, subm
           <Form.List name="agents">
             {(fields, { add, remove }) => (
               <>
+                {fields.length > 0 && (
+                  <div className="flex gap-4 px-4 mb-2">
+                    <div className="flex-1 text-white/40 text-[10px] uppercase font-bold tracking-widest">Agent Name</div>
+                    <div className="flex-2 text-white/40 text-[10px] uppercase font-bold tracking-widest">Agent UUID / URL</div>
+                    <div className="w-20 text-white/40 text-[10px] uppercase font-bold tracking-widest text-center">Games</div>
+                    <div className="w-10"></div>
+                  </div>
+                )}
                 {fields.map(({ key, name, ...restField }) => (
-                  <Space key={key} style={{ display: 'flex', marginBottom: 16 }} align="baseline" size="large">
+                  <div key={key} className="grid grid-cols-[1fr_2fr_80px_32px] items-center gap-4 p-4 mb-3 bg-white/5 rounded-2xl border border-white/5">
                     <Form.Item
                       {...restField}
                       name={[name, 'agent_name']}
                       rules={[{ required: true, message: 'Missing name' }]}
+                      className="mb-0"
                     >
-                      <Input placeholder="Agent Name" style={{ width: 150 }} />
+                      <Input placeholder="e.g. Sage" className="admin-input-dark" />
                     </Form.Item>
                     <Form.Item
                       {...restField}
                       name={[name, 'agent_image']}
                       rules={[{ required: true, message: 'Missing image' }]}
+                      className="mb-0"
                     >
-                      <Input placeholder="Image URL (valorant-api.com...)" style={{ width: 250 }} />
+                      <Input placeholder="paste UUID or URL" className="admin-input-dark" />
                     </Form.Item>
                     <Form.Item
                       {...restField}
                       name={[name, 'play_count']}
+                      className="mb-0"
                     >
-                      <InputNumber placeholder="Play Count" min={0} />
+                      <InputNumber placeholder="0" min={0} className="admin-input-dark w-full" />
                     </Form.Item>
-                    <MinusCircleOutlined onClick={() => remove(name)} style={{ color: '#ff4d4f' }} />
-                  </Space>
+                    <div className="flex justify-center">
+                      <MinusCircleOutlined 
+                        onClick={() => remove(name)} 
+                        className="cursor-pointer transition-all text-xl mt-[-2px]"
+                        style={{ color: '#ff4655', filter: 'drop-shadow(0 0 5px rgba(255, 70, 85, 0.3))' }}
+                      />
+                    </div>
+                  </div>
                 ))}
                 <Form.Item>
-                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />} style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.1)', color: '#fff' }}>
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />} style={{ background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.1)', color: '#fff', height: '44px', borderRadius: '12px' }}>
                     Add Most Played Agent
                   </Button>
                 </Form.Item>
@@ -206,11 +238,11 @@ const ValorantForm: React.FC<ValorantFormProps> = ({ initialData, onSubmit, subm
                 <span className="text-white/60 text-xs uppercase font-bold tracking-wider">Resolution</span>
                 <div className="flex items-center gap-2">
                   <Form.Item name={['graphics', 'resolution_w']} noStyle>
-                    <Input placeholder="1920" style={{ width: 80 }} className="admin-input-dark text-center" />
+                    <InputNumber placeholder="1920" style={{ width: 100 }} className="admin-input-dark text-center" />
                   </Form.Item>
                   <span className="text-white/40 font-bold">x</span>
                   <Form.Item name={['graphics', 'resolution_h']} noStyle>
-                    <Input placeholder="1080" style={{ width: 80 }} className="admin-input-dark text-center" />
+                    <InputNumber placeholder="1080" style={{ width: 100 }} className="admin-input-dark text-center" />
                   </Form.Item>
                 </div>
               </div>
@@ -359,7 +391,7 @@ const ValorantForm: React.FC<ValorantFormProps> = ({ initialData, onSubmit, subm
   return (
     <Card 
         className="admin-card" 
-        style={{ background: 'rgba(15, 20, 40, 0.9)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '24px' }}
+        style={{ position: 'relative', background: 'rgba(15, 20, 40, 0.9)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '24px' }}
     >
       <Form
         form={form}
@@ -393,6 +425,20 @@ const ValorantForm: React.FC<ValorantFormProps> = ({ initialData, onSubmit, subm
             className="admin-tabs"
             style={{ minHeight: '300px' }}
         />
+        
+        {/* Valorant API Helper Button */}
+        <div className="flex justify-end mt-4">
+          <Button
+            type="text"
+            icon={<ApiOutlined style={{ fontSize: '18px', color: '#ff4655' }} />}
+            href="https://valorant-api.com/v1/agents?isPlayableCharacter=true"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-white/40 hover:text-[#ff4655] transition-all bg-white/5 hover:bg-[#ff4655]/10 border border-white/5 px-4 h-10 rounded-xl"
+          >
+            <span className="text-[10px] uppercase font-bold tracking-widest">Get Agent UUIDs</span>
+          </Button>
+        </div>
       </Form>
     </Card>
   );
