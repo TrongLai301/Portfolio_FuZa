@@ -34,7 +34,7 @@ const CelebrationList: React.FC<CelebrationListProps> = ({ celebrations, loading
       ),
     },
     {
-      title: "Timeline",
+      title: "Date",
       key: "timeline",
       width: 150,
       render: (_: any, record: Celebration) => (

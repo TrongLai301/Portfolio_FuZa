@@ -28,11 +28,11 @@ export function useCelebrations() {
     setSubmitting(true);
     try {
       await celebrationService.create(input);
-      toast.success("Memory successfully archived.");
+      toast.success("Memory create successfully.");
       await fetchCelebrations();
       return true;
     } catch (e: any) {
-      toast.error("Deployment failed: " + e.message);
+      toast.error("Create failed: " + e.message);
       return false;
     } finally {
       setSubmitting(false);
@@ -43,7 +43,7 @@ export function useCelebrations() {
     setSubmitting(true);
     try {
       await celebrationService.update(id, input);
-      toast.success("Memory sequence updated.");
+      toast.success("Memory updated.");
       await fetchCelebrations();
       return true;
     } catch (e: any) {
@@ -57,11 +57,11 @@ export function useCelebrations() {
   const removeCelebration = async (id: string, imageUrl?: string) => {
     try {
       await celebrationService.delete(id, imageUrl);
-      toast.success("Memory Purged.");
+      toast.success("Memory deleted.");
       await fetchCelebrations();
       return true;
     } catch (e: any) {
-      toast.error("Purge failed: " + e.message);
+      toast.error("Delete failed: " + e.message);
       return false;
     }
   };

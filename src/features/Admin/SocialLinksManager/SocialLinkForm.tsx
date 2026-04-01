@@ -28,7 +28,7 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
       form.setFieldsValue({
         ...initialData,
         // Chuyển string màu sang object cho ColorPicker nếu cần
-        color_code: initialData.color_code || "#ff4655"
+        color_code: initialData.color_code || "#6366f1"
       });
     } else {
       form.setFieldsValue({
@@ -45,7 +45,7 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
   const onFinish = async (values: any) => {
     const color = typeof values.color_code === 'string' 
       ? values.color_code 
-      : values.color_code?.toHexString?.() || '#ff4655';
+      : values.color_code?.toHexString?.() || '#6366f1';
 
     const success = await onSubmit({
       ...values,
@@ -60,11 +60,11 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
   return (
     <Card 
       className="admin-card" 
-      style={{ background: 'rgba(21, 21, 21, 0.9)', border: '1px solid rgba(255, 255, 255, 0.05)' }}
+      style={{ background: 'rgba(13, 13, 13, 0.8)', border: '1px solid rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)' }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={4} style={{ color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
-          {initialData ? <EditOutlined style={{ color: '#faad14' }} /> : <PlusOutlined style={{ color: '#ff4655' }} />}
+          {initialData ? <EditOutlined style={{ color: '#faad14' }} /> : <PlusOutlined style={{ color: '#6366f1' }} />}
           {initialData ? 'Edit Social Link' : 'New Social Link'}
         </Title>
         
@@ -89,7 +89,7 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
           name="name"
           rules={[{ required: true, message: 'Required' }]}
         >
-          <Input prefix={<GlobalOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} placeholder="e.g. GitHub" />
+          <Input prefix={<GlobalOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} placeholder="e.g. GitHub" className="admin-input-dark" />
         </Form.Item>
 
         <Form.Item
@@ -97,7 +97,7 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
           name="url"
           rules={[{ required: true, message: 'Required' }, { type: 'url', message: 'Invalid URL' }]}
         >
-          <Input prefix={<LinkOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} placeholder="https://github.com/..." />
+          <Input prefix={<LinkOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} placeholder="https://github.com/..." className="admin-input-dark" />
         </Form.Item>
 
         <Form.Item
@@ -105,7 +105,7 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
           name="icon_name"
           rules={[{ required: true, message: 'Required' }]}
         >
-          <Input prefix={<FormatPainterOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} placeholder="e.g. faGithub, faFacebook" />
+          <Input prefix={<FormatPainterOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} placeholder="e.g. faGithub, faFacebook" className="admin-input-dark" />
         </Form.Item>
 
         <div style={{ display: 'flex', gap: '24px' }}>
@@ -125,7 +125,7 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
           </Form.Item>
 
           <Form.Item
-            label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '10px' }}>Visible</Text>}
+            label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '10px' }}>Active</Text>}
             name="is_active"
             valuePropName="checked"
           >
@@ -140,13 +140,13 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
             loading={submitting} 
             block 
             size="large"
+            className="admin-btn-primary"
             style={{ 
               height: '48px', 
               fontWeight: 900, 
               textTransform: 'uppercase', 
               letterSpacing: '1px',
-              background: '#ff4655',
-              borderColor: '#ff4655'
+              marginTop: 12
             }}
           >
             {submitting ? "Processing..." : (initialData ? "Update Link" : "Add Link")}

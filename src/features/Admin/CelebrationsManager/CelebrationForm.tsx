@@ -75,7 +75,7 @@ const CelebrationForm: React.FC<CelebrationFormProps> = ({ initialData, onSubmit
             {/* Left Column: Image Area */}
             <div className="col-span-12 lg:col-span-7">
                 <Form.Item
-                    label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '9px' }}>Memory Archive</Text>}
+                    label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '9px' }}>Memory</Text>}
                 >
                     <Upload
                         beforeUpload={beforeUpload}
@@ -85,7 +85,7 @@ const CelebrationForm: React.FC<CelebrationFormProps> = ({ initialData, onSubmit
                         disabled={submitting}
                     >
                         <div 
-                            className={`w-full h-[260px] rounded-[32px] border-2 border-dashed flex flex-col items-center justify-center gap-4 cursor-pointer transition-all overflow-hidden relative ${
+                            className={`w-full min-w-[300px] h-[260px] rounded-[32px] border-2 border-dashed flex flex-col items-center justify-center gap-4 cursor-pointer transition-all overflow-hidden relative ${
                                 imagePreview 
                                 ? 'border-indigo-500 bg-indigo-500/5' 
                                 : 'border-white/10 hover:border-indigo-500/30 bg-white/2'
@@ -109,7 +109,7 @@ const CelebrationForm: React.FC<CelebrationFormProps> = ({ initialData, onSubmit
                                 <>
                                 <PictureOutlined className="text-4xl opacity-10" />
                                 <Text strong style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px' }}>
-                                    Target Memory Fragment
+                                    Image memory
                                 </Text>
                                 </>
                             )}
@@ -121,19 +121,7 @@ const CelebrationForm: React.FC<CelebrationFormProps> = ({ initialData, onSubmit
             {/* Right Column: Metadata */}
             <div className="col-span-12 lg:col-span-5 flex flex-col gap-1">
                 <Form.Item
-                    label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '9px' }}>Timeline Date</Text>}
-                    name="date"
-                    rules={[{ required: true, message: 'Timestamp required' }]}
-                >
-                    <DatePicker 
-                        style={{ width: '100%', height: '48px', borderRadius: '16px' }} 
-                        placeholder="Select Archive Date"
-                        suffixIcon={<CalendarOutlined style={{ color: 'rgba(255,255,255,0.1)' }} />}
-                    />
-                </Form.Item>
-
-                <Form.Item
-                    label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '9px' }}>Memory Label</Text>}
+                    label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '9px' }}>Caption</Text>}
                     name="caption"
                     rules={[{ required: true, message: 'Identity missing' }]}
                 >
@@ -143,7 +131,17 @@ const CelebrationForm: React.FC<CelebrationFormProps> = ({ initialData, onSubmit
                         style={{ height: '48px', borderRadius: '16px' }}
                     />
                 </Form.Item>
-
+                <Form.Item
+                    label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '9px' }}>Date</Text>}
+                    name="date"
+                    rules={[{ required: true, message: 'Timestamp required' }]}
+                >
+                    <DatePicker 
+                        style={{ width: '100%', height: '48px', borderRadius: '16px' }} 
+                        placeholder="Select Archive Date"
+                        suffixIcon={<CalendarOutlined style={{ color: 'rgba(255,255,255,0.1)' }} />}
+                    />
+                </Form.Item>
                 <div className="mt-4 p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 backdrop-blur-md">
                     <Space align="start">
                         <BulbOutlined style={{ color: '#6366f1', marginTop: 4 }} />
@@ -175,7 +173,7 @@ const CelebrationForm: React.FC<CelebrationFormProps> = ({ initialData, onSubmit
             size="large"
             style={{ height: '54px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', border: 'none', borderRadius: '16px', marginTop: 12 }}
         >
-            Deploy Memory
+            Add Memory
         </Button>
       </Form>
     </div>

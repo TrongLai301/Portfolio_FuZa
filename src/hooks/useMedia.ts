@@ -53,7 +53,7 @@ export const useMedia = () => {
       };
 
       await mediaService.createMedia(newMedia);
-      toast.success("Media record deployed!");
+      toast.success("Media record created!");
       await fetchData();
       return true;
     } catch (error: any) {
@@ -97,7 +97,7 @@ export const useMedia = () => {
         await musicService.deleteFileByUrl(input.existing_image_url, "covers");
       }
 
-      toast.success("Media record optimized!");
+      toast.success("Media record updated!");
       await fetchData();
       return true;
     } catch (error: any) {
@@ -115,10 +115,10 @@ export const useMedia = () => {
   const removeMedia = async (id: string, imageUrl: string) => {
     try {
       await mediaService.deleteMedia(id, imageUrl);
-      toast.success("Media purged from database.");
+      toast.success("Media deleted.");
       await fetchData();
     } catch (error: any) {
-      toast.error("Purge failed: " + error.message);
+      toast.error("Delete failed: " + error.message);
     }
   };
 

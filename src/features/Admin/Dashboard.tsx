@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
     <div className="animate-in fade-in slide-in-from-bottom-5 duration-1000">
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <div style={{ marginBottom: 20 }}>
-          <Title level={2} style={{ color: '#fff', margin: 0, fontWeight: 900 }}>Portfolio Status</Title>
+          <Title level={2} style={{ color: '#fff', margin: 0, fontWeight: 900 }}>Profile Status</Title>
           <Text type="secondary">Monitoring the digital universe of FuZa. All systems are green.</Text>
         </div>
 
