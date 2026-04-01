@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import type { CelebratePhoto } from "../mockData";
 
 interface CelebrateDetailProps {
@@ -6,22 +7,7 @@ interface CelebrateDetailProps {
 }
 
 const formatDate = (dateStr: string) => {
-  const parts = dateStr.split("-");
-  if (parts.length === 3) {
-    const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1;
-    const year = parseInt(parts[2], 10);
-    const d = new Date(year, month, day);
-
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    }
-  }
-  return dateStr;
+  return dayjs(dateStr).format("MMMM D, YYYY");
 };
 
 export default function CelebrateDetail({

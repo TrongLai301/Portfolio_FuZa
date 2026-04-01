@@ -1,0 +1,150 @@
+@reference "tailwindcss";
+
+.admin-sidebar {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-nav-link {
+  @apply flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-white/5 font-medium;
+}
+
+.admin-nav-link.active {
+  @apply text-white bg-indigo-600 border border-indigo-400/30 shadow-[0_4px_20px_rgba(79,70,229,0.3)];
+}
+
+.admin-card {
+  @apply bg-[#151515] border border-white/10 rounded-4xl p-8 hover:border-white/20 transition-all duration-300 shadow-2xl;
+}
+
+.admin-glass-panel {
+  @apply bg-[#0d0d0d] border-r border-white/10 shadow-2xl;
+}
+
+.admin-input {
+  @apply w-full bg-[#1e1e1e] border border-white/10 rounded-xl py-3.5 pl-12 pr-5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50 transition-all placeholder:text-gray-600 text-sm;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Ant Design Overrides for Admin Panel */
+.admin-tabs .ant-tabs-nav {
+  margin-bottom: 32px !important;
+}
+
+.admin-tabs .ant-tabs-tab {
+  padding: 12px 24px !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  transition: all 0.3s ease !important;
+}
+
+.admin-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+.admin-tabs .ant-tabs-ink-bar {
+  background: #818cf8 !important;
+  height: 3px !important;
+}
+
+/* Valorant Config Styling */
+.admin-radio-group .ant-radio-button-wrapper {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  font-weight: 800 !important;
+  letter-spacing: 1.5px !important;
+  height: 38px !important;
+  line-height: 36px !important;
+  padding: 0 20px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.admin-radio-group .ant-radio-button-wrapper-checked {
+  background: rgba(129, 140, 248, 0.1) !important;
+  color: #f7fafc !important;
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 15px rgba(129, 140, 248, 0.2) !important;
+}
+
+.admin-radio-group .ant-radio-button-wrapper-checked:before {
+    background-color: #818cf8 !important;
+}
+
+.admin-radio-group .ant-radio-button-wrapper:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.admin-select-dark .ant-select-selector {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  height: 38px !important;
+  border-radius: 8px !important;
+}
+
+.admin-select-dark .ant-select-selection-item {
+    line-height: 36px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+.admin-input-dark {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  height: 38px !important;
+  font-size: 13px !important;
+  border-radius: 8px !important;
+}
+
+.admin-input-dark:focus {
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 8px rgba(129, 140, 248, 0.2) !important;
+}
+
+.admin-btn-primary {
+  background: #6366f1 !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.admin-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* Ant Select Dropdown Dark */
+.ant-select-dropdown {
+    background-color: #1a1a1a !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 4px !important;
+}
+
+.ant-select-item {
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 4px !important;
+    margin-bottom: 2px !important;
+}
+
+.ant-select-item-option-selected {
+    background-color: rgba(129, 140, 248, 0.2) !important;
+    color: #818cf8 !important;
+}
+
+.ant-select-item-option-active {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #fff !important;
+}

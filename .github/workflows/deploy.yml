@@ -1,0 +1,43 @@
+name: CI/CD Deployment (Auto Deploy to GitHub Pages)
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Lint and Build
+        run: |
+          npm run lint
+          npm run build
+        env:
+          # Các biến môi trường lấy từ GitHub Secrets để build project
+          VITE_VALORANT_API_KEY: ${{ secrets.VITE_VALORANT_API_KEY }}
+          VITE_USER_ID: ${{ secrets.VITE_USER_ID }}
+          VITE_PW_DB: ${{ secrets.VITE_PW_DB }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          # Tự động đẩy bản build từ thư mục dist lên nhánh gh-pages

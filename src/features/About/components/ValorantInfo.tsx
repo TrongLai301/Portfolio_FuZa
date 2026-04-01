@@ -1,11 +1,10 @@
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
-import { mockValorantProfile } from "../mockData";
 import { getValorantAccount, getValorantMMR } from "../../../services/valorantApi";
+import { valorantService, type ValorantData } from "../../../services/valorantService";
 
 export default function ValorantInfo() {
-  const profile = mockValorantProfile;
-
+  const [dbData, setDbData] = useState<ValorantData | null>(null);
   const [liveData, setLiveData] = useState<{
     level?: number;
     rankName?: string;
@@ -19,86 +18,163 @@ export default function ValorantInfo() {
   const [activeTab, setActiveTab] = useState<"config" | "graphics">("config");
 
   useEffect(() => {
-    async function fetchLiveProfile() {
-      const [name, tag] = profile.ign.split("#");
-      if (!name || !tag) {
-        setLoading(false);
-        return;
-      }
-
+    async function fetchAllData() {
+      setLoading(true);
       try {
-        const [accountData, mmrData] = await Promise.all([
-          getValorantAccount(name, tag),
-          getValorantMMR(name, tag)
-        ]);
+        const profile = await valorantService.getProfile();
+        setDbData(profile);
 
-        console.log("✅ [Valorant API] Account Data:", accountData);
-        console.log("✅ [Valorant API] MMR Data:", mmrData);
+        if (profile) {
+          const { name, tag, region } = profile.profile;
+          const [accountData, mmrData] = await Promise.all([
+            getValorantAccount(name, tag),
+            getValorantMMR(name, tag, region || "ap")
+          ]);
 
-        setLiveData({
-          level: accountData?.account_level,
-          rankName: mmrData?.currenttierpatched,
-          name: accountData?.name,
-          tag: accountData?.tag,
-          rankIcon: mmrData?.images?.large,
-          rr: mmrData?.ranking_in_tier,
-          playerCard: accountData?.card?.small,
-        });
-      } catch {
-        toast.error("Failed to sync Valorant data");
+          if (accountData || mmrData) {
+            setLiveData({
+              level: accountData?.account_level,
+              rankName: mmrData?.currenttierpatched,
+              name: accountData?.name,
+              tag: accountData?.tag,
+              rankIcon: mmrData?.images?.large,
+              rr: mmrData?.ranking_in_tier,
+              playerCard: accountData?.card?.small,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Valorant sync error:", err);
+        toast.error("Failed to sync Valorant data with live servers");
       } finally {
         setLoading(false);
       }
     }
     
-    fetchLiveProfile();
-  }, [profile.ign]);
+    fetchAllData();
+  }, []);
 
-  const displayRankIcon = liveData.rankIcon || profile.rankIcon;
-  const displayRankName = liveData.rankName || profile.rankName;
-  const displayLevel = liveData.level || profile.level;
-  const ingame = (liveData.name && liveData.tag) ? `${liveData.name}#${liveData.tag}` : profile.ign;
+  if (!dbData && !loading) {
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-black/20 backdrop-blur-sm rounded-2xl md:rounded-4xl border border-white/5 py-10 md:py-20 grayscale opacity-40 text-center px-4">
+            <div className="text-4xl md:text-6xl mb-2 md:mb-4">🛸</div>
+            <p className="text-white font-black uppercase tracking-[0.2em] text-lg md:text-xl">Tactical Profile Not Found</p>
+            <p className="text-white/50 text-xs md:text-sm max-w-xs mx-auto">No Valorant frequency has been modulated in the administration terminal.</p>
+        </div>
+    );
+  }
+
+  // Use DB data as base
+  if (!dbData) return null;
+  
+  const displayRankIcon = liveData.rankIcon || "";
+  const displayRankName = liveData.rankName || "Unranked";
+  const displayLevel = liveData.level || 0;
+  
+  const ingame = (liveData.name && liveData.tag) ? `${liveData.name}#${liveData.tag}` : `${dbData.profile.name}#${dbData.profile.tag}`;
+  
   const displayRR = liveData.rr !== undefined ? ` - ${liveData.rr} RR` : "";
-  const displayAvatar = liveData.playerCard || profile.playerCard;
+  const displayAvatar = liveData.playerCard || "";
+  const displayMainRole = dbData.profile.main_role || "Agent";
+
+  const uiConfig = [
+    { label: "DPI", value: dbData.settings.dpi?.toString() },
+    { label: "Sensitivity", value: dbData.settings.sensitivity?.toString() },
+    { label: "eDPI", value: (dbData.settings.dpi && dbData.settings.sensitivity) ? (dbData.settings.dpi * dbData.settings.sensitivity).toFixed(0) : "0" },
+    { label: "Polling Rate", value: dbData.settings.polling_rate ? (isNaN(Number(dbData.settings.polling_rate)) ? dbData.settings.polling_rate : `${dbData.settings.polling_rate} Hz`) : "0 Hz" },
+    { label: "Crosshair", value: dbData.settings.crosshair_code },
+  ];
+
+  const uiGraphics = {
+    display: [
+      { label: "Resolution", value: `${dbData.graphics.resolution} (${dbData.graphics.aspect_ratio})` },
+      { label: "Display Mode", value: dbData.graphics.display_mode },
+      { label: "Aspect Ratio Method", value: dbData.graphics.aspect_ratio_method },
+      { label: "Enemy Highlight Color", value: dbData.graphics.enemy_highlight_color },
+    ],
+    performance: [
+        { label: "Multithreaded Rendering", value: dbData.graphics.multithreaded_rendering },
+        { label: "Material Quality", value: dbData.graphics.material_quality },
+        { label: "Texture Quality", value: dbData.graphics.texture_quality },
+        { label: "Detail Quality", value: dbData.graphics.detail_quality },
+        { label: "UI Quality", value: dbData.graphics.ui_quality },
+        { label: "Vignette", value: dbData.graphics.vignette },
+        { label: "VSync", value: dbData.graphics.vsync },
+        { label: "NVIDIA Reflex Low Latency", value: dbData.graphics.nvidia_reflex_low_latency },
+    ],
+    quality: [
+        { label: "Anti-Aliasing", value: dbData.graphics.anti_aliasing },
+        { label: "Anisotropic Filtering", value: dbData.graphics.anisotropic_filtering },
+        { label: "Improve Clarity", value: dbData.graphics.improve_clarity },
+        { label: "Experimental Sharpening", value: dbData.graphics.experimental_sharpening },
+        { label: "Bloom", value: dbData.graphics.bloom },
+        { label: "Distortion", value: dbData.graphics.distortion },
+        { label: "Cast Shadows", value: dbData.graphics.cast_shadows },
+    ],
+  };
+
+  const uiGear = [
+    { name: "Mouse", value: dbData.gears.mouse },
+    { name: "Keyboard", value: dbData.gears.keyboard },
+    { name: "Headset", value: dbData.gears.headset },
+    { name: "Mousepad", value: dbData.gears.mousepad },
+    { name: "Monitor", value: dbData.gears.monitor },
+  ];
+
+  const uiAgents = [
+    {
+      tier: "S",
+      color: "bg-indigo-600",
+      agents: dbData.agents.map(a => ({ id: a.agent_name, name: a.agent_name, img: a.agent_image }))
+    }
+  ];
+
+  const v = (val: any) => val || "N/A";
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="animation fade-in-up w-full h-full p-2 md:p-6 pb-10 overflow-y-auto custom-scrollbar flex flex-col gap-6">
-      
-      {/* Header Profile */}
       <div className="flex flex-col md:flex-row items-center md:items-stretch gap-4 md:gap-8 bg-indigo-500/5 p-4 md:p-8 rounded-2xl md:rounded-4xl border border-indigo-500/20 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
-        
-        {/* Left: Avatar */}
         <div className="relative shrink-0 flex items-center justify-center">
           <div className="absolute inset-0 bg-indigo-500/30 blur-2xl opacity-40 rounded-full"></div>
-          <img 
-            src={displayAvatar} 
-            alt="Avatar" 
-            className={`w-24 h-24 md:w-36 md:h-36 relative z-10 rounded-2xl border-2 border-indigo-500/50 object-cover transition-all duration-700 shadow-[0_0_15px_rgba(99,102,241,0.4)] ${loading ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
-          />
+          {displayAvatar && (
+            <img 
+                src={displayAvatar} 
+                alt="Avatar" 
+                className={`w-24 h-24 md:w-36 md:h-36 relative z-10 rounded-2xl border-2 border-indigo-500/50 object-cover transition-all duration-700 shadow-[0_0_15px_rgba(99,102,241,0.4)] ${loading ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
+            />
+          )}
         </div>
 
-        {/* Center: Info */}
         <div className="flex flex-col justify-center flex-1 text-center md:text-left gap-3">
           <div>
-            <h2 className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-black text-white tracking-wider uppercase mb-2 drop-shadow-lg truncate">{ingame}</h2>
+            <h2 className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-black text-white tracking-wider mb-2 drop-shadow-lg truncate">{ingame}</h2>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
               <span className={`px-3 py-1 bg-indigo-500/10 text-indigo-200 font-bold rounded-xl text-xs md:text-sm border border-indigo-500/30 shadow-sm transition-opacity duration-700 ${loading ? 'opacity-0' : 'opacity-100'}`}>
                 Level {displayLevel}
               </span>
               <span className="px-3 py-1 bg-indigo-500/10 text-indigo-200 font-bold rounded-xl text-xs md:text-sm border border-indigo-500/30 shadow-sm">
-                {profile.mainRole}
+                {displayMainRole}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right: Rank Display */}
         <div className="flex flex-row md:flex-col items-center justify-center gap-3 border-t md:border-t-0 md:border-l border-indigo-500/20 pt-4 md:pt-0 md:pl-8 shrink-0">
-          <img 
-            src={displayRankIcon} 
-            alt={displayRankName} 
-            className={`w-16 h-16 md:w-28 md:h-28 drop-shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-700 ${loading ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
-          />
+          {displayRankIcon && (
+            <img 
+                src={displayRankIcon} 
+                alt={displayRankName} 
+                className={`w-16 h-16 md:w-28 md:h-28 drop-shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-700 ${loading ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
+            />
+          )}
           <span className={`px-3 md:px-5 py-1.5 bg-linear-to-r from-indigo-600/40 to-purple-600/40 text-white font-extrabold rounded-xl uppercase text-xs md:text-sm border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.3)] tracking-wide whitespace-nowrap transition-opacity duration-700 ${loading ? 'opacity-0' : 'opacity-100'}`}>
             {displayRankName}{displayRR}
           </span>
@@ -106,9 +182,7 @@ export default function ValorantInfo() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* Settings / Config */}
         <div className="bg-indigo-500/5 rounded-4xl border border-indigo-500/20 backdrop-blur-md flex flex-col shadow-lg overflow-hidden">
-          {/* Header & Tabs */}
           <div className="p-4 md:p-8 pb-0">
             <h3 className="text-lg md:text-2xl font-black text-white mb-4 md:mb-6 flex items-center gap-3 uppercase tracking-wide">
               <span className="w-2 h-5 md:w-2.5 md:h-7 bg-indigo-500 rounded-full inline-block shadow-[0_0_8px_rgba(99,102,241,0.8)]"></span>
@@ -132,80 +206,83 @@ export default function ValorantInfo() {
             </div>
           </div>
 
-          {/* Tab Content */}
           <div className="p-6 md:p-8 pt-0 flex-1 overflow-y-auto">
             {activeTab === "config" && (
               <div className="grid grid-cols-2 gap-4">
-                {profile.settings.config.map((s) => (
-                  <SettingItem key={s.label} label={s.label} value={s.value} />
+                {uiConfig.map((s) => (
+                  <SettingItem key={s.label} label={s.label} value={v(s.value)} />
                 ))}
               </div>
             )}
             
             {activeTab === "graphics" && (
               <div className="flex flex-col gap-6">
-                <div>
-                  <h4 className="text-white font-black mb-4 text-base md:text-lg flex items-center gap-2 uppercase tracking-wide">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    Display
-                  </h4>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-6 border-t border-indigo-500/20 pt-5">
-                    {profile.settings.graphics.display.map((s) => (
-                      <SettingGraphicItem key={s.label} label={s.label} value={s.value} />
-                    ))}
+                {uiGraphics.display.length > 0 && (
+                  <div>
+                    <h4 className="text-white font-black mb-4 text-base md:text-lg flex items-center gap-2 uppercase tracking-wide">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                      Display
+                    </h4>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-6 border-t border-indigo-500/20 pt-5">
+                      {uiGraphics.display.map((s) => (
+                        <SettingGraphicItem key={s.label} label={s.label} value={s.value} />
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div>
-                  <h4 className="text-white font-black mb-4 text-base md:text-lg flex items-center gap-2 uppercase tracking-wide">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
-                    Performance
-                  </h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 border-t border-indigo-500/20 pt-5">
-                    {profile.settings.graphics.performance.map((s) => (
-                      <SettingGraphicItem key={s.label} label={s.label} value={s.value} />
-                    ))}
+                {uiGraphics.performance.length > 0 && (
+                  <div>
+                    <h4 className="text-white font-black mb-4 text-base md:text-lg flex items-center gap-2 uppercase tracking-wide">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                      Performance
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 border-t border-indigo-500/20 pt-5">
+                      {uiGraphics.performance.map((s) => (
+                        <SettingGraphicItem key={s.label} label={s.label} value={s.value} />
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div>
-                  <h4 className="text-white font-black mb-4 text-base md:text-lg flex items-center gap-2 uppercase tracking-wide">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
-                    Quality
-                  </h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 border-t border-indigo-500/20 pt-5">
-                    {profile.settings.graphics.quality.map((s) => (
-                      <SettingGraphicItem key={s.label} label={s.label} value={s.value} />
-                    ))}
+                {uiGraphics.quality.length > 0 && (
+                  <div>
+                    <h4 className="text-white font-black mb-4 text-base md:text-lg flex items-center gap-2 uppercase tracking-wide">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+                      Quality
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 border-t border-indigo-500/20 pt-5">
+                      {uiGraphics.quality.map((s) => (
+                        <SettingGraphicItem key={s.label} label={s.label} value={s.value} />
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>
         </div>
 
-        {/* Gear */}
         <div className="bg-indigo-500/5 p-4 md:p-8 rounded-2xl md:rounded-4xl border border-indigo-500/20 backdrop-blur-md flex flex-col shadow-lg">
           <h3 className="text-lg md:text-2xl font-black text-white mb-4 md:mb-6 flex items-center gap-3 uppercase tracking-wide">
             <span className="w-2 h-5 md:w-2.5 md:h-7 bg-indigo-500 rounded-full inline-block shadow-[0_0_8px_rgba(99,102,241,0.8)]"></span>
             Gaming Gear
           </h3>
           <div className="flex flex-col gap-4">
-            {profile.gear.map((g) => (
+            {uiGear.map((g) => (
               <GearItem key={g.name} name={g.name} value={g.value} />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Agents Tier List */}
       <div className="bg-indigo-500/5 p-4 md:p-8 rounded-2xl md:rounded-4xl border border-indigo-500/20 backdrop-blur-md shadow-lg mb-8">
         <h3 className="text-lg md:text-2xl font-black text-white mb-4 md:mb-6 flex items-center gap-3 uppercase tracking-wide">
           <span className="w-2 h-5 md:w-2.5 md:h-7 bg-indigo-500 rounded-full inline-block shadow-[0_0_8px_rgba(99,102,241,0.8)]"></span>
           Most Played Agents
         </h3>
         <div className="flex flex-col gap-4">
-          {profile.agentsTier.map((t) => (
+          {uiAgents.map((t) => (
             <TierRow key={t.tier} tier={t.tier} color={t.color} agents={t.agents} />
           ))}
         </div>

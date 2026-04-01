@@ -45,7 +45,7 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
   const renderContent = () => {
     switch (activeTab) {
       case "general":
-        return <GeneralContent />;
+        return <GeneralContent onTabChange={setActiveTab} />;
       case "anime":
         return <AnimeContent />;
       case "game":
@@ -99,7 +99,7 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
 
           {/* Dynamic Content Area (Frame) */}
           <div className="transition-all duration-500 w-full h-[520px] md:h-[680px] border border-white/15 rounded-2xl rounded-tl-none bg-[rgba(15,20,40,0.80)] p-4 md:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] relative z-0 overflow-hidden">
-            {renderContent()}
+            {activeTab === 'general' ? <GeneralContent onTabChange={setActiveTab} /> : renderContent()}
           </div>
         </div>
       </div>

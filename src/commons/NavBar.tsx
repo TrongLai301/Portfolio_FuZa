@@ -38,7 +38,7 @@ export default function Navbar({
       <div className="flex justify-between w-full lg:max-w-4/5 lg:mx-auto py-3 md:py-4 px-3 md:px-4 items-center">
         {/* Logo */}
         <div className="flex items-center gap-2 signature cursor-pointer" onClick={onScrollToHome}>
-          <span className="blink-text text-nav">FuZa's portfolio</span>
+          <span className="blink-text text-nav">FuZa's profile</span>
           <FontAwesomeIcon className="text-nav" icon={faCode} />
         </div>
 

@@ -1,33 +1,40 @@
 import React, { useEffect, useRef, useState } from "react";
-import { mockCelebrations, type CelebratePhoto } from "../mockData";
+import { type CelebratePhoto } from "../mockData";
 import CelebrateDetail from "./CelebrateDetail";
+import { celebrationService } from "../../../services/celebrationService";
+import dayjs from "dayjs";
 
 const formatDate = (dateStr: string) => {
-  const parts = dateStr.split("-");
-  if (parts.length === 3) {
-    const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1; 
-    const year = parseInt(parts[2], 10);
-    const d = new Date(year, month, day);
-    
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    }
-  }
-  return dateStr;
+  return dayjs(dateStr).format("MMMM D, YYYY");
 };
 
 export default function CelebrateContent() {
   const gridRef = useRef<HTMLDivElement>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<CelebratePhoto | null>(null);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  const [celebrations, setCelebrations] = useState<CelebratePhoto[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Scroll handling or other initialization
+    const fetchMemories = async () => {
+      try {
+        const data = await celebrationService.getAll();
+        const mappedData: CelebratePhoto[] = data.map(item => ({
+          id: item.id,
+          imageSrc: item.image_url,
+          date: item.date,
+          caption: item.caption,
+          description: item.description
+        }));
+        setCelebrations(mappedData);
+      } catch (error) {
+        console.error("Failed to sync memory fragments:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMemories();
   }, []);
 
   const onImageLoad = (id: string) => {
@@ -43,13 +50,35 @@ export default function CelebrateContent() {
     );
   }
 
+  if (loading) {
+     return (
+        <div className="w-full h-full flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+                <p className="text-indigo-300/50 text-xs font-mono tracking-widest uppercase animate-pulse">Syncing Archive...</p>
+            </div>
+        </div>
+     );
+  }
+
+  if (celebrations.length === 0) {
+    return (
+        <div className="w-full h-full flex items-center justify-center">
+            <div className="text-center p-8 border border-dashed border-white/10 rounded-[40px] bg-white/2 max-w-sm">
+                <p className="text-white/20 text-sm font-medium mb-2">No memory fragments detected in this sector.</p>
+                <p className="text-white/10 text-[10px] uppercase tracking-tighter">Initialize database to visualize timeline.</p>
+            </div>
+        </div>
+    );
+  }
+
   return (
     <div className="w-full h-full overflow-y-auto overflow-x-hidden custom-scrollbar">
       <div
         ref={gridRef}
         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5 p-2 md:p-4 pb-10"
       >
-        {mockCelebrations.map((photo, index) => {
+        {celebrations.map((photo, index) => {
           const isLoaded = loadedImages[photo.id];
           return (
             <div
@@ -94,3 +123,4 @@ export default function CelebrateContent() {
     </div>
   );
 }
+

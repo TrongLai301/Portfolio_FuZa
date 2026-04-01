@@ -1,36 +1,16 @@
 import { forwardRef, useEffect, useRef, useState } from "react";
 import SkillCard from "../components/SkillCard";
-import {
-  faGithub,
-  faGitlab,
-  faJava,
-  faHtml5,
-  faCss3Alt,
-  faReact,
-  faVuejs,
-} from "@fortawesome/free-brands-svg-icons";
-import {
-  faLeaf,
-  faLayerGroup,
-  faWind,
-  faBolt
-} from "@fortawesome/free-solid-svg-icons";
+import * as BrandIcons from "@fortawesome/free-brands-svg-icons";
+import * as SolidIcons from "@fortawesome/free-solid-svg-icons";
+import { usePortfolio } from "../commons/PortfolioContext";
 
-const skillsData = [
-  { name: "Java", icon: faJava, color: "#f89820" },
-  { name: "Spring Boot", icon: faLeaf, color: "#6db33f" },
-  { name: "HTML", icon: faHtml5, color: "#e34c26" },
-  { name: "CSS", icon: faCss3Alt, color: "#264de4" },
-  { name: "ReactJs", icon: faReact, color: "#61dafb" },
-  { name: "Vue", icon: faVuejs, color: "#4fc08d" },
-  { name: "Material UI", icon: faLayerGroup, color: "#0081cb" },
-  { name: "Tailwind", icon: faWind, color: "#38bdf8" },
-  { name: "Vite", icon: faBolt, color: "#646cff" },
-  { name: "Github", icon: faGithub, color: "#ffffff" },
-  { name: "Gitlab", icon: faGitlab, color: "#fc6d26" },
-];
+// Helper to get FA icon by string name
+const getIcon = (iconName: string) => {
+  return (BrandIcons as any)[iconName] || (SolidIcons as any)[iconName] || SolidIcons.faCircleQuestion;
+};
 
 const Skill = forwardRef<HTMLDivElement>((_, ref) => {
+  const { skills } = usePortfolio();
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
 
@@ -57,7 +37,7 @@ const Skill = forwardRef<HTMLDivElement>((_, ref) => {
 
     observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, [hasAnimated]);
+  }, [hasAnimated, skills]);
 
   return (
     <section 
@@ -80,30 +60,38 @@ const Skill = forwardRef<HTMLDivElement>((_, ref) => {
           className="animation opacity-0 w-full relative overflow-hidden marquee-container flex flex-nowrap mask-[linear-gradient(to_right,transparent_0,black_128px,black_calc(100%-128px),transparent_100%)]"
           style={{ animationFillMode: "both" }}
         >
-          {/* First Marquee Layer */}
-          <ul className="flex items-center justify-center animate-marquee min-w-full shrink-0">
-            {skillsData.map((skill, index) => (
-              <li key={skill.name + index} className="mx-2 md:mx-4 lg:mx-6 py-10 px-4">
-                <SkillCard 
-                  name={skill.name}
-                  icon={skill.icon}
-                  color={skill.color}
-                />
-              </li>
-            ))}
-          </ul>
-          {/* Second Duplicate Marquee Layer for seamless loop */}
-          <ul className="flex items-center justify-center animate-marquee min-w-full shrink-0" aria-hidden="true">
-            {skillsData.map((skill, index) => (
-              <li key={skill.name + "-dup-" + index} className="mx-2 md:mx-4 lg:mx-6 py-10 px-4">
-                <SkillCard 
-                  name={skill.name}
-                  icon={skill.icon}
-                  color={skill.color}
-                />
-              </li>
-            ))}
-          </ul>
+          {skills.length > 0 ? (
+            <>
+              {/* First Marquee Layer */}
+              <ul className="flex items-center justify-center animate-marquee min-w-full shrink-0">
+                {skills.map((skill, index) => (
+                  <li key={skill.id + index} className="mx-2 md:mx-4 lg:mx-6 py-10 px-4">
+                    <SkillCard 
+                      name={skill.name}
+                      icon={getIcon(skill.icon_name)}
+                      color={skill.color_code}
+                    />
+                  </li>
+                ))}
+              </ul>
+              {/* Second Duplicate Marquee Layer for seamless loop */}
+              <ul className="flex items-center justify-center animate-marquee min-w-full shrink-0" aria-hidden="true">
+                {skills.map((skill, index) => (
+                  <li key={skill.id + "-dup-" + index} className="mx-2 md:mx-4 lg:mx-6 py-10 px-4">
+                    <SkillCard 
+                      name={skill.name}
+                      icon={getIcon(skill.icon_name)}
+                      color={skill.color_code}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <div className="w-full flex flex-col items-center justify-center py-20 opacity-20">
+               <p className="text-sm uppercase tracking-widest text-white">Experience Void - No signals detected</p>
+            </div>
+          )}
         </div>
       </div>
     </section>

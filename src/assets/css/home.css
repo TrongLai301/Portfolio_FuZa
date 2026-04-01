@@ -58,7 +58,7 @@
 
 .contact-icon:hover {
     transform: scale(1.04) translateY(-5px);
-    box-shadow: 0 0 12px 2px #f6eaea;
+    box-shadow: 0 0 12px 2px var(--hover-color, #f6eaea);
 }
 
 .contact-icon>svg {
@@ -209,6 +209,14 @@
     animation: animationUpDown 2s ease-in-out alternate infinite;
 }
 
+.animation {
+    opacity: 0;
+}
+
+.opacity-100 {
+    opacity: 1 !important;
+}
+
 .delay {
     animation-delay: calc(var(--i));
 }
@@ -275,7 +283,7 @@
 }
 
 .orbit-item:hover {
-    box-shadow: 0 0 15px 2px rgb(226, 226, 226);
+    box-shadow: 0 0 15px 2px var(--hover-color, rgb(226, 226, 226));
 }
 
 /* Custom Scrollbar */

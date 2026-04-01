@@ -1,0 +1,151 @@
+// ==========================================
+// PORTFOLIO FUZA - FULL DATABASE SCHEMA (DBML)
+// ==========================================
+
+// --- 1. SKILLS SECTION ---
+Table skills {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name text [not null]
+  icon_name text
+  color_code varchar(10)
+  display_order integer [default: 0]
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+// --- 2. MUSIC PLAYER SECTION ---
+Table songs {
+  id uuid [pk, default: `gen_random_uuid()`]
+  title text [not null]
+  artist text
+  audio_url text [not null]
+  cover_url text [not null]
+  display_order integer [default: 0]
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+// --- 3. RE-DESIGNED MEDIA SYSTEM (ANIME & GAMES) ---
+Table categories {
+  id uuid [pk, default: `gen_random_uuid()`]
+  type text [not null, note: "'anime' | 'game'"]
+  name text [not null]
+  slug text [unique] 
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+Table medias {
+  id uuid [pk, default: `gen_random_uuid()`]
+  type text [not null, note: "'anime' | 'game'"]
+  title text [not null]
+  image_url text [not null]
+  year integer
+  description text
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+Table media_categories {
+  id uuid [pk, default: `gen_random_uuid()`]
+  media_id uuid [ref: > medias.id]
+  category_id uuid [ref: > categories.id]
+}
+
+
+// --- 4. PHOTO CELEBRATIONS ---
+Table celebrations {
+  id uuid [pk, default: `gen_random_uuid()`]
+  image_url text [not null]
+  date date [not null]
+  caption text
+  description text
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+// --- 5. VALORANT MODULE DB SCHEMA ---
+
+Table valorant_profiles {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name text [not null]
+  tag text [not null]
+  region varchar(10) [default: "ap"]
+  main_role text
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+Table valorant_settings {
+  id uuid [pk, default: `gen_random_uuid()`]
+  profile_id uuid [ref: - valorant_profiles.id]
+  dpi integer
+  sensitivity float
+  polling_rate varchar(20)
+  resolution_config varchar(50)
+  crosshair_code text
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+Table valorant_graphics {
+  id uuid [pk, default: `gen_random_uuid()`]
+  profile_id uuid [ref: - valorant_profiles.id]
+  display_mode text [default: 'Fullscreen']
+  resolution text [default: '1920x1080 (16:9)']
+  aspect_ratio text [default: 'Letterbox']
+  aspect_ratio_method text [default: 'Fill']
+  enemy_highlight_color text [default: 'Yellow (Deuteranopia)']
+  multithreaded_rendering text [default: 'On']
+  material_quality text [default: 'Medium']
+  texture_quality text [default: 'Medium']
+  detail_quality text [default: 'Medium']
+  ui_quality text [default: 'Medium']
+  vignette text [default: 'Off']
+  vsync text [default: 'Off']
+  nvidia_reflex_low_latency text [default: 'On + Boost']
+  anti_aliasing text [default: 'MSAA 4x']
+  anisotropic_filtering text [default: '4x']
+  improve_clarity text [default: 'Off']
+  experimental_sharpening text [default: 'Off']
+  bloom text [default: 'Off']
+  distortion text [default: 'Off']
+  cast_shadows text [default: 'Off']
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+Table valorant_gears {
+  id uuid [pk, default: `gen_random_uuid()`]
+  profile_id uuid [ref: - valorant_profiles.id]
+  mouse text
+  keyboard text
+  headset text
+  mousepad text
+  monitor text
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+Table valorant_most_played_agents {
+  id uuid [pk, default: `gen_random_uuid()`]
+  profile_id uuid [ref: > valorant_profiles.id]
+  agent_name text [not null]
+  agent_image text
+  play_count integer [default: 0]
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+// --- 6. SOCIAL LINKS (FOLLOW ME) ---
+Table social_links {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name varchar [not null]
+  url text [not null]
+  icon_name varchar [not null]
+  color_code varchar
+  display_order integer [default: 0]
+  is_active boolean [default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
