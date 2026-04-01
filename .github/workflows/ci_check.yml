@@ -1,0 +1,34 @@
+name: Pull Request Check (Lint & Build)
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  check:
+    name: Lint and Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Check Lint
+        run: npm run lint
+        
+      - name: Build project
+        run: npm run build
+        env:
+          # Thêm các biến môi trường cần thiết cho quá trình build nếu có
+          VITE_VALORANT_API_KEY: ${{ secrets.VITE_VALORANT_API_KEY }}
+          VITE_USER_ID: ${{ secrets.VITE_USER_ID }}
+          VITE_PW_DB: ${{ secrets.VITE_PW_DB }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
