@@ -3,8 +3,7 @@ import { Layout, Typography, Button, Space, Breadcrumb, Divider } from "antd";
 import { 
   PlusOutlined, 
   HomeOutlined, 
-  GlobalOutlined,
-  ReloadOutlined
+  GlobalOutlined
 } from "@ant-design/icons";
 import SocialLinkList from "./SocialLinkList";
 import SocialLinkForm from "./SocialLinkForm";
@@ -15,7 +14,7 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const SocialLinksManager: React.FC = () => {
-  const { links, loading, submitting, nextOrder, addLink, editLink, removeLink, fetchLinks } = useSocialLinks();
+  const { links, loading, submitting, nextOrder, addLink, editLink, removeLink } = useSocialLinks();
   const [editingLink, setEditingLink] = useState<SocialLink | null>(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -62,13 +61,13 @@ const SocialLinksManager: React.FC = () => {
             <Text className="admin-page-subtitle">Manage your social media presence and "Follow me" links</Text>
           </div>
           <Space>
-            <Button icon={<ReloadOutlined />} onClick={fetchLinks} className="admin-btn-secondary" />
+            
             <Button 
               type="primary" 
               icon={<PlusOutlined />} 
               onClick={handleAdd}
               className="admin-btn-primary"
-              style={{ background: '#ff4655', borderColor: '#ff4655' }}
+              style={{ fontWeight: 'bold' }}
             >
               New Link
             </Button>

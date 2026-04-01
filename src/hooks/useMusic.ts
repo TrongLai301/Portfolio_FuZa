@@ -59,7 +59,7 @@ export const useMusic = () => {
       };
 
       await musicService.createSong(newSong);
-      toast.success("Song deployed to universe!");
+      toast.success("Song created!");
       await fetchSongs();
       return true;
     } catch (error: any) {
@@ -109,7 +109,7 @@ export const useMusic = () => {
         await musicService.deleteFileByUrl(input.existing_cover_url, "covers");
       }
 
-      toast.success("Frequency modulated effectively!");
+      toast.success("Song updated!");
       await fetchSongs();
       return true;
     } catch (error: any) {
@@ -127,10 +127,10 @@ export const useMusic = () => {
   const removeSong = async (id: string, audioUrl: string, coverUrl: string) => {
     try {
       await musicService.deleteSong(id, audioUrl, coverUrl);
-      toast.success("Song retracted from memory.");
+      toast.success("Song deleted.");
       await fetchSongs();
     } catch (error: any) {
-      toast.error("Retraction failed: " + error.message);
+      toast.error("Delete failed: " + error.message);
     }
   };
 

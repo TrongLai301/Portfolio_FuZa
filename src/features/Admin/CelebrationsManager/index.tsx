@@ -70,7 +70,7 @@ const CelebrationsIndex: React.FC = () => {
             onClick={() => handleOpenModal(null)}
             style={{ fontWeight: 'bold', boxShadow: '0 4px 15px rgba(99, 102, 241, 0.3)' }}
           >
-            Archive New Memory
+            Add new celebrate
           </Button>
         </div>
 
