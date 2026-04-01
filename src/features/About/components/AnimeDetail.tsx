@@ -1,4 +1,4 @@
-import type { Anime } from "../mockData";
+import type { Anime } from "../types";
 
 interface AnimeDetailProps {
   anime: Anime;

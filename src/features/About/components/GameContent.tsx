@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { type Game } from "../types";
 import AboutCard from "../../../components/AboutCard";
 import GameDetail from "./GameDetail";
 import { useMedia } from "../../../hooks/useMedia";
@@ -8,7 +9,8 @@ export default function GameContent() {
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
 
   // Filter for game type and map to consistent structure
-  const games = medias
+  // Filter for game type and map to consistent structure
+  const games: Game[] = medias
     .filter(m => m.type === 'game')
     .map(m => ({
       id: m.id,
@@ -22,7 +24,7 @@ export default function GameContent() {
   if (selectedGameId) {
     const game = games.find((g) => g.id === selectedGameId);
     if (game) {
-      return <GameDetail game={game as any} onBack={() => setSelectedGameId(null)} />;
+      return <GameDetail game={game} onBack={() => setSelectedGameId(null)} />;
     }
   }
 

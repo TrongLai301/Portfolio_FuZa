@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { type Anime } from "../types";
 import AboutCard from "../../../components/AboutCard";
 import AnimeDetail from "./AnimeDetail";
 import { useMedia } from "../../../hooks/useMedia";
@@ -8,7 +9,7 @@ export default function AnimeContent() {
   const [selectedAnimeId, setSelectedAnimeId] = useState<string | null>(null);
 
   // Filter for anime type and map to consistent structure
-  const animes = medias
+  const animes: Anime[] = medias
     .filter(m => m.type === 'anime')
     .map(m => ({
       id: m.id,
@@ -22,7 +23,7 @@ export default function AnimeContent() {
   if (selectedAnimeId) {
     const anime = animes.find((a) => a.id === selectedAnimeId);
     if (anime) {
-      return <AnimeDetail anime={anime as any} onBack={() => setSelectedAnimeId(null)} />;
+      return <AnimeDetail anime={anime} onBack={() => setSelectedAnimeId(null)} />;
     }
   }
 
