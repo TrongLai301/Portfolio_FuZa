@@ -1,4 +1,4 @@
-import type { Game } from "../mockData";
+import type { Game } from "../types";
 
 interface GameDetailProps {
   game: Game;

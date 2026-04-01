@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { type CelebratePhoto } from "../mockData";
+import { type CelebratePhoto } from "../types";
 import CelebrateDetail from "./CelebrateDetail";
 import { celebrationService } from "../../../services/celebrationService";
 import dayjs from "dayjs";

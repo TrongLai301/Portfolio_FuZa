@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import type { CelebratePhoto } from "../mockData";
+import type { CelebratePhoto } from "../types";
 
 interface CelebrateDetailProps {
   photo: CelebratePhoto;
