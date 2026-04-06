@@ -1,5 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
-import { musicService, type Song, type CreateSongInput } from "../services/musicService";
+import {
+  musicService,
+  type Song,
+  type CreateSongInput,
+} from "../services/musicService";
 import { toast } from "sonner";
 
 export interface SongSubmitInput extends Partial<CreateSongInput> {
@@ -20,9 +24,9 @@ export const useMusic = () => {
     try {
       const data = await musicService.getSongs();
       setSongs(data);
-      
+
       if (data.length > 0) {
-        const max = Math.max(...data.map(s => s.display_order || 0));
+        const max = Math.max(...data.map((s) => s.display_order || 0));
         setNextOrder(max + 1);
       } else {
         setNextOrder(1);
@@ -46,8 +50,14 @@ export const useMusic = () => {
       }
 
       // 2. Upload Files
-      uploadedAudioUrl = await musicService.uploadFile(input.audio_file, "audio");
-      uploadedCoverUrl = await musicService.uploadFile(input.cover_file, "covers");
+      uploadedAudioUrl = await musicService.uploadFile(
+        input.audio_file,
+        "audio",
+      );
+      uploadedCoverUrl = await musicService.uploadFile(
+        input.cover_file,
+        "covers",
+      );
 
       // 3. Create Record
       const newSong: CreateSongInput = {
@@ -55,7 +65,7 @@ export const useMusic = () => {
         artist: input.artist!,
         audio_url: uploadedAudioUrl,
         cover_url: uploadedCoverUrl,
-        display_order: input.display_order || 0
+        display_order: input.display_order || 0,
       };
 
       await musicService.createSong(newSong);
@@ -64,9 +74,11 @@ export const useMusic = () => {
       return true;
     } catch (error: any) {
       // 4. ROLLBACK: Cleanup uploaded files if DB fails
-      if (uploadedAudioUrl) await musicService.deleteFileByUrl(uploadedAudioUrl, "audio");
-      if (uploadedCoverUrl) await musicService.deleteFileByUrl(uploadedCoverUrl, "covers");
-      
+      if (uploadedAudioUrl)
+        await musicService.deleteFileByUrl(uploadedAudioUrl, "audio");
+      if (uploadedCoverUrl)
+        await musicService.deleteFileByUrl(uploadedCoverUrl, "covers");
+
       toast.error("Deployment failed: " + error.message);
       return false;
     } finally {
@@ -82,10 +94,16 @@ export const useMusic = () => {
     try {
       // 1. Upload new files if provided
       if (input.audio_file) {
-        uploadedAudioUrl = await musicService.uploadFile(input.audio_file, "audio");
+        uploadedAudioUrl = await musicService.uploadFile(
+          input.audio_file,
+          "audio",
+        );
       }
       if (input.cover_file) {
-        uploadedCoverUrl = await musicService.uploadFile(input.cover_file, "covers");
+        uploadedCoverUrl = await musicService.uploadFile(
+          input.cover_file,
+          "covers",
+        );
       }
 
       // 2. Prepare update data
@@ -94,7 +112,7 @@ export const useMusic = () => {
         artist: input.artist,
         display_order: input.display_order,
       };
-      
+
       if (uploadedAudioUrl) updateData.audio_url = uploadedAudioUrl;
       if (uploadedCoverUrl) updateData.cover_url = uploadedCoverUrl;
 
@@ -114,8 +132,10 @@ export const useMusic = () => {
       return true;
     } catch (error: any) {
       // ROLLBACK NEW UPLOADS
-      if (uploadedAudioUrl) await musicService.deleteFileByUrl(uploadedAudioUrl, "audio");
-      if (uploadedCoverUrl) await musicService.deleteFileByUrl(uploadedCoverUrl, "covers");
+      if (uploadedAudioUrl)
+        await musicService.deleteFileByUrl(uploadedAudioUrl, "audio");
+      if (uploadedCoverUrl)
+        await musicService.deleteFileByUrl(uploadedCoverUrl, "covers");
 
       toast.error("Retune failed: " + error.message);
       return false;
@@ -134,6 +154,23 @@ export const useMusic = () => {
     }
   };
 
+  const reorderSongs = async (newSongs: Song[]) => {
+    // 1. Optimistic update
+    const previousSongs = [...songs];
+    const orderedSongs = newSongs.map((s, idx) => ({ ...s, display_order: idx + 1 }));
+    setSongs(orderedSongs);
+
+    try {
+      // 2. Prepare payload
+      await musicService.updateOrder(orderedSongs);
+      toast.success("Order Updated.");
+    } catch (error: any) {
+      // 3. Rollback
+      setSongs(previousSongs);
+      toast.error("Sync failed: " + error.message);
+    }
+  };
+
   useEffect(() => {
     fetchSongs();
   }, [fetchSongs]);
@@ -146,6 +183,7 @@ export const useMusic = () => {
     fetchSongs,
     saveSong,
     editSong,
-    removeSong
+    removeSong,
+    reorderSongs,
   };
 };
