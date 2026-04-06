@@ -47,5 +47,12 @@ export const socialLinkService = {
       .delete()
       .eq("id", id);
     if (error) throw error;
+  },
+
+  async updateOrder(links: SocialLink[]) {
+    const { error } = await supabase
+      .from("social_links")
+      .upsert(links, { onConflict: "id" });
+    if (error) throw error;
   }
 };

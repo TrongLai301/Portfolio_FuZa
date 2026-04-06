@@ -68,6 +68,23 @@ export const useSocialLinks = () => {
     }
   };
 
+  const reorderLinks = async (newLinks: SocialLink[]) => {
+    // 1. Optimistic update
+    const previousLinks = [...links];
+    const orderedLinks = newLinks.map((l, idx) => ({ ...l, display_order: idx + 1 }));
+    setLinks(orderedLinks);
+
+    try {
+      // 2. Prepare payload
+      await socialLinkService.updateOrder(orderedLinks);
+      toast.success("Order updated.");
+    } catch (error: any) {
+      // 3. Rollback
+      setLinks(previousLinks);
+      toast.error("Sync failed: " + error.message);
+    }
+  };
+
   useEffect(() => {
     fetchLinks();
   }, [fetchLinks]);
@@ -80,6 +97,7 @@ export const useSocialLinks = () => {
     fetchLinks,
     addLink,
     editLink,
-    removeLink
+    removeLink,
+    reorderLinks
   };
 };

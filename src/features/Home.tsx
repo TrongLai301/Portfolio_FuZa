@@ -8,31 +8,49 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SocialIcon from "../components/SocialIcon";
 import OrbitIcon from "../components/OrbitIcon";
 import MusicPlayer from "../components/MusicPlayer";
+import AudioVisualizer from "../components/AudioVisualizer";
 import nilou from "../assets/image/commons/nilouPr4.png";
 import { useEnter } from "../commons/useEnterContext";
 import { usePortfolio } from "../commons/PortfolioContext";
+import { useMusic } from "../commons/MusicContext";
 import type { Skill } from "../services/skillService";
 import { hitVisitCount } from "../services/visitorApi";
 
 // Helper to get FA icon by string name
 const getIcon = (iconName: string) => {
-  return (BrandIcons as any)[iconName] || (SolidIcons as any)[iconName] || SolidIcons.faCircleQuestion;
+  return (
+    (BrandIcons as any)[iconName] ||
+    (SolidIcons as any)[iconName] ||
+    SolidIcons.faCircleQuestion
+  );
 };
 
 const Home = forwardRef<HTMLDivElement>((_, ref) => {
   const { isEntered } = useEnter();
-  const { skills: allSkills, socialLinks: allSocialLinks } = usePortfolio();
+  const {
+    skills: allSkills,
+    socialLinks: allSocialLinks,
+    heroSettings,
+    typewriterTexts,
+    isVideoPlaying,
+    toggleVideo,
+  } = usePortfolio();
+  const { isPlaying } = useMusic();
   const animationLeft = useRef<HTMLDivElement | null>(null);
   const animationRight = useRef<HTMLDivElement | null>(null);
   const [orbitRadius, setOrbitRadius] = useState(
     window.innerWidth < 768 ? 100 : window.innerWidth < 1024 ? 130 : 180,
   );
+  const [avtSize, setAvtSize] = useState(
+    window.innerWidth < 481 ? 150 : window.innerWidth < 769 ? 180 : window.innerWidth < 1025 ? 190 : 240
+  );
   const [visitorCount, setVisitorCount] = useState(0);
   const [orbitSkills, setOrbitSkills] = useState<Skill[]>([]);
+  const [isHoveringOrbit, setIsHoveringOrbit] = useState(false);
 
   useEffect(() => {
     if (!isEntered) return;
-    
+
     // Record visit
     hitVisitCount().then((count) => setVisitorCount(count));
 
@@ -43,9 +61,18 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
     }
 
     const handleResize = () => {
-      if (window.innerWidth < 768) setOrbitRadius(100);
-      else if (window.innerWidth < 1024) setOrbitRadius(130);
-      else setOrbitRadius(180);
+      if (window.innerWidth < 768) {
+        setOrbitRadius(100);
+        setAvtSize(180);
+      } else if (window.innerWidth < 1024) {
+        setOrbitRadius(130);
+        setAvtSize(190);
+      } else {
+        setOrbitRadius(180);
+        setAvtSize(240);
+      }
+      
+      if (window.innerWidth < 481) setAvtSize(150);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -100,9 +127,9 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
         animation(box, index * 0.1, "fade-in-up", true);
       }
     });
-    const avt = animationRight.current?.querySelector(".big-avt");
-    animation(avt, null, "fade-in-right", true).then(() => {
-      animation(avt, null, "animation-up-down-blink", false);
+    const avt = animationRight.current?.querySelector("#animatedAvatarWrapper");
+    animation(avt, null, "fade-in-right-centered", true).then(() => {
+      animation(avt, null, "animation-up-down-blink-centered", false);
     });
     handleMouseenter(avt);
 
@@ -120,7 +147,10 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
       const icons = animationLeft.current.querySelectorAll(".contact-icon");
       icons.forEach((icon, index) => {
         // Only animate if not already animated
-        if (!icon.classList.contains("fade-in-up") && !icon.classList.contains("opacity-100")) {
+        if (
+          !icon.classList.contains("fade-in-up") &&
+          !icon.classList.contains("opacity-100")
+        ) {
           animation(icon, index * 0.1, "fade-in-up", true);
         }
       });
@@ -132,7 +162,10 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
     if (orbitSkills.length > 0 && animationRight.current) {
       const orbits = animationRight.current.querySelectorAll(".orbit-item");
       orbits.forEach((orbit, index) => {
-        if (!orbit.classList.contains("fade-in-up") && !orbit.classList.contains("opacity-100")) {
+        if (
+          !orbit.classList.contains("fade-in-up") &&
+          !orbit.classList.contains("opacity-100")
+        ) {
           animation(orbit, index * 0.1, "fade-in-up", true).then(() => {
             animation(orbit, index * 0.2, "animation-up-down", false);
           });
@@ -141,6 +174,21 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
       });
     }
   }, [orbitSkills]);
+
+  // Helper to determine if a string is a color or gradient and return styles
+  const getTextStyle = (colorStr?: string) => {
+    if (!colorStr) return {};
+    const isGradient = colorStr.includes("gradient");
+    if (isGradient) {
+      return {
+        background: colorStr,
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        display: "inline-block",
+      };
+    }
+    return { color: colorStr };
+  };
 
   return (
     <section className="snap-start" id="home" ref={ref}>
@@ -155,34 +203,67 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
         >
           <div className="animation animation-up-left flex items-center justify-center md:justify-start">
             <span className="main-text">
-              <span className="text-secondary-1 ">Hello,</span>
-              <span className="text-secondary-2"> I'm FuZa</span>
+              <span
+                className="text-secondary-1"
+                style={getTextStyle(heroSettings?.main_text_prefix_color)}
+              >
+                {heroSettings?.main_text_prefix || "Hello,"}
+              </span>
+              <span
+                className="text-secondary-2"
+                style={{
+                  ...getTextStyle(heroSettings?.main_text_suffix_color),
+                  marginLeft: "8px",
+                }}
+              >
+                {heroSettings?.main_text_suffix || "I'm FuZa"}
+              </span>
             </span>
           </div>
           <div className="animation typewriter mb-8 ">
-            <TypeIt
-              options={{ loop: true }}
-              getBeforeInit={(instance) => {
-                instance
-                  .type("Web-Developer")
-                  .pause(2500)
-                  .delete()
-                  .pause(800)
-                  .type("Full-stack")
-                  .pause(2500)
-                  .delete()
-                  .pause(800)
-                  .type("Love Anime")
-                  .pause(2500);
+            {typewriterTexts.length > 0 ? (
+              <TypeIt
+                key={typewriterTexts
+                  .map((t) => `${t.content}-${t.content_color}`)
+                  .join(",")}
+                options={{ loop: true, html: true }}
+                getBeforeInit={(instance) => {
+                  typewriterTexts.forEach((text) => {
+                    const coloredContent = `<span style="color: ${text.content_color || "#6366f1"}">${text.content}</span>`;
+                    instance
+                      .type(coloredContent)
+                      .pause(2500)
+                      .delete()
+                      .pause(800);
+                  });
+                  return instance;
+                }}
+              />
+            ) : (
+              <TypeIt
+                options={{ loop: true }}
+                getBeforeInit={(instance) => {
+                  instance
+                    .type("Web-Developer")
+                    .pause(2500)
+                    .delete()
+                    .pause(800)
+                    .type("Full-stack")
+                    .pause(2500)
+                    .delete()
+                    .pause(800)
+                    .type("Love Anime")
+                    .pause(2500);
 
-                return instance;
-              }}
-            />
+                  return instance;
+                }}
+              />
+            )}
           </div>
           <div className="animation mb-6">
             <span className="text-xs md:text-sm lg:text-base">
-              A passionate developer who loves building modern and responsive
-              web applications using React, Java, and JavaScript.
+              {heroSettings?.description ||
+                "A passionate developer who loves building modern and responsive web applications using React, Java, and JavaScript."}
             </span>
           </div>
           <div className="flex gap-2 md:gap-3 lg:gap-4 items-center justify-center md:justify-start flex-wrap">
@@ -190,10 +271,10 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
               Follow me:
             </span>
             {allSocialLinks.map((link) => (
-              <SocialIcon 
-                key={link.id} 
-                to={link.url} 
-                icon={getIcon(link.icon_name)} 
+              <SocialIcon
+                key={link.id}
+                to={link.url}
+                icon={getIcon(link.icon_name)}
                 color={link.color_code || undefined}
               />
             ))}
@@ -201,20 +282,63 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
         {/* Right: Avatar + Music Player */}
         <div className="w-full md:w-3/5" ref={animationRight}>
-          <div className="orbit-container">
-            <div id="bigAvt" className="big-avt avt-size">
-              <img src={nilou} alt="nilou..." className=" avt-size" />
+          <div 
+            className="orbit-container"
+            onMouseEnter={() => setIsHoveringOrbit(true)}
+            onMouseLeave={() => setIsHoveringOrbit(false)}
+          >
+            {/* Wrapper for both Avt and Visualizer to move together */}
+            <div 
+              id="animatedAvatarWrapper" 
+              className="absolute rounded-full animation opacity-0"
+              style={{ 
+                width: avtSize, 
+                height: avtSize,
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                opacity: 0,
+                boxShadow: `0 0 20px 20px ${heroSettings?.orbit_animation_color || "#c8c8c8"}`,
+              }}
+            >
+                <AudioVisualizer 
+                  size={avtSize} 
+                  isPlaying={isPlaying} 
+                  color={heroSettings?.orbit_animation_color || "#6366f1"}
+                />
+                <div
+                  id="bigAvt"
+                  className="absolute z-10 w-full h-full rounded-full overflow-hidden"
+                >
+                  <img
+                    src={heroSettings?.orbit_image_url || nilou}
+                    alt="FuZa..."
+                    className="w-full h-full object-cover"
+                  />
+
+                  {/* Video Play/Pause Overlay */}
+                  <div 
+                    className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity duration-300 flex items-center justify-center cursor-pointer ${isHoveringOrbit ? 'opacity-100' : 'opacity-0'}`}
+                    onClick={toggleVideo}
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center border border-white/30 backdrop-blur-md shadow-lg transform transition-transform hover:scale-110 active:scale-95">
+                      <FontAwesomeIcon
+                        icon={isVideoPlaying ? SolidIcons.faPause : SolidIcons.faPlay}
+                        className={`text-2xl text-white/90 ${isVideoPlaying ? '' : 'ml-1'}`}
+                      />
+                    </div>
+                  </div>
+                </div>
             </div>
             {orbitSkills.map((skill, index, arr) => (
-                <OrbitIcon
-                  key={skill.id}
-                  icon={getIcon(skill.icon_name)}
-                  angle={(index * 360) / arr.length - 45}
-                  radius={orbitRadius}
-                  color={skill.color_code || undefined}
-                />
-              ),
-            )}
+              <OrbitIcon
+                key={skill.id}
+                icon={getIcon(skill.icon_name)}
+                angle={(index * 360) / arr.length - 45}
+                radius={orbitRadius}
+                color={skill.color_code || undefined}
+              />
+            ))}
           </div>
           <div className="relative w-full max-w-[320px] md:max-w-[380px] lg:max-w-[500px] mx-auto mt-4 md:mt-8">
             {/* Floating Visitor Count Badge with entrance animation */}
@@ -222,7 +346,8 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
               <div className="absolute -top-3 right-4 z-20 flex items-center gap-2 px-3 py-1 rounded-full bg-[#1a1a1a]/80 backdrop-blur-xl border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] animate-visitor-entrance">
                 <FontAwesomeIcon
                   icon={SolidIcons.faEye}
-                  className="text-indigo-400 text-[10px]"
+                  className="text-[10px]"
+                  style={{ color: heroSettings?.orbit_animation_color || "#6366f1" }}
                 />
                 <span className="text-white/90 text-xs font-bold font-mono tracking-tight">
                   {visitorCount.toLocaleString()}
@@ -240,6 +365,18 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
                  animation: visitorEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
                  animation-delay: 1.2s;
                  opacity: 0;
+               }
+               
+               /* Override animation color based on DB setting */
+               @keyframes animationUpDownBlinkCentered {
+                 0% {
+                   box-shadow: 0 0 20px 20px ${heroSettings?.orbit_animation_color || "#c8c8c8"};
+                   transform: translate(-50%, -50%);
+                 }
+                 100% {
+                   box-shadow: 0 0 20px 0 ${heroSettings?.orbit_animation_color || "#c8c8c8"};
+                   transform: translate(-50%, calc(-50% + 10px));
+                 }
                }
              `}</style>
           </div>

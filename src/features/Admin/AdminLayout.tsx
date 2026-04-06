@@ -9,9 +9,9 @@ import {
   PlayCircleOutlined,
   CameraOutlined,
   LogoutOutlined,
-  BulbOutlined,
   RocketOutlined,
   GlobalOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import "../../assets/css/admin.css";
 
@@ -33,6 +33,11 @@ const AdminLayout: React.FC = () => {
       key: "/admin",
       icon: <DashboardOutlined />,
       label: <NavLink to="/admin">Dashboard</NavLink>,
+    },
+    {
+      key: "/admin/hero",
+      icon: <HomeOutlined />,
+      label: <NavLink to="/admin/hero">Hero Section</NavLink>,
     },
     {
       key: "/admin/social",
@@ -81,7 +86,7 @@ const AdminLayout: React.FC = () => {
           <Avatar
             shape="square"
             size={40}
-            icon={<BulbOutlined />}
+            src="/nilouAvt.jpg"
             style={{
               backgroundColor: "#6366f1",
               boxShadow: "0 0 15px rgba(99, 102, 241, 0.4)",
@@ -176,7 +181,7 @@ const AdminLayout: React.FC = () => {
           </Title>
           <Space size="middle">
             <a 
-              href="/" 
+              href={import.meta.env.BASE_URL} 
               target="_blank" 
               rel="noreferrer" 
               className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 shadow-sm group"
