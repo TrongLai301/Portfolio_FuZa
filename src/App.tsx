@@ -42,6 +42,7 @@ function MainApp() {
         videoRef.current.play().catch(e => console.log('Autoplay prevented', e));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [heroSettings?.video_bg_url]);
 
   // React to play/pause state changes

@@ -139,6 +139,7 @@ export default function MusicPlayer() {
       <audio
         ref={audioRef}
         src={currentSong.url}
+        crossOrigin="anonymous"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={onNext}
