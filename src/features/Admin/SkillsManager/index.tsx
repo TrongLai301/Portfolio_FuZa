@@ -19,10 +19,21 @@ const SkillsManagerIndex: React.FC = () => {
     nextOrder, 
     addSkill, 
     editSkill, 
-    removeSkill 
+    removeSkill,
+    reorderSkills
   } = useSkills();
 
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
+
+  // Sync editingSkill when skills list changes (e.g. after reordering)
+  React.useEffect(() => {
+    if (editingSkill) {
+      const updated = skills.find(s => s.id === editingSkill.id);
+      if (updated && JSON.stringify(updated) !== JSON.stringify(editingSkill)) {
+        setEditingSkill(updated);
+      }
+    }
+  }, [skills, editingSkill]);
 
   const handleFormSubmit = async (input: CreateSkillInput) => {
     if (editingSkill) {
@@ -71,6 +82,7 @@ const SkillsManagerIndex: React.FC = () => {
                 loading={loading}
                 onEdit={(skill) => setEditingSkill(skill)}
                 onDelete={removeSkill}
+                onReorder={reorderSkills}
             />
           </Col>
 

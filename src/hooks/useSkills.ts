@@ -1,5 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
-import { skillService, type Skill, type CreateSkillInput } from "../services/skillService";
+import {
+  skillService,
+  type Skill,
+  type CreateSkillInput,
+} from "../services/skillService";
 import { toast } from "sonner";
 
 export const useSkills = () => {
@@ -13,10 +17,10 @@ export const useSkills = () => {
     try {
       const data = await skillService.getSkills();
       setSkills(data);
-      
+
       // Compute next order
       if (data.length > 0) {
-        const max = Math.max(...data.map(s => s.display_order || 0));
+        const max = Math.max(...data.map((s) => s.display_order || 0));
         setNextOrder(max + 1);
       } else {
         setNextOrder(1);
@@ -68,6 +72,23 @@ export const useSkills = () => {
     }
   };
 
+  const reorderSkills = async (newSkills: Skill[]) => {
+    // 1. Optimistic update
+    const previousSkills = [...skills];
+    const orderedSkills = newSkills.map((s, idx) => ({ ...s, display_order: idx + 1 }));
+    setSkills(orderedSkills);
+
+    try {
+      // 2. Prepare payload - Send full objects to avoid NOT NULL constraints
+      await skillService.updateOrder(orderedSkills);
+      toast.success("Skills updated.");
+    } catch (error: any) {
+      // 3. Rollback if failed
+      setSkills(previousSkills);
+      toast.error("Sync failed: " + error.message);
+    }
+  };
+
   useEffect(() => {
     fetchSkills();
   }, [fetchSkills]);
@@ -80,6 +101,7 @@ export const useSkills = () => {
     fetchSkills,
     addSkill,
     editSkill,
-    removeSkill
+    removeSkill,
+    reorderSkills,
   };
 };

@@ -18,7 +18,7 @@ export const musicService = {
       .from("songs")
       .select("*")
       .order("display_order", { ascending: true });
-    
+
     if (error) throw error;
     return data as Song[];
   },
@@ -50,7 +50,7 @@ export const musicService = {
       .from("songs")
       .insert([song])
       .select();
-    
+
     if (error) throw error;
     return data?.[0];
   },
@@ -61,26 +61,33 @@ export const musicService = {
       .update(song)
       .eq("id", id)
       .select();
-    
+
     if (error) throw error;
     return data?.[0];
   },
 
   deleteSong: async (id: string, audioUrl: string, coverUrl: string) => {
     // 1. Delete record from DB
-    const { error: dbError } = await supabase.from("songs").delete().eq("id", id);
+    const { error: dbError } = await supabase
+      .from("songs")
+      .delete()
+      .eq("id", id);
     if (dbError) throw dbError;
 
     // 2. Cleanup Storage (Optional but recommended)
     try {
-        const audioPath = audioUrl.split("/").pop();
-        const coverPath = coverUrl.split("/").pop();
-        if(audioPath) await supabase.storage.from("portfolio").remove([`audio/${audioPath}`]);
-        if(coverPath) await supabase.storage.from("portfolio").remove([`covers/${coverPath}`]);
+      const audioPath = audioUrl.split("/").pop();
+      const coverPath = coverUrl.split("/").pop();
+      if (audioPath)
+        await supabase.storage.from("portfolio").remove([`audio/${audioPath}`]);
+      if (coverPath)
+        await supabase.storage
+          .from("portfolio")
+          .remove([`covers/${coverPath}`]);
     } catch (e) {
-        console.warn("Storage cleanup failed:", e);
+      console.warn("Storage cleanup failed:", e);
     }
-    
+
     return true;
   },
 
@@ -88,9 +95,20 @@ export const musicService = {
     try {
       const fileName = url.split("/").pop();
       if (!fileName) return;
-      await supabase.storage.from("portfolio").remove([`${folder}/${fileName}`]);
+      await supabase.storage
+        .from("portfolio")
+        .remove([`${folder}/${fileName}`]);
     } catch (e) {
       console.warn("Manual cleanup failed:", e);
     }
+  },
+
+  updateOrder: async (songs: Song[]) => {
+    const { error } = await supabase
+      .from("songs")
+      .upsert(songs, { onConflict: "id" });
+    
+    if (error) throw error;
+    return true;
   }
 };
