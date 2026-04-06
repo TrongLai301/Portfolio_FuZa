@@ -16,7 +16,7 @@ export const skillService = {
       .from("skills")
       .select("*")
       .order("display_order", { ascending: true });
-    
+
     if (error) throw error;
     return data as Skill[];
   },
@@ -26,7 +26,7 @@ export const skillService = {
       .from("skills")
       .insert([skill])
       .select();
-    
+
     if (error) throw error;
     return data?.[0];
   },
@@ -37,13 +37,22 @@ export const skillService = {
       .update(skill)
       .eq("id", id)
       .select();
-    
+
     if (error) throw error;
     return data?.[0];
   },
 
   deleteSkill: async (id: string) => {
     const { error } = await supabase.from("skills").delete().eq("id", id);
+    if (error) throw error;
+    return true;
+  },
+
+  updateOrder: async (skills: Skill[]) => {
+    const { error } = await supabase
+      .from("skills")
+      .upsert(skills, { onConflict: "id" });
+    
     if (error) throw error;
     return true;
   }

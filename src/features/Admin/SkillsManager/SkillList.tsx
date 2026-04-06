@@ -1,7 +1,21 @@
 import React from "react";
 import { Table, Button, Space, Tag, Popconfirm, Typography, Tooltip } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, MenuOutlined } from "@ant-design/icons";
 import type { Skill } from "../../../services/skillService";
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const { Text } = Typography;
 
@@ -10,10 +24,76 @@ interface SkillListProps {
   loading: boolean;
   onEdit: (skill: Skill) => void;
   onDelete: (id: string) => void;
+  onReorder: (newSkills: Skill[]) => void;
 }
 
-const SkillList: React.FC<SkillListProps> = ({ skills, loading, onEdit, onDelete }) => {
+interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  'data-row-key': string;
+}
+
+const DraggableRow = ({ children, ...props }: RowProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: props['data-row-key'],
+  });
+
+  const style: React.CSSProperties = {
+    ...props.style,
+    transform: CSS.Translate.toString(transform),
+    transition,
+    ...(isDragging ? { position: 'relative', zIndex: 9999, background: 'rgba(99, 102, 241, 0.1)' } : {}),
+  };
+
+  return (
+    <tr {...props} ref={setNodeRef} style={style} {...attributes}>
+      {React.Children.map(children, (child) => {
+        if ((child as React.ReactElement).key === 'sort') {
+          return React.cloneElement(child as React.ReactElement, {
+            children: (
+              <MenuOutlined
+                ref={setActivatorNodeRef}
+                style={{ cursor: 'grab', color: 'rgba(255,255,255,0.25)' }}
+                {...listeners}
+              />
+            ),
+          } as any);
+        }
+        return child;
+      })}
+    </tr>
+  );
+};
+
+const SkillList: React.FC<SkillListProps> = ({ skills, loading, onEdit, onDelete, onReorder }) => {
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 1,
+      },
+    }),
+  );
+
+  const onDragEnd = ({ active, over }: DragEndEvent) => {
+    if (active.id !== over?.id) {
+      const oldIndex = skills.findIndex((i) => i.id === active.id);
+      const newIndex = skills.findIndex((i) => i.id === over?.id);
+      onReorder(arrayMove(skills, oldIndex, newIndex));
+    }
+  };
+
   const columns = [
+    {
+      key: 'sort',
+      width: 50,
+      align: 'center' as const,
+    },
     {
       title: "Node",
       dataIndex: "name",
@@ -45,7 +125,7 @@ const SkillList: React.FC<SkillListProps> = ({ skills, loading, onEdit, onDelete
       title: "Order",
       dataIndex: "display_order",
       key: "display_order",
-      render: (order: number) => <Tag color="blue" bordered={false} style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', borderRadius: '4px' }}>Order #{order}</Tag>,
+      render: (order: number) => <Tag color="blue" bordered={false} style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', borderRadius: '4px' }}># {order}</Tag>,
     },
     {
         title: "Color",
@@ -90,20 +170,29 @@ const SkillList: React.FC<SkillListProps> = ({ skills, loading, onEdit, onDelete
   ];
 
   return (
-    <Table
-      columns={columns}
-      dataSource={skills}
-      loading={loading}
-      rowKey="id"
-      pagination={{ pageSize: 8 }}
-      style={{ 
-        background: 'rgba(21, 21, 21, 0.8)', 
-        borderRadius: '24px', 
-        overflow: 'hidden',
-        border: '1px solid rgba(255, 255, 255, 0.05)'
-      }}
-      className="admin-antd-table"
-    />
+    <DndContext sensors={sensors} onDragEnd={onDragEnd}>
+      <SortableContext items={skills.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+        <Table
+          columns={columns}
+          dataSource={skills}
+          loading={loading}
+          rowKey="id"
+          pagination={false}
+          style={{ 
+            background: 'rgba(21, 21, 21, 0.8)', 
+            borderRadius: '24px', 
+            overflow: 'hidden',
+            border: '1px solid rgba(255, 255, 255, 0.05)'
+          }}
+          components={{
+            body: {
+              row: DraggableRow,
+            },
+          }}
+          className="admin-antd-table"
+        />
+      </SortableContext>
+    </DndContext>
   );
 };
 

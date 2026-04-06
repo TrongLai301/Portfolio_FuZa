@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
+# Portfolio FuZa
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dự án Portfolio cá nhân được xây dựng với React, TypeScript và Vite, kết hợp với Supabase để quản lý Database và Storage.
 
-Currently, two official plugins are available:
+## 🚀 Lệnh Phát Triển (Development)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Frontend (NPM)
+Chạy ứng dụng ở môi trường local:
+```bash
+npm install     # Cài đặt bài phụ thuộc
+npm run dev     # Khởi chạy server phát triển
+npm run build   # Build dự án cho production
+npm run lint    # Kiểm tra lỗi code (ESLint)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Database (Supabase CLI)
+Quản lý database migrations:
+```bash
+# Tạo một file migration mới (trống)
+npx supabase migration new [migration_name]
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# Áp dụng các migration chưa chạy vào database local (nếu dùng docker)
+npx supabase migration up
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Đẩy các thay đổi lên database remote (production)
+npx supabase db push
+
+# Kiểm tra trạng thái các migration
+npx supabase migration list
 ```
+
+## 📂 Cấu Trúc Database
+
+Mô hình database được thiết kế bằng DBML trong thư mục `docs/database_design.dbml`. Bạn có thể dán nội dung này vào [dbdiagram.io](https://dbdiagram.io/) để xem sơ đồ trực quan.
+
+## 🛠 Công Nghệ Sử Dụng
+
+- **Frontend**: React 19, Vite, Tailwind CSS, Framer Motion.
+- **Backend**: Supabase (Database, Auth, Storage).
+- **Tooling**: TypeScript, ESLint.
+
+## 📦 Triển Khai (Deployment)
+
+Dự án này được cấu hình để triển khai thông qua GitHub Actions (nếu có) hoặc build tay:
+
+1. Chạy `npm run build`.
+2. Kiểm tra thư mục `dist/`.
+3. Đẩy code lên branch `main` để kích hoạt CI/CD (nếu đã cài đặt).

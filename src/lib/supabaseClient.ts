@@ -21,10 +21,24 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  */
 export function resolveStorageUrl(url: string): string {
   if (!url) return url;
-  if (url.includes('127.0.0.1') || url.includes('localhost')) {
-    // Rewrite to use proxy path relative to current origin
-    return url.replace(/https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?/, `${window.location.origin}/supabase-local`);
+  
+  // Pattern to match any existing origin followed by our proxy path
+  // This handles http://localhost:5173/supabase-local, http://10.22.20.156:5173/supabase-local, etc.
+  const proxyPattern = /https?:\/\/[^/]+\/supabase-local/;
+  
+  if (proxyPattern.test(url)) {
+    // Force the current origin so it works on any device on the LAN
+    const resolved = url.replace(proxyPattern, `${window.location.origin}/supabase-local`);
+    console.log("Resolved Proxy URL:", resolved);
+    return resolved;
   }
+
+  // Fallback for raw local Supabase URLs (127.0.0.1:54321)
+  const localPattern = /https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?/;
+  if (localPattern.test(url)) {
+    return url.replace(localPattern, `${window.location.origin}/supabase-local`);
+  }
+
   return url;
 }
 
