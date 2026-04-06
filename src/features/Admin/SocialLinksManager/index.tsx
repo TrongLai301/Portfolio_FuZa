@@ -14,9 +14,19 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const SocialLinksManager: React.FC = () => {
-  const { links, loading, submitting, nextOrder, addLink, editLink, removeLink } = useSocialLinks();
+  const { links, loading, submitting, nextOrder, addLink, editLink, removeLink, reorderLinks } = useSocialLinks();
   const [editingLink, setEditingLink] = useState<SocialLink | null>(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
+
+  // Sync editingLink when links list changes (e.g. after reordering)
+  React.useEffect(() => {
+    if (editingLink) {
+      const updated = links.find(s => s.id === editingLink.id);
+      if (updated && JSON.stringify(updated) !== JSON.stringify(editingLink)) {
+        setEditingLink(updated);
+      }
+    }
+  }, [links, editingLink]);
 
   const handleAdd = () => {
     setEditingLink(null);
@@ -83,6 +93,7 @@ const SocialLinksManager: React.FC = () => {
           loading={loading} 
           onEdit={handleEdit} 
           onDelete={removeLink} 
+          onReorder={reorderLinks}
         />
       ) : (
         <SocialLinkForm 
