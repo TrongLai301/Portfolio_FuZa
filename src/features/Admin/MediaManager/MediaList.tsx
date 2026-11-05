@@ -85,7 +85,7 @@ const MediaList: React.FC<MediaListProps> = ({ medias, loading, onEdit, onDelete
       onFilter: (value: any, record: Media) =>
         record.title.toLowerCase().includes(value.toLowerCase()),
       render: (_: any, record: Media) => (
-        <Space direction="vertical" size={2}>
+        <Space orientation="vertical" size={2}>
           <Text strong style={{ color: '#fff', fontSize: '14px' }}>{record.title}</Text>
           <Space size={4}>
             <CalendarOutlined style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px' }} />

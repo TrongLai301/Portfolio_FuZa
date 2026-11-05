@@ -116,14 +116,143 @@
 
 .admin-btn-primary {
   background: #6366f1 !important;
+  color: #fff !important;
   border: none !important;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
-  transition: all 0.3s ease !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
 }
 
 .admin-btn-primary:hover {
+  background: #4f46e5 !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5) !important;
+}
+
+.admin-btn-primary:active {
+  transform: translateY(0px);
+}
+
+/* Ant ColorPicker Dark Theme Trigger Override */
+.admin-color-picker.w-full {
+  display: block !important;
+  width: 100% !important;
+}
+
+.admin-color-picker.w-full .ant-color-picker-trigger {
+  width: 100% !important;
+}
+
+.admin-color-picker .ant-color-picker-trigger {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 14px !important;
+  padding: 8px 16px !important;
+  height: 48px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  color: #fff !important;
+  transition: all 0.2s ease !important;
+}
+
+.admin-color-picker .ant-color-picker-trigger:hover {
+  border-color: #818cf8 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 0 12px rgba(129, 140, 248, 0.2) !important;
+}
+
+.admin-color-picker .ant-color-picker-color-block {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 8px !important;
+  border: 2px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+.admin-color-picker .ant-color-picker-trigger-text {
+  color: #f1f5f9 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Compact ColorPicker for Table/List Rows */
+.admin-color-picker-compact {
+  display: inline-block !important;
+}
+
+.admin-color-picker-compact .ant-color-picker-trigger {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 12px !important;
+  padding: 4px 10px !important;
+  height: 42px !important;
+  width: 130px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  color: #fff !important;
+  transition: all 0.2s ease !important;
+}
+
+.admin-color-picker-compact .ant-color-picker-trigger:hover {
+  border-color: #818cf8 !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.2) !important;
+}
+
+.admin-color-picker-compact .ant-color-picker-color-block {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+.admin-color-picker-compact .ant-color-picker-trigger-text {
+  color: #f1f5f9 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Input Large Dark Override */
+.admin-input-lg {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+  height: 48px !important;
+  font-size: 14px !important;
+  border-radius: 14px !important;
+  padding: 0 16px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease !important;
+}
+
+.admin-input-lg:focus {
+  border-color: #818cf8 !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 0 0 12px rgba(129, 140, 248, 0.25) !important;
+}
+
+/* Form Label Uniform Alignment */
+.admin-theme-label {
+  min-height: 28px;
+  display: flex;
+  align-items: flex-end;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #cbd5e1;
+  line-height: 1.3;
 }
 
 /* Ant Select Dropdown Dark */

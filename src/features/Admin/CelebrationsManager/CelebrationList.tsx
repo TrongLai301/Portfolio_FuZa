@@ -38,7 +38,7 @@ const CelebrationList: React.FC<CelebrationListProps> = ({ celebrations, loading
       key: "timeline",
       width: 150,
       render: (_: any, record: Celebration) => (
-        <Space direction="vertical" size={0}>
+        <Space orientation="vertical" size={0}>
           <Text strong style={{ color: '#fff', fontSize: '14px' }}>
             {dayjs(record.date).format('MMM D, YYYY')}
           </Text>

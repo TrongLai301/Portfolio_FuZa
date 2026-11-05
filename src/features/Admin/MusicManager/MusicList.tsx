@@ -255,7 +255,7 @@ const MusicList: React.FC<MusicListProps> = ({
       title: "Name",
       key: "name",
       render: (_: any, record: Song) => (
-        <Space direction="vertical" size={0}>
+        <Space orientation="vertical" size={0}>
           <Text strong style={{ color: "#fff", fontSize: "13px" }}>
             {record.title}
           </Text>

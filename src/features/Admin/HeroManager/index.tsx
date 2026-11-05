@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Spin } from "antd";
 import { supabase } from "../../../lib/supabaseClient";
+import { deleteStorageFile } from "../../../services/storageService";
 import { toast } from "sonner";
 import HeroForm from "./HeroForm";
 
@@ -72,14 +73,22 @@ const HeroManager: React.FC = () => {
       let videoUrl = initialValues?.video_bg_url;
       let orbitUrl = initialValues?.orbit_image_url;
 
-      // 1. Upload files
+      // 1. Upload files & clean up old files
       if (video_file) {
         toast.info("Uploading video background...");
-        videoUrl = await uploadFile(video_file, "backgrounds");
+        const newVideoUrl = await uploadFile(video_file, "backgrounds");
+        if (initialValues?.video_bg_url) {
+          await deleteStorageFile(initialValues.video_bg_url);
+        }
+        videoUrl = newVideoUrl;
       }
       if (orbit_file) {
         toast.info("Uploading orbit image...");
-        orbitUrl = await uploadFile(orbit_file, "orbits");
+        const newOrbitUrl = await uploadFile(orbit_file, "orbits");
+        if (initialValues?.orbit_image_url) {
+          await deleteStorageFile(initialValues.orbit_image_url);
+        }
+        orbitUrl = newOrbitUrl;
       }
 
       // 2. Save Hero Settings
@@ -142,7 +151,7 @@ const HeroManager: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Spin size="large" tip="Synchronizing systems..." />
+        <Spin size="large" description="Synchronizing systems..." />
       </div>
     );
   }

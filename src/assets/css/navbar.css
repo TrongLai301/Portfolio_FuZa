@@ -1,6 +1,7 @@
 :root {
     --color-signature: #ffffff;
-    --color-menu-items: linear-gradient(to right, #bdc3c7, #2c3e50);
+    --color-menu-items: #bdc3c7;
+    --color-menu-active: #ffffff;
     --delay-hover-end: 0.1s;
     --delay-hover: 0s;
 }
@@ -22,14 +23,22 @@
     height: 1.5rem;
 }
 
-.signature>svg,
 .signature>span {
-    color: var(--color-signature);
+    background: var(--color-signature, #ffffff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
     transition: filter 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
 }
 
+.signature>svg {
+    color: var(--color-signature-solid, #ffffff);
+    transition: filter 0.3s ease-in-out;
+}
+
 .signature:hover>span {
-    text-shadow: 1px 1px 4px #ffffff;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
     cursor: pointer;
 }
 
@@ -58,7 +67,10 @@
     font-size: 1.15rem;
     list-style: none;
     cursor: pointer;
-    color: var(--color-menu-items);
+    background: var(--color-menu-items, #bdc3c7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     transition: all 0.4s ease;
     transition-delay: var(--delay-hover-end);
 }
@@ -70,9 +82,8 @@
     bottom: 0;
     height: 2px;
     width: 0;
-    background: #697680;
-    background: linear-gradient(204deg, rgba(105, 118, 128, 1) 24%, rgba(223, 235, 245, 1) 72%);
-    transition: width 0.8s ease 0.5s;
+    background: var(--color-menu-active, #ffffff);
+    transition: width 0.5s ease;
     transition-delay: var(--delay-hover-end);
 }
 
@@ -83,10 +94,10 @@
 }
 
 .menu-list-items>li:hover,
-.active {
-    background: #697680;
-    background: linear-gradient(204deg, rgba(105, 118, 128, 1) 24%, rgba(223, 235, 245, 1) 72%);
+.menu-list-items>.active {
+    background: var(--color-menu-active, #ffffff);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     transition-delay: var(--delay-hover);
 }

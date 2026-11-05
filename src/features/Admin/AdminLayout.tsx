@@ -4,6 +4,7 @@ import { useAuth } from "../../commons/AuthContext";
 import { Layout, Menu, Button, Avatar, Space, Typography } from "antd";
 import {
   DashboardOutlined,
+  BgColorsOutlined,
   CodeOutlined,
   CustomerServiceOutlined,
   PlayCircleOutlined,
@@ -33,6 +34,11 @@ const AdminLayout: React.FC = () => {
       key: "/admin",
       icon: <DashboardOutlined />,
       label: <NavLink to="/admin">Dashboard</NavLink>,
+    },
+    {
+      key: "/admin/theme",
+      icon: <BgColorsOutlined />,
+      label: <NavLink to="/admin/theme">Theme & Header</NavLink>,
     },
     {
       key: "/admin/hero",
@@ -128,7 +134,7 @@ const AdminLayout: React.FC = () => {
             padding: "0 20px",
           }}
         >
-          <Space direction="vertical" style={{ width: "100%" }}>
+          <Space orientation="vertical" style={{ width: "100%" }}>
             <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
               <Avatar
                 src={`https://ui-avatars.com/api/?name=${user?.email}&background=6366f1&color=fff`}

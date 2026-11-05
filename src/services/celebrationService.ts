@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
+import { deleteStorageFile } from "./storageService";
 
 export interface Celebration {
   id: string;
@@ -66,10 +67,11 @@ export const celebrationService = {
 
   async update(id: string, input: CreateCelebrationInput): Promise<Celebration> {
     let image_url = input.image_url || "";
+    const oldImageUrl = input.image_url;
 
     if (input.image_file) {
       const fileExt = input.image_file.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
       const filePath = `celebrations/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -83,6 +85,11 @@ export const celebrationService = {
         .getPublicUrl(filePath);
 
       image_url = publicUrlData.publicUrl;
+
+      // Delete old image from storage to avoid bloated storage
+      if (oldImageUrl) {
+        await deleteStorageFile(oldImageUrl);
+      }
     }
 
     const { data, error } = await supabase
@@ -108,14 +115,7 @@ export const celebrationService = {
 
     // Delete image from storage if applicable
     if (imageUrl) {
-      try {
-        const path = imageUrl.split("/").pop();
-        if (path) {
-          await supabase.storage.from("portfolio").remove([`celebrations/${path}`]);
-        }
-      } catch (e) {
-        console.error("Failed to delete celebration image:", e);
-      }
+      await deleteStorageFile(imageUrl);
     }
   }
 };

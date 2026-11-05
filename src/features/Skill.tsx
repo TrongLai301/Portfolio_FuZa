@@ -50,7 +50,7 @@ const Skill = forwardRef<HTMLDivElement>((_, ref) => {
         {/* Tiêu đề */}
         <div className="animation opacity-0 text-center mb-20 relative z-10 w-full" style={{ animationFillMode: "both" }}>
           <span className="main-text">
-            <span className="text-secondary-1 text-white">My</span>
+            <span className="text-secondary-1">My</span>
             <span className="text-secondary-2"> Skills</span>
           </span>
         </div>

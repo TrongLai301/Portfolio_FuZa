@@ -29,7 +29,6 @@ export function resolveStorageUrl(url: string): string {
   if (proxyPattern.test(url)) {
     // Force the current origin so it works on any device on the LAN
     const resolved = url.replace(proxyPattern, `${window.location.origin}/supabase-local`);
-    console.log("Resolved Proxy URL:", resolved);
     return resolved;
   }
 

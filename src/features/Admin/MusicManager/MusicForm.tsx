@@ -8,6 +8,7 @@ import {
   CheckCircleFilled
 } from "@ant-design/icons";
 import type { Song } from "../../../services/musicService";
+import ImageCropperModal from "../components/ImageCropperModal";
 
 const { Text } = Typography;
 
@@ -24,6 +25,8 @@ const MusicForm: React.FC<MusicFormProps> = ({ initialData, onSubmit, submitting
   // Local File state for new uploads
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropRawFile, setCropRawFile] = useState<File | null>(null);
   
   // URLs for preview or existing data
   const [audioPreview, setAudioPreview] = useState<string>("");
@@ -74,9 +77,15 @@ const MusicForm: React.FC<MusicFormProps> = ({ initialData, onSubmit, submitting
   };
 
   const beforeCoverUpload = (file: File) => {
-    setCoverFile(file);
-    setCoverPreview(URL.createObjectURL(file));
+    setCropRawFile(file);
+    setCropperOpen(true);
     return false; // Prevent automatic upload
+  };
+
+  const handleCropped = (croppedFile: File) => {
+    setCoverFile(croppedFile);
+    setCoverPreview(URL.createObjectURL(croppedFile));
+    setCropperOpen(false);
   };
 
   // Valid if: (isEdit AND has some data) OR (isCreate AND has files)
@@ -204,11 +213,21 @@ const MusicForm: React.FC<MusicFormProps> = ({ initialData, onSubmit, submitting
             block 
             size="large"
             className="admin-btn-primary"
-            style={{ height: '54px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', border: 'none', marginTop: 12 }}
+            style={{ height: '48px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', borderRadius: '16px', marginTop: 16 }}
         >
-            Save
+            {initialData ? "Update Track" : "Save New Track"}
         </Button>
       </Form>
+
+      <ImageCropperModal
+        open={cropperOpen}
+        file={cropRawFile}
+        defaultAspect={1}
+        title="Crop Track Cover (Recommended 1:1 Square)"
+        onCropComplete={handleCropped}
+        onCancel={() => setCropperOpen(false)}
+        onSkipCrop={(original) => handleCropped(original)}
+      />
     </div>
   );
 };

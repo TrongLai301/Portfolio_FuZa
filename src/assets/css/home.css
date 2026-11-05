@@ -6,14 +6,21 @@
     --size-icon: calc(var(--size-frame-icon) /2);
 }
 
-.main-text>.text-secondary-2 {
-    background: #bdc3c7;
-    background: -webkit-linear-gradient(to bottom, #2c3e50, #bdc3c7);
-    background: linear-gradient(to bottom, #333333, #ffffff);
-    filter: drop-shadow(2px 4px 8px black);
+.main-text>.text-secondary-1 {
+    background: var(--color-title-primary, #ffffff);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.main-text>.text-secondary-2 {
+    background: var(--color-title-secondary, #bdc3c7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    filter: drop-shadow(2px 4px 8px black);
 }
 
 .main-text {

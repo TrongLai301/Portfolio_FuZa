@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import type { Celebration } from "../../../services/celebrationService";
 import dayjs from "dayjs";
+import ImageCropperModal from "../components/ImageCropperModal";
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -23,6 +24,8 @@ const CelebrationForm: React.FC<CelebrationFormProps> = ({ initialData, onSubmit
   const [form] = Form.useForm();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropRawFile, setCropRawFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (initialData) {
@@ -55,9 +58,15 @@ const CelebrationForm: React.FC<CelebrationFormProps> = ({ initialData, onSubmit
   };
 
   const beforeUpload = (file: File) => {
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    setCropRawFile(file);
+    setCropperOpen(true);
     return false;
+  };
+
+  const handleCropped = (croppedFile: File) => {
+    setImageFile(croppedFile);
+    setImagePreview(URL.createObjectURL(croppedFile));
+    setCropperOpen(false);
   };
 
   const isFormValid = initialData ? true : imageFile;
@@ -171,11 +180,22 @@ const CelebrationForm: React.FC<CelebrationFormProps> = ({ initialData, onSubmit
             disabled={!isFormValid}
             block 
             size="large"
-            style={{ height: '54px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', border: 'none', borderRadius: '16px', marginTop: 12 }}
+            className="admin-btn-primary"
+            style={{ height: '48px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', borderRadius: '16px', marginTop: 16 }}
         >
-            Add Memory
+            {initialData ? "Update Celebration" : "Save Celebration"}
         </Button>
       </Form>
+
+      <ImageCropperModal
+        open={cropperOpen}
+        file={cropRawFile}
+        defaultAspect={16 / 9}
+        title="Crop Celebration Image (Recommended 16:9)"
+        onCropComplete={handleCropped}
+        onCancel={() => setCropperOpen(false)}
+        onSkipCrop={(original) => handleCropped(original)}
+      />
     </div>
   );
 };

@@ -52,7 +52,7 @@ const Contact = forwardRef<HTMLDivElement>((_, ref) => {
           style={{ animationFillMode: "both" }}
         >
           <span className="main-text">
-            <span className="text-secondary-1 text-white">Contact</span>
+            <span className="text-secondary-1">Contact</span>
             <span className="text-secondary-2"> Me</span>
           </span>
           <p className="text-gray-400 mt-4 text-sm md:text-lg font-medium tracking-wide max-w-2xl mx-auto px-4">

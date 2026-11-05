@@ -3,6 +3,7 @@ import "./../assets/css/navbar.css";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCode, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { usePortfolio } from "./PortfolioContext";
 
 type NavbarProps = {
   activeId: string;
@@ -20,6 +21,7 @@ export default function Navbar({
   onScrollToContact,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { siteSettings } = usePortfolio();
 
   const handleNav = (fn: () => void) => {
     fn();
@@ -33,13 +35,39 @@ export default function Navbar({
     { id: "contact", label: "Contact", fn: onScrollToContact },
   ];
 
+  const logoText = siteSettings?.header_logo_text || "FuZa's profile";
+  const isGradient = (val?: any) => Boolean(val && typeof val === "string" && val.includes("gradient"));
+
+  const logoTextStyle = isGradient(siteSettings?.header_logo_color)
+    ? {
+        background: siteSettings?.header_logo_color,
+        WebkitBackgroundClip: "text",
+        backgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        display: "inline-block",
+      }
+    : {
+        color: siteSettings?.header_logo_color || "var(--color-signature)",
+      };
+
+  const logoSvgStyle = {
+    color: isGradient(siteSettings?.header_logo_color)
+      ? "var(--color-signature-solid, #ffffff)"
+      : (siteSettings?.header_logo_color || "var(--color-signature)"),
+  };
+
   return (
     <div className="navbar-edit sticky top-0 w-full backdrop-blur-md z-50">
       <div className="flex justify-between w-full lg:max-w-4/5 lg:mx-auto py-3 md:py-4 px-3 md:px-4 items-center">
         {/* Logo */}
-        <div className="flex items-center gap-2 signature cursor-pointer" onClick={onScrollToHome}>
-          <span className="blink-text text-nav">FuZa's profile</span>
-          <FontAwesomeIcon className="text-nav" icon={faCode} />
+        <div 
+          className="flex items-center gap-2 signature cursor-pointer" 
+          onClick={onScrollToHome}
+        >
+          <span className="blink-text text-nav" style={logoTextStyle}>
+            {logoText}
+          </span>
+          <FontAwesomeIcon className="text-nav" icon={faCode} style={logoSvgStyle} />
         </div>
 
         {/* Desktop Menu */}
@@ -77,7 +105,19 @@ export default function Navbar({
                 className={`w-full text-center py-4 text-nav cursor-pointer border-b border-white/5 ${activeId === item.id ? "active" : ""}`}
                 onClick={() => handleNav(item.fn)}
               >
-                {item.label}
+                <span
+                  style={{
+                    background: activeId === item.id
+                      ? (siteSettings?.menu_active_color || "var(--color-menu-active)")
+                      : (siteSettings?.menu_text_color || "var(--color-menu-items)"),
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    display: "inline-block",
+                  }}
+                >
+                  {item.label}
+                </span>
               </li>
             ))}
           </ul>

@@ -10,6 +10,7 @@ import {
   RocketOutlined
 } from "@ant-design/icons";
 import type { Media, Category } from "../../../services/mediaService";
+import ImageCropperModal from "../components/ImageCropperModal";
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -25,6 +26,8 @@ const MediaForm: React.FC<MediaFormProps> = ({ initialData, categories, onSubmit
   const [form] = Form.useForm();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropRawFile, setCropRawFile] = useState<File | null>(null);
   
   // Watch media type change
   const currentType = Form.useWatch('type', form);
@@ -72,9 +75,15 @@ const MediaForm: React.FC<MediaFormProps> = ({ initialData, categories, onSubmit
   };
 
   const beforeUpload = (file: File) => {
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    setCropRawFile(file);
+    setCropperOpen(true);
     return false;
+  };
+
+  const handleCropped = (croppedFile: File) => {
+    setImageFile(croppedFile);
+    setImagePreview(URL.createObjectURL(croppedFile));
+    setCropperOpen(false);
   };
 
   const isFormValid = initialData ? true : (imageFile);
@@ -214,11 +223,21 @@ const MediaForm: React.FC<MediaFormProps> = ({ initialData, categories, onSubmit
             block 
             size="large"
             className="admin-btn-primary"
-            style={{ height: '54px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', border: 'none', marginTop: 12 }}
+            style={{ height: '48px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', borderRadius: '16px', marginTop: 16 }}
         >
-            Save
+            {initialData ? "Update Media" : "Save New Media"}
         </Button>
       </Form>
+
+      <ImageCropperModal
+        open={cropperOpen}
+        file={cropRawFile}
+        defaultAspect={3 / 4}
+        title="Crop Media Cover (Recommended 3:4)"
+        onCropComplete={handleCropped}
+        onCancel={() => setCropperOpen(false)}
+        onSkipCrop={(original) => handleCropped(original)}
+      />
     </div>
   );
 };

@@ -1,16 +1,25 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, InputNumber, Space, Typography, Card, Divider, ColorPicker, Switch } from "antd";
+import { Form, Input, Button, InputNumber, Space, Typography, Card, Divider, ColorPicker, Switch, Tooltip } from "antd";
 import { 
   PlusOutlined, 
   EditOutlined, 
   GlobalOutlined,
   FormatPainterOutlined,
   ArrowLeftOutlined,
-  LinkOutlined
+  LinkOutlined,
+  CompassOutlined,
 } from "@ant-design/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as BrandIcons from "@fortawesome/free-brands-svg-icons";
+import * as SolidIcons from "@fortawesome/free-solid-svg-icons";
 import type { SocialLink } from "../../../services/socialLinkService";
 
 const { Text, Title } = Typography;
+
+const getFaIcon = (iconName: string) => {
+  if (!iconName) return null;
+  return (BrandIcons as any)[iconName] || (SolidIcons as any)[iconName] || null;
+};
 
 interface SocialLinkFormProps {
   initialData?: SocialLink | null;
@@ -22,12 +31,14 @@ interface SocialLinkFormProps {
 
 const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, onCancel, submitting, defaultOrder }) => {
   const [form] = Form.useForm();
+  const watchedIcon = Form.useWatch("icon_name", form);
+  const previewFa = getFaIcon(watchedIcon);
 
   useEffect(() => {
     if (initialData) {
       form.setFieldsValue({
         ...initialData,
-        // Chuyển string màu sang object cho ColorPicker nếu cần
+        // Convert color string to ColorPicker value if needed
         color_code: initialData.color_code || "#6366f1"
       });
     } else {
@@ -101,11 +112,48 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
         </Form.Item>
 
         <Form.Item
-          label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '10px' }}>Icon (FontAwesome Name)</Text>}
+          label={
+            <div className="flex items-center justify-between w-full">
+              <Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '10px' }}>
+                Icon (FontAwesome Name)
+              </Text>
+              <a
+                href="https://fontawesome.com/search?o=r&m=free"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 hover:text-indigo-300 transition-colors ml-3"
+              >
+                <CompassOutlined />
+                Browse Icons
+              </a>
+            </div>
+          }
           name="icon_name"
           rules={[{ required: true, message: 'Required' }]}
+          extra={
+            <Text style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.45)' }}>
+              e.g. <code className="text-indigo-300">faGithub</code>, <code className="text-indigo-300">faFacebook</code>, <code className="text-indigo-300">faDiscord</code>, <code className="text-indigo-300">faEnvelope</code>
+            </Text>
+          }
         >
-          <Input prefix={<FormatPainterOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} placeholder="e.g. faGithub, faFacebook" className="admin-input-dark" />
+          <Input 
+            prefix={<FormatPainterOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} 
+            suffix={
+              previewFa ? (
+                <Tooltip title="Valid icon!">
+                  <span className="flex items-center justify-center w-6 h-6 text-indigo-400 text-base">
+                    <FontAwesomeIcon icon={previewFa} />
+                  </span>
+                </Tooltip>
+              ) : watchedIcon ? (
+                <Tooltip title="Icon not recognized, please check camelCase name on FontAwesome">
+                  <span className="text-[10px] text-yellow-500/90 font-mono">Unmatched</span>
+                </Tooltip>
+              ) : null
+            }
+            placeholder="e.g. faGithub, faFacebook" 
+            className="admin-input-dark" 
+          />
         </Form.Item>
 
         <div style={{ display: 'flex', gap: '24px' }}>
@@ -133,7 +181,7 @@ const SocialLinkForm: React.FC<SocialLinkFormProps> = ({ initialData, onSubmit, 
           </Form.Item>
         </div>
 
-        <Space direction="vertical" style={{ width: '100%', marginTop: 24 }} size="middle">
+        <Space orientation="vertical" style={{ width: '100%', marginTop: 24 }} size="middle">
           <Button 
             type="primary" 
             htmlType="submit" 

@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
-  Card,
   Form,
   Input,
   Button,
   Typography,
-  Space,
-  Divider,
   Upload,
   Row,
   Col,
   ColorPicker,
+  Breadcrumb,
 } from "antd";
 import {
   SaveOutlined,
@@ -22,10 +20,78 @@ import {
   UploadOutlined,
   VideoCameraOutlined,
   RocketOutlined,
+  HomeOutlined,
+  EyeOutlined,
+  LockOutlined,
+  CheckCircleFilled,
 } from "@ant-design/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faReact, faJs, faNodeJs, faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faPlay } from "@fortawesome/free-solid-svg-icons";
+import ImageCropperModal from "../components/ImageCropperModal";
+import nilou from "../../../assets/image/commons/nilouPr4.png";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
+
+export const parseColorToPickerValue = (str?: any) => {
+  if (!str) return "#ffffff";
+  if (typeof str !== "string") return str;
+  if (!str.includes("gradient")) return str;
+
+  // 1. Try with percentages: e.g. '#6366f1 0%'
+  const withPercentRegex = /(#[0-9a-fA-F]{3,8}|rgba?\([^)]+\))\s*(\d+)%/g;
+  const stops: { color: string; percent: number }[] = [];
+  let match;
+  while ((match = withPercentRegex.exec(str)) !== null) {
+    stops.push({
+      color: match[1],
+      percent: parseInt(match[2], 10),
+    });
+  }
+  if (stops.length >= 2) return stops;
+
+  // 2. Try without percentages: e.g. 'linear-gradient(90deg, #6366f1, #a855f7)'
+  const colorRegex = /(#[0-9a-fA-F]{3,8}|rgba?\([^)]+\))/g;
+  const colors: string[] = [];
+  while ((match = colorRegex.exec(str)) !== null) {
+    colors.push(match[1]);
+  }
+  if (colors.length >= 2) {
+    return colors.map((c, i) => ({
+      color: c,
+      percent: Math.round((i / (colors.length - 1)) * 100),
+    }));
+  }
+
+  return str;
+};
+
+const COLOR_PRESETS = [
+  {
+    label: "Featured Gradients",
+    colors: [
+      parseColorToPickerValue("linear-gradient(90deg, #6366f1 0%, #a855f7 100%)"),
+      parseColorToPickerValue("linear-gradient(90deg, #ec4899 0%, #f43f5e 100%)"),
+      parseColorToPickerValue("linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%)"),
+      parseColorToPickerValue("linear-gradient(180deg, #333333 0%, #ffffff 100%)"),
+      parseColorToPickerValue("linear-gradient(90deg, #f59e0b 0%, #ef4444 100%)"),
+    ],
+  },
+  {
+    label: "Solid Colors",
+    colors: [
+      "#ffffff",
+      "#bdc3c7",
+      "#6366f1",
+      "#ec4899",
+      "#38bdf8",
+      "#10b981",
+      "#f59e0b",
+      "#e2e8f0",
+    ],
+  },
+];
 
 interface HeroFormProps {
   initialValues?: any;
@@ -34,7 +100,90 @@ interface HeroFormProps {
   saving: boolean;
 }
 
-const HeroForm: React.FC<HeroFormProps> = ({
+const extractColor = (val: any, fallback: string): string => {
+  if (!val) return fallback;
+  if (typeof val === "string") return val;
+  if (typeof val.toCssString === "function") {
+    try {
+      const res = val.toCssString();
+      if (typeof res === "string" && res) return res;
+    } catch {
+      // fallback
+    }
+  }
+  if (Array.isArray(val) && val.length > 0) {
+    try {
+      return `linear-gradient(90deg, ${val
+        .map((s: any) => `${extractColor(s.color, "#ffffff")} ${s.percent ?? 0}%`)
+        .join(", ")})`;
+    } catch {
+      // fallback
+    }
+  }
+  if (typeof val.toHexString === "function") {
+    try {
+      const res = val.toHexString();
+      if (typeof res === "string" && res) return res;
+    } catch {
+      // fallback
+    }
+  }
+  if (typeof val.toRgbString === "function") {
+    try {
+      const res = val.toRgbString();
+      if (typeof res === "string" && res) return res;
+    } catch {
+      // fallback
+    }
+  }
+  if (val.colors && Array.isArray(val.colors)) {
+    return extractColor(val.colors, fallback);
+  }
+  if (val.metaColor) {
+    return extractColor(val.metaColor, fallback);
+  }
+  return fallback;
+};
+
+const renderGradientText = (
+  text: string,
+  colorOrGradientInput: any,
+  extraStyle?: React.CSSProperties
+) => {
+  const colorStr = extractColor(colorOrGradientInput, "#ffffff");
+  const isGrad = typeof colorStr === "string" && colorStr.includes("gradient");
+  if (!isGrad) {
+    return (
+      <span
+        style={{
+          color: colorStr || "#ffffff",
+          display: "inline-block",
+          ...extraStyle,
+        }}
+      >
+        {text}
+      </span>
+    );
+  }
+
+  return (
+    <span
+      style={{
+        backgroundImage: colorStr,
+        WebkitBackgroundClip: "text",
+        backgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        color: "transparent",
+        display: "inline-block",
+        ...extraStyle,
+      }}
+    >
+      {text}
+    </span>
+  );
+};
+
+export const HeroForm: React.FC<HeroFormProps> = ({
   initialValues,
   typewriterTexts,
   onSaveAll,
@@ -45,15 +194,43 @@ const HeroForm: React.FC<HeroFormProps> = ({
   const [orbitFile, setOrbitFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string>("");
   const [orbitPreview, setOrbitPreview] = useState<string>("");
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropRawFile, setCropRawFile] = useState<File | null>(null);
+
+  // Watch all values for live preview
+  const watchedValues = Form.useWatch([], form) || {};
+
+  // Typewriter cycling animation for Live Preview
+  const [activePhraseIndex, setActivePhraseIndex] = useState(0);
+
+  const rawPhrases = watchedValues.phrases || typewriterTexts || [];
+  const phrases = Array.isArray(rawPhrases)
+    ? rawPhrases.filter((p: any) => p && p.content)
+    : [];
+
+  useEffect(() => {
+    if (phrases.length <= 1) return;
+    const timer = setInterval(() => {
+      setActivePhraseIndex((prev) => (prev + 1) % phrases.length);
+    }, 2800);
+    return () => clearInterval(timer);
+  }, [phrases.length]);
+
+  const currentPhrase =
+    phrases[activePhraseIndex] ||
+    phrases[0] || { content: "Web-Developer", content_color: "#6366f1" };
 
   useEffect(() => {
     if (initialValues) {
       form.setFieldsValue({
         ...initialValues,
-        phrases: typewriterTexts.map((t) => ({ 
-          id: t.id, 
-          content: t.content, 
-          content_color: t.content_color || '#6366f1' 
+        main_text_prefix_color: parseColorToPickerValue(initialValues.main_text_prefix_color),
+        main_text_suffix_color: parseColorToPickerValue(initialValues.main_text_suffix_color),
+        orbit_animation_color: parseColorToPickerValue(initialValues.orbit_animation_color),
+        phrases: typewriterTexts.map((t) => ({
+          id: t.id,
+          content: t.content,
+          content_color: parseColorToPickerValue(t.content_color || "#6366f1"),
         })),
       });
       setVideoPreview(initialValues.video_bg_url || "");
@@ -62,21 +239,19 @@ const HeroForm: React.FC<HeroFormProps> = ({
   }, [initialValues, typewriterTexts, form]);
 
   const onFinish = (values: any) => {
-    // Format colors from phrases (typewriter)
     const formattedPhrases = values.phrases?.map((p: any) => ({
       ...p,
-      content_color: typeof p.content_color === 'string' 
-        ? p.content_color 
-        : p.content_color?.toHexString?.() || '#6366f1'
+      content_color: extractColor(p.content_color, "#6366f1"),
     }));
 
-    // Format orbit color
-    const orbitColor = typeof values.orbit_animation_color === 'string'
-      ? values.orbit_animation_color
-      : values.orbit_animation_color?.toHexString?.() || '#6366f1';
+    const orbitColor = extractColor(values.orbit_animation_color, "#6366f1");
+    const prefixColor = extractColor(values.main_text_prefix_color, "#ffffff");
+    const suffixColor = extractColor(values.main_text_suffix_color, "#6366f1");
 
     onSaveAll({
       ...values,
+      main_text_prefix_color: prefixColor,
+      main_text_suffix_color: suffixColor,
       phrases: formattedPhrases,
       orbit_animation_color: orbitColor,
       video_file: videoFile,
@@ -91,262 +266,614 @@ const HeroForm: React.FC<HeroFormProps> = ({
   };
 
   const beforeUploadOrbit = (file: File) => {
-    setOrbitFile(file);
-    setOrbitPreview(URL.createObjectURL(file));
+    setCropRawFile(file);
+    setCropperOpen(true);
     return false;
   };
 
+  const handleOrbitCropped = (croppedFile: File) => {
+    setOrbitFile(croppedFile);
+    setOrbitPreview(URL.createObjectURL(croppedFile));
+    setCropperOpen(false);
+  };
+
+  // Preview computed values
+  const previewPrefix = watchedValues.main_text_prefix ?? initialValues?.main_text_prefix ?? "Hello,";
+  const previewPrefixColor = extractColor(
+    watchedValues.main_text_prefix_color,
+    initialValues?.main_text_prefix_color || "#ffffff"
+  );
+  const previewSuffix = watchedValues.main_text_suffix ?? initialValues?.main_text_suffix ?? "I'm FuZa";
+  const previewSuffixColor = extractColor(
+    watchedValues.main_text_suffix_color,
+    initialValues?.main_text_suffix_color || "#6366f1"
+  );
+  const previewDesc =
+    watchedValues.description ??
+    initialValues?.description ??
+    "A passionate developer who loves building modern and responsive web applications using React, Java, and JavaScript.";
+  const previewOrbitColor = extractColor(
+    watchedValues.orbit_animation_color,
+    initialValues?.orbit_animation_color || "#6366f1"
+  );
+
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-5 duration-700">
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFinish}
-        requiredMark={false}
-      >
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <Title level={2} style={{ color: "#fff", margin: 0, fontWeight: 900 }}>
-              Hero Section Editor
-            </Title>
-            <Text type="secondary">
-              Synchronize your landing page visual and content.
-            </Text>
+    <div className="animate-in fade-in slide-in-from-bottom-5 duration-700 pb-28 pt-2">
+      <Form form={form} layout="vertical" onFinish={onFinish} requiredMark={false}>
+        {/* Breadcrumb & Top Page Header */}
+        <div className="mb-10 pb-6 border-b border-white/10">
+          <Breadcrumb
+            className="mb-3"
+            items={[
+              {
+                title: (
+                  <span className="flex items-center gap-1.5 text-gray-400 hover:text-white">
+                    <HomeOutlined /> Dashboard
+                  </span>
+                ),
+                href: "/admin",
+              },
+              {
+                title: (
+                  <span className="flex items-center gap-1.5 text-indigo-400 font-medium">
+                    <RocketOutlined /> Hero Section
+                  </span>
+                ),
+              },
+            ]}
+          />
+
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-2">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center shadow-lg shadow-indigo-500/10">
+                  <RocketOutlined style={{ fontSize: "22px", color: "#818cf8" }} />
+                </div>
+                <Title
+                  level={2}
+                  style={{
+                    color: "#fff",
+                    margin: 0,
+                    fontWeight: 900,
+                    letterSpacing: "-0.5px",
+                    fontSize: "28px",
+                  }}
+                >
+                  Hero Section Editor
+                </Title>
+              </div>
+              <Text className="text-gray-400 text-sm mt-1.5 block">
+                Customize Hero landing page: background video, orbiting avatar, typewriter effects, and introduction copy.
+              </Text>
+            </div>
+
+            <Button
+              type="primary"
+              htmlType="submit"
+              icon={<SaveOutlined />}
+              loading={saving}
+              className="admin-btn-primary self-end md:self-auto shrink-0"
+              style={{
+                height: "48px",
+                padding: "0 36px",
+                borderRadius: "16px",
+                fontWeight: 900,
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+              }}
+            >
+              Save Changes
+            </Button>
           </div>
-          <Button
-            type="primary"
-            icon={<SaveOutlined />}
-            htmlType="submit"
-            loading={saving}
-            className="admin-btn-primary"
-            style={{
-              height: "48px",
-              padding: "0 40px",
-              borderRadius: "16px",
-              fontWeight: 900,
-              textTransform: "uppercase",
-              letterSpacing: "1px",
-            }}
-          >
-            Save Changes
-          </Button>
         </div>
 
-        <Row gutter={[24, 24]}>
-          {/* Left Column: General Settings */}
-          <Col xs={24} lg={14}>
-            <Card
-              className="admin-card"
-              style={{
-                height: '100%',
-                background: "rgba(21, 21, 21, 0.6)",
-                border: "1px solid rgba(255, 255, 255, 0.05)",
-                borderRadius: '24px'
-              }}
-              title={<Space><RocketOutlined style={{ color: '#6366f1' }}/> <Text strong style={{ color: '#fff', fontSize: '12px', textTransform: 'uppercase' }}>Visual & Bio</Text></Space>}
-            >
-              <Title
-                level={5}
-                style={{
-                  color: "rgba(255,255,255,0.45)",
-                  textTransform: "uppercase",
-                  fontSize: "10px",
-                  letterSpacing: "1px",
-                  marginBottom: 16
-                }}
+        {/* Content Layout with Generous Gutter */}
+        <Row gutter={[32, 32]}>
+          {/* Left Column: Form Controls */}
+          <Col xs={24} lg={13}>
+            <div className="space-y-8">
+              {/* Card 1: Media Assets (Video & Orbit Avatar) */}
+              <div
+                className="bg-[#141416] border border-white/10 rounded-3xl p-7 md:p-8 hover:border-white/20 transition-all duration-300 shadow-xl relative overflow-hidden"
+                style={{ backdropFilter: "blur(12px)" }}
               >
-                Media Assets
-              </Title>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <Upload beforeUpload={beforeUploadVideo} showUploadList={false} accept="video/*">
-                  <div className="w-full min-w-[230px] h-32 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:border-indigo-500/50 transition-all flex flex-col items-center justify-center overflow-hidden relative cursor-pointer">
-                    {videoPreview ? (
-                      <>
-                        <video src={videoPreview} className="absolute inset-0 w-full h-full object-cover opacity-50" muted />
-                        <PlayCircleOutlined className="relative z-10 text-xl text-indigo-400" />
-                      </>
-                    ) : <VideoCameraOutlined className="text-2xl text-white/10" />}
-                    <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: '10px', marginTop: 4 }}>BG Video</Text>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 font-black text-xs flex items-center justify-center border border-indigo-500/30 font-mono">
+                      01
+                    </span>
+                    <Title level={4} style={{ color: "#fff", margin: 0, fontWeight: 800 }}>
+                      Media Assets (Background Video & Avatar)
+                    </Title>
                   </div>
-                </Upload>
+                  <VideoCameraOutlined className="text-gray-500 text-lg" />
+                </div>
 
-                <Upload beforeUpload={beforeUploadOrbit} showUploadList={false} accept="image/*">
-                  <div className="w-full min-w-[230px] h-32 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:border-indigo-500/50 transition-all flex flex-col items-center justify-center overflow-hidden relative cursor-pointer">
-                    {orbitPreview ? (
-                      <>
-                        <img src={orbitPreview} alt="Orbit" className="absolute inset-0 w-full h-full object-cover opacity-50" />
-                        <PictureOutlined className="relative z-10 text-xl text-indigo-400" />
-                      </>
-                    ) : <UploadOutlined className="text-2xl text-white/10" />}
-                    <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: '10px', marginTop: 4 }}>Orbit Image</Text>
-                  </div>
-                </Upload>
-              </div>
+                <Paragraph className="text-xs text-gray-400 mb-6 leading-relaxed">
+                  Upload looping MP4 background video and orbit avatar profile picture (supports 1:1 square crop).
+                </Paragraph>
 
-              <Form.Item 
-                name="orbit_animation_color" 
-                label={<Text style={{ color: "rgba(255,255,255,0.45)", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>Orbit Animation Color</Text>}
-              >
-                <Input 
-                  className="admin-input-dark" 
-                  placeholder="#6366f1 or linear-gradient(...)" 
-                  style={{ borderRadius: '12px' }}
-                  suffix={
-                    <ColorPicker 
-                      size="small" 
-                      onChange={(c) => form.setFieldValue('orbit_animation_color', c.toHexString())} 
-                    />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+                  {/* Video Upload Box */}
+                  <Upload beforeUpload={beforeUploadVideo} showUploadList={false} accept="video/*">
+                    <div className="w-full h-36 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:border-indigo-500/50 hover:bg-white/8 transition-all flex flex-col items-center justify-center overflow-hidden relative cursor-pointer group">
+                      {videoPreview ? (
+                        <>
+                          <video
+                            src={videoPreview}
+                            className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-75 transition-opacity"
+                            muted
+                            loop
+                            autoPlay
+                          />
+                          <div className="relative z-10 flex flex-col items-center">
+                            <PlayCircleOutlined className="text-2xl text-indigo-400 mb-1" />
+                            <span className="text-[11px] text-white font-medium bg-black/60 px-2.5 py-0.5 rounded-full">
+                              Change Video
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <VideoCameraOutlined className="text-3xl text-gray-500 mb-1.5" />
+                          <span className="text-xs text-gray-400 font-medium">Upload Background Video (MP4)</span>
+                        </>
+                      )}
+                    </div>
+                  </Upload>
+
+                  {/* Orbit Image Upload Box */}
+                  <Upload beforeUpload={beforeUploadOrbit} showUploadList={false} accept="image/*">
+                    <div className="w-full h-36 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:border-indigo-500/50 hover:bg-white/8 transition-all flex flex-col items-center justify-center overflow-hidden relative cursor-pointer group">
+                      {orbitPreview ? (
+                        <>
+                          <img
+                            src={orbitPreview}
+                            alt="Orbit Preview"
+                            className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-75 transition-opacity"
+                          />
+                          <div className="relative z-10 flex flex-col items-center">
+                            <PictureOutlined className="text-2xl text-indigo-400 mb-1" />
+                            <span className="text-[11px] text-white font-medium bg-black/60 px-2.5 py-0.5 rounded-full">
+                              Crop / Change Orbit Photo
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <UploadOutlined className="text-3xl text-gray-500 mb-1.5" />
+                          <span className="text-xs text-gray-400 font-medium">Upload Orbit Avatar</span>
+                        </>
+                      )}
+                    </div>
+                  </Upload>
+                </div>
+
+                {/* Orbit Glow Color Picker */}
+                <Form.Item
+                  name="orbit_animation_color"
+                  label={
+                    <Text strong className="text-gray-300 text-[11px] uppercase tracking-wider">
+                      Orbit Glow Illumination Color
+                    </Text>
                   }
-                />
-              </Form.Item>
-
-              <Divider style={{ borderColor: 'rgba(255,255,255,0.05)', margin: '32px 0' }} />
-
-              <Title
-                level={5}
-                style={{
-                  color: "#6366f1",
-                  textTransform: "uppercase",
-                  fontSize: "10px",
-                  letterSpacing: "2px",
-                  marginBottom: 24,
-                  fontWeight: 900
-                }}
-              >
-                Main Text Configuration
-              </Title>
-              
-              <div className="flex flex-col gap-6">
-                {/* Part 1 Configuration */}
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4">
-                   <Text strong style={{ color: "rgba(255,255,255,0.8)", fontSize: '11px' }}>PART 1 (PREFIX)</Text>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Form.Item name="main_text_prefix" label="Text content" noStyle>
-                        <Input className="admin-input-dark" placeholder="Hello," />
-                      </Form.Item>
-                      <Form.Item name="main_text_prefix_color" label="Color/Gradient" noStyle>
-                        <Input 
-                          className="admin-input-dark" 
-                          placeholder="#fff" 
-                          suffix={
-                            <ColorPicker 
-                              size="small" 
-                              onChange={(c) => form.setFieldValue('main_text_prefix_color', c.toHexString())} 
-                            />
-                          }
-                        />
-                      </Form.Item>
-                   </div>
-                </div>
-
-                {/* Part 2 Configuration */}
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-4">
-                   <Text strong style={{ color: "rgba(255,255,255,0.8)", fontSize: '11px' }}>PART 2 (SUFFIX)</Text>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Form.Item name="main_text_suffix" label="Text content" noStyle>
-                        <Input className="admin-input-dark" placeholder="I'm FuZa" />
-                      </Form.Item>
-                      <Form.Item name="main_text_suffix_color" label="Color/Gradient" noStyle>
-                        <Input 
-                          className="admin-input-dark" 
-                          placeholder="linear-gradient(...)" 
-                          suffix={
-                            <ColorPicker 
-                              size="small" 
-                              onChange={(c) => form.setFieldValue('main_text_suffix_color', c.toHexString())} 
-                            />
-                          }
-                        />
-                      </Form.Item>
-                   </div>
-                </div>
+                  style={{ marginBottom: 0 }}
+                >
+                  <ColorPicker
+                    mode={["single", "gradient"]}
+                    presets={COLOR_PRESETS}
+                    showText
+                    size="large"
+                    className="admin-color-picker w-full"
+                  />
+                </Form.Item>
               </div>
 
-              <Form.Item name="description" label={<Text style={{ color: "rgba(255,255,255,0.45)", fontSize: '10px' }}>Description</Text>}>
-                <TextArea rows={5} className="admin-input-dark" placeholder="Write your intro..." />
-              </Form.Item>
-            </Card>
-          </Col>
+              {/* Card 2: Main Text & Description */}
+              <div
+                className="bg-[#141416] border border-white/10 rounded-3xl p-7 md:p-8 hover:border-white/20 transition-all duration-300 shadow-xl relative overflow-hidden"
+                style={{ backdropFilter: "blur(12px)" }}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 font-black text-xs flex items-center justify-center border border-purple-500/30 font-mono">
+                      02
+                    </span>
+                    <Title level={4} style={{ color: "#fff", margin: 0, fontWeight: 800 }}>
+                      Greeting & Hero Copy
+                    </Title>
+                  </div>
+                  <RocketOutlined className="text-gray-500 text-lg" />
+                </div>
 
-          {/* Right Column: Typewriter List */}
-          <Col xs={24} lg={10}>
-            <Card
-              className="admin-card"
-              style={{
-                height: '100%',
-                background: "rgba(21, 21, 21, 0.4)",
-                border: "1px solid rgba(255, 255, 255, 0.05)",
-                borderRadius: '24px'
-              }}
-              title={<Space><LineHeightOutlined style={{ color: '#6366f1' }}/> <Text strong style={{ color: '#fff', fontSize: '12px', textTransform: 'uppercase' }}>Typewriter Phrases</Text></Space>}
-              extra={
+                <Paragraph className="text-xs text-gray-400 mb-6 leading-relaxed">
+                  Configure primary headline text (Part 1 + Part 2) with gradient support and short biography.
+                </Paragraph>
+
+                {/* Part 1 (Prefix) */}
+                <div className="p-4 rounded-2xl bg-white/4 border border-white/5 mb-5">
+                  <Text strong className="text-[11px] text-indigo-300 uppercase tracking-wider block mb-3">
+                    Part 1: Salutation Greeting (e.g. Hello,)
+                  </Text>
+                  <Row gutter={[16, 16]}>
+                    <Col xs={24} sm={15}>
+                      <Form.Item name="main_text_prefix" style={{ marginBottom: 0 }}>
+                        <Input
+                          placeholder="Hello,"
+                          className="admin-input-lg"
+                          style={{
+                            background: "rgba(255, 255, 255, 0.04)",
+                            border: "1px solid rgba(255, 255, 255, 0.12)",
+                            color: "#fff",
+                            height: "46px",
+                            borderRadius: "14px",
+                          }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={9}>
+                      <Form.Item name="main_text_prefix_color" style={{ marginBottom: 0 }}>
+                        <ColorPicker
+                          mode={["single", "gradient"]}
+                          presets={COLOR_PRESETS}
+                          showText
+                          size="large"
+                          className="admin-color-picker w-full"
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </div>
+
+                {/* Part 2 (Suffix) */}
+                <div className="p-4 rounded-2xl bg-white/4 border border-white/5 mb-6">
+                  <Text strong className="text-[11px] text-purple-300 uppercase tracking-wider block mb-3">
+                    Part 2: Name / Identity (e.g. I'm FuZa)
+                  </Text>
+                  <Row gutter={[16, 16]}>
+                    <Col xs={24} sm={15}>
+                      <Form.Item name="main_text_suffix" style={{ marginBottom: 0 }}>
+                        <Input
+                          placeholder="I'm FuZa"
+                          className="admin-input-lg"
+                          style={{
+                            background: "rgba(255, 255, 255, 0.04)",
+                            border: "1px solid rgba(255, 255, 255, 0.12)",
+                            color: "#fff",
+                            height: "46px",
+                            borderRadius: "14px",
+                          }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={9}>
+                      <Form.Item name="main_text_suffix_color" style={{ marginBottom: 0 }}>
+                        <ColorPicker
+                          mode={["single", "gradient"]}
+                          presets={COLOR_PRESETS}
+                          showText
+                          size="large"
+                          className="admin-color-picker w-full"
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </div>
+
+                {/* Description */}
+                <Form.Item
+                  name="description"
+                  label={
+                    <Text strong className="text-gray-300 text-[11px] uppercase tracking-wider">
+                      Short Biography / Summary
+                    </Text>
+                  }
+                  style={{ marginBottom: 0 }}
+                >
+                  <TextArea
+                    rows={4}
+                    placeholder="Write a concise biography or welcome message..."
+                    className="admin-input-dark"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.04)",
+                      border: "1px solid rgba(255, 255, 255, 0.12)",
+                      color: "#fff",
+                      borderRadius: "14px",
+                      padding: "12px",
+                      fontSize: "13px",
+                    }}
+                  />
+                </Form.Item>
+              </div>
+
+              {/* Card 3: Typewriter Phrases */}
+              <div
+                className="bg-[#141416] border border-white/10 rounded-3xl p-7 md:p-8 hover:border-white/20 transition-all duration-300 shadow-xl relative overflow-hidden"
+                style={{ backdropFilter: "blur(12px)" }}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 font-black text-xs flex items-center justify-center border border-blue-500/30 font-mono">
+                      03
+                    </span>
+                    <Title level={4} style={{ color: "#fff", margin: 0, fontWeight: 800 }}>
+                      Typewriter Phrases (Animated Cycler)
+                    </Title>
+                  </div>
+                  <LineHeightOutlined className="text-gray-500 text-lg" />
+                </div>
+
+                <Paragraph className="text-xs text-gray-400 mb-6 leading-relaxed">
+                  Dynamic rotating phrases and occupational titles displayed with typewriter effect.
+                </Paragraph>
+
                 <Form.List name="phrases">
-                  {(_, { add }) => (
-                    <Button type="text" icon={<PlusOutlined />} onClick={() => add({ content: '' })} style={{ color: '#6366f1' }}>
-                      Add
-                    </Button>
+                  {(fields, { add, remove }) => (
+                    <div className="space-y-3">
+                      {fields.map(({ key, name, ...restField }) => (
+                        <div
+                          key={key}
+                          className="flex items-center gap-3 bg-white/4 p-2 px-3 rounded-2xl border border-white/8 hover:border-white/15 transition-all"
+                        >
+                          <Form.Item
+                            {...restField}
+                            name={[name, "content"]}
+                            rules={[{ required: true, message: "Please enter phrase content" }]}
+                            style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
+                          >
+                            <Input
+                              placeholder="e.g. Web Developer..."
+                              className="admin-input-dark"
+                              style={{
+                                height: "42px",
+                                borderRadius: "12px",
+                                background: "rgba(255, 255, 255, 0.04)",
+                                border: "1px solid rgba(255, 255, 255, 0.1)",
+                                color: "#fff",
+                                fontSize: "14px",
+                                width: "100%",
+                              }}
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[name, "content_color"]}
+                            style={{ marginBottom: 0, flexShrink: 0 }}
+                          >
+                            <ColorPicker
+                              mode={["single", "gradient"]}
+                              presets={COLOR_PRESETS}
+                              showText
+                              className="admin-color-picker-compact"
+                            />
+                          </Form.Item>
+
+                          {/* Hidden ID */}
+                          <Form.Item {...restField} name={[name, "id"]} hidden>
+                            <Input />
+                          </Form.Item>
+
+                          <Button
+                            type="text"
+                            danger
+                            icon={<DeleteOutlined />}
+                            onClick={() => remove(name)}
+                            className="hover:bg-red-500/10 rounded-xl shrink-0 flex items-center justify-center"
+                            style={{ height: "42px", width: "42px" }}
+                          />
+                        </div>
+                      ))}
+
+                      {fields.length === 0 && (
+                        <div className="text-center py-8 text-gray-500 border border-dashed border-white/10 rounded-2xl">
+                          <LineHeightOutlined style={{ fontSize: "28px" }} />
+                          <p className="mt-2 text-xs">No typewriter phrases yet. Click the button below to add one!</p>
+                        </div>
+                      )}
+
+                      <Button
+                        type="dashed"
+                        onClick={() => add({ content: "", content_color: "#6366f1" })}
+                        block
+                        icon={<PlusOutlined />}
+                        className="border-indigo-500/30 text-indigo-400 hover:text-indigo-300 hover:border-indigo-400 h-11 rounded-2xl font-bold"
+                      >
+                        Add New Phrase
+                      </Button>
+                    </div>
                   )}
                 </Form.List>
-              }
-            >
-              <Form.List name="phrases">
-                {(fields, { remove }) => (
-                  <div className="flex flex-col gap-3">
-                    {fields.map(({ key, name, ...restField }) => (
-                      <div key={key} className="flex items-center gap-3 bg-white/5 p-2 px-3 rounded-xl border border-white/5 group transition-all hover:bg-white/10">
-                        <Form.Item
-                          {...restField}
-                          name={[name, 'content']}
-                          rules={[{ required: true, message: 'Value required' }]}
-                          noStyle
-                        >
-                          <Input 
-                            placeholder="I'm a Developer..." 
-                            className="admin-input-dark flex-1"
-                            style={{ border: 'none', background: 'transparent' }}
-                            suffix={
-                              <Form.Item {...restField} name={[name, 'content_color']} noStyle>
-                                <ColorPicker 
-                                  size="small" 
-                                  onChange={(c) => {
-                                    // Update the specific field value in the list
-                                    const phrases = form.getFieldValue('phrases');
-                                    phrases[name].content_color = c.toHexString();
-                                    form.setFieldsValue({ phrases });
-                                  }}
-                                />
-                              </Form.Item>
-                            }
-                          />
-                        </Form.Item>
+              </div>
 
-                        {/* Store ID hidden to know whether to update or create if needed */}
-                        <Form.Item {...restField} name={[name, 'id']} hidden>
-                          <Input />
-                        </Form.Item>
-                        <Button 
-                          type="text" 
-                          danger 
-                          icon={<DeleteOutlined />} 
-                          onClick={() => remove(name)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity"
-                        />
-                      </div>
-                    ))}
-                    {fields.length === 0 && (
-                      <div className="text-center py-10 opacity-20">
-                        <LineHeightOutlined style={{ fontSize: '30px' }} />
-                        <p style={{ marginTop: 10 }}>No phrases added yet</p>
-                      </div>
-                    )}
+              {/* Bottom Large Submit Button */}
+              <div className="pt-2">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  icon={<SaveOutlined />}
+                  loading={saving}
+                  block
+                  className="admin-btn-primary"
+                  style={{
+                    height: "52px",
+                    borderRadius: "16px",
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    letterSpacing: "1.5px",
+                    fontSize: "14px",
+                  }}
+                >
+                  Save Hero Settings
+                </Button>
+              </div>
+            </div>
+          </Col>
+
+          {/* Right Column: Interactive Live Preview with Desktop Frame */}
+          <Col xs={24} lg={11}>
+            <div className="sticky top-6">
+              <div
+                className="bg-[#0e0e11] border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative"
+                style={{
+                  boxShadow: "0 20px 50px rgba(0, 0, 0, 0.6)",
+                }}
+              >
+                {/* Browser Window Mockup Bar */}
+                <div className="bg-[#18181c] px-4 py-3 border-b border-white/10 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-red-500/80 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-yellow-500/80 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-green-500/80 inline-block" />
                   </div>
-                )}
-              </Form.List>
-            </Card>
+
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-black/40 border border-white/5 text-[11px] text-gray-400 font-mono">
+                    <LockOutlined className="text-green-400 text-[10px]" />
+                    <span>hero-preview.local</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 text-indigo-400 text-xs font-semibold">
+                    <EyeOutlined />
+                    <span>LIVE</span>
+                  </div>
+                </div>
+
+                {/* Simulated Hero Section Stage */}
+                <div className="relative p-6 md:p-8 min-h-[460px] flex flex-col justify-between overflow-hidden bg-black/80">
+                  {/* Background Video Simulation */}
+                  {videoPreview ? (
+                    <video
+                      src={videoPreview}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-radial from-indigo-900/20 via-[#0a0a0f] to-black opacity-60 pointer-events-none" />
+                  )}
+
+                  {/* Top Badge */}
+                  <div className="relative z-10 flex items-center justify-between mb-4">
+                    <span className="text-[10px] text-gray-400 uppercase font-mono tracking-wider font-bold">
+                      Hero Section Preview:
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium">
+                      Desktop Scale 100%
+                    </span>
+                  </div>
+
+                  {/* Center Hero Layout: 2 Columns Simulation */}
+                  <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 my-auto">
+                    {/* Left: Text & Typewriter */}
+                    <div className="flex-1 text-left space-y-3 min-w-0">
+                      {/* Main Heading */}
+                      <div className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+                        {renderGradientText(previewPrefix, previewPrefixColor)}
+                        {" "}
+                        {renderGradientText(previewSuffix, previewSuffixColor)}
+                      </div>
+
+                      {/* Typewriter Simulation */}
+                      <div className="flex items-center gap-1 text-sm font-semibold h-6">
+                        {renderGradientText(
+                          currentPhrase.content || "Developer",
+                          currentPhrase.content_color || "#6366f1"
+                        )}
+                        <span className="w-0.5 h-4 bg-indigo-400 animate-pulse inline-block" />
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-gray-300 text-xs leading-relaxed line-clamp-3">
+                        {previewDesc}
+                      </p>
+
+                      {/* Social Icons Mockup */}
+                      <div className="flex items-center gap-2 pt-1 text-xs text-gray-400">
+                        <span className="text-[11px]">Follow:</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 text-gray-300 text-[10px]">
+                            <FontAwesomeIcon icon={faGithub} />
+                          </span>
+                          <span className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 text-blue-400 text-[10px]">
+                            <FontAwesomeIcon icon={faReact} />
+                          </span>
+                          <span className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 text-yellow-400 text-[10px]">
+                            <FontAwesomeIcon icon={faJs} />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Orbit Avatar with Live Glow & Waves */}
+                    <div className="relative shrink-0 flex items-center justify-center p-4">
+                      {/* Outer Orbit Track Circle */}
+                      <div
+                        className="w-40 h-40 rounded-full border border-dashed border-white/15 absolute animate-spin"
+                        style={{ animationDuration: "30s" }}
+                      >
+                        {/* Orbiting Icons */}
+                        <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/80 border border-white/20 flex items-center justify-center text-blue-400 text-[10px] shadow-lg">
+                          <FontAwesomeIcon icon={faReact} />
+                        </span>
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-6 h-6 rounded-full bg-black/80 border border-white/20 flex items-center justify-center text-yellow-400 text-[10px] shadow-lg">
+                          <FontAwesomeIcon icon={faJs} />
+                        </span>
+                        <span className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/80 border border-white/20 flex items-center justify-center text-green-400 text-[10px] shadow-lg">
+                          <FontAwesomeIcon icon={faNodeJs} />
+                        </span>
+                      </div>
+
+                      {/* Main Avatar Circle with Dynamic Glow Shadow */}
+                      <div
+                        className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-white/20 flex items-center justify-center transition-all duration-500 group cursor-pointer"
+                        style={{
+                          boxShadow: `0 0 25px 8px ${
+                            typeof previewOrbitColor === "string" && previewOrbitColor.includes("gradient")
+                              ? "#6366f1"
+                              : previewOrbitColor || "#6366f1"
+                          }`,
+                        }}
+                      >
+                        <img
+                          src={orbitPreview || nilou}
+                          alt="Orbit Avatar"
+                          className="w-full h-full object-cover"
+                        />
+
+                        {/* Play Overlay */}
+                        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
+                            <FontAwesomeIcon icon={faPlay} className="text-white text-xs ml-0.5" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Notice */}
+                  <div className="relative z-10 pt-4 mt-4 border-t border-white/10 flex items-center gap-2 text-xs text-indigo-300">
+                    <CheckCircleFilled className="text-indigo-400 text-sm shrink-0" />
+                    <span>All text, gradient styling, avatar, and background video update in real time here.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </Col>
         </Row>
       </Form>
+
+      {/* Image Cropper Modal for Orbit Avatar */}
+      <ImageCropperModal
+        open={cropperOpen}
+        file={cropRawFile}
+        defaultAspect={1}
+        title="Crop Orbit Avatar (Recommended 1:1 Square)"
+        onCropComplete={handleOrbitCropped}
+        onCancel={() => setCropperOpen(false)}
+        onSkipCrop={(original) => handleOrbitCropped(original)}
+      />
     </div>
   );
 };

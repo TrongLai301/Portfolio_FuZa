@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
+import { deleteStorageFile } from "./storageService";
 
 export interface Song {
   id: string;
@@ -74,33 +75,15 @@ export const musicService = {
       .eq("id", id);
     if (dbError) throw dbError;
 
-    // 2. Cleanup Storage (Optional but recommended)
-    try {
-      const audioPath = audioUrl.split("/").pop();
-      const coverPath = coverUrl.split("/").pop();
-      if (audioPath)
-        await supabase.storage.from("portfolio").remove([`audio/${audioPath}`]);
-      if (coverPath)
-        await supabase.storage
-          .from("portfolio")
-          .remove([`covers/${coverPath}`]);
-    } catch (e) {
-      console.warn("Storage cleanup failed:", e);
-    }
+    // 2. Cleanup Storage securely
+    if (audioUrl) await deleteStorageFile(audioUrl);
+    if (coverUrl) await deleteStorageFile(coverUrl);
 
     return true;
   },
 
-  deleteFileByUrl: async (url: string, folder: "audio" | "covers") => {
-    try {
-      const fileName = url.split("/").pop();
-      if (!fileName) return;
-      await supabase.storage
-        .from("portfolio")
-        .remove([`${folder}/${fileName}`]);
-    } catch (e) {
-      console.warn("Manual cleanup failed:", e);
-    }
+  deleteFileByUrl: async (url: string, _folder?: "audio" | "covers") => {
+    await deleteStorageFile(url);
   },
 
   updateOrder: async (songs: Song[]) => {

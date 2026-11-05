@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
+import { deleteStorageFile } from "./storageService";
 
 export type MediaType = 'anime' | 'game';
 
@@ -141,13 +142,8 @@ export const mediaService = {
   deleteMedia: async (id: string, imageUrl: string) => {
     const { error } = await supabase.from("medias").delete().eq("id", id);
     if (error) throw error;
-    try {
-        const fileName = imageUrl.split("/").pop();
-        if (fileName) {
-            await supabase.storage.from("portfolio").remove([`covers/${fileName}`]);
-        }
-    } catch (e) {
-        console.warn("Media storage cleanup failed:", e);
+    if (imageUrl) {
+      await deleteStorageFile(imageUrl);
     }
     return true;
   }

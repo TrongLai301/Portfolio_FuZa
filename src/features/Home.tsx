@@ -176,9 +176,9 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
   }, [orbitSkills]);
 
   // Helper to determine if a string is a color or gradient and return styles
-  const getTextStyle = (colorStr?: string) => {
+  const getTextStyle = (colorStr?: any) => {
     if (!colorStr) return {};
-    const isGradient = colorStr.includes("gradient");
+    const isGradient = typeof colorStr === "string" && colorStr.includes("gradient");
     if (isGradient) {
       return {
         background: colorStr,
@@ -187,7 +187,7 @@ const Home = forwardRef<HTMLDivElement>((_, ref) => {
         display: "inline-block",
       };
     }
-    return { color: colorStr };
+    return { color: typeof colorStr === "string" ? colorStr : undefined };
   };
 
   return (

@@ -25,6 +25,7 @@ import MediaManager from "./features/Admin/MediaManager/index";
 import CelebrationsManager from "./features/Admin/CelebrationsManager/index";
 import ValorantManager from "./features/Admin/ValorantManager/index";
 import HeroManager from "./features/Admin/HeroManager/index";
+import ThemeManager from "./features/Admin/ThemeManager/index";
 import { ConfigProvider, theme } from "antd";
 import { PortfolioProvider, usePortfolio } from "./commons/PortfolioContext";
 import { MusicProvider } from "./commons/MusicContext";
@@ -34,12 +35,25 @@ function MainApp() {
   const { heroSettings, loading, isVideoPlaying } = usePortfolio();
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Safely play video without spamming AbortError when interrupted by load/pause
+  const safePlayVideo = () => {
+    if (!videoRef.current) return;
+    const promise = videoRef.current.play();
+    if (promise !== undefined) {
+      promise.catch((e: any) => {
+        if (e?.name !== "AbortError" && e?.name !== "NotAllowedError") {
+          console.debug("Autoplay prevented:", e);
+        }
+      });
+    }
+  };
+
   // Manually trigger video load when the background URL changes
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.load();
       if (isVideoPlaying) {
-        videoRef.current.play().catch(e => console.log('Autoplay prevented', e));
+        safePlayVideo();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,7 +63,7 @@ function MainApp() {
   useEffect(() => {
     if (videoRef.current) {
       if (isVideoPlaying) {
-        videoRef.current.play().catch(e => console.log('Autoplay prevented', e));
+        safePlayVideo();
       } else {
         videoRef.current.pause();
       }
@@ -93,6 +107,7 @@ function MainApp() {
         <Route path="/admin" element={<ProtectedRoute />}>
           <Route element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
+            <Route path="theme" element={<ThemeManager />} />
             <Route path="hero" element={<HeroManager />} />
             <Route path="skills" element={<SkillsManager />} />
             <Route path="music" element={<MusicManager />} />
