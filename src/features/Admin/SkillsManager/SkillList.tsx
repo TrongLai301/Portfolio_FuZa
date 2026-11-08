@@ -178,6 +178,7 @@ const SkillList: React.FC<SkillListProps> = ({ skills, loading, onEdit, onDelete
           loading={loading}
           rowKey="id"
           pagination={false}
+          scroll={{ x: 600 }}
           style={{ 
             background: 'rgba(21, 21, 21, 0.8)', 
             borderRadius: '24px', 

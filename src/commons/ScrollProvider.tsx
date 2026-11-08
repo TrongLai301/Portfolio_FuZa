@@ -4,6 +4,8 @@ import { ScrollContext } from "./ScrollContext";
 export const ScrollProvider = ({ children }: { children: React.ReactNode }) => {
   const homeRef = useRef<HTMLDivElement | null>(null);
   const aboutRef = useRef<HTMLDivElement | null>(null);
+  const entertainmentRef = useRef<HTMLDivElement | null>(null);
+  const celebratesRef = useRef<HTMLDivElement | null>(null);
   const skillRef = useRef<HTMLDivElement | null>(null);
   const contactRef = useRef<HTMLDivElement | null>(null);
 
@@ -17,7 +19,7 @@ export const ScrollProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ScrollContext.Provider
-      value={{ homeRef, aboutRef, skillRef, contactRef, scrollTo }}
+      value={{ homeRef, aboutRef, entertainmentRef, celebratesRef, skillRef, contactRef, scrollTo }}
     >
       {children}
     </ScrollContext.Provider>

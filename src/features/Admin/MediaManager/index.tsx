@@ -112,7 +112,7 @@ const MediaManagerIndex: React.FC = () => {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-5 duration-1000 pb-20">
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+      <Space orientation="vertical" size="large" style={{ width: "100%" }}>
         {/* Breadcrumbs & Header Actions */}
         <div
           style={{
@@ -122,7 +122,7 @@ const MediaManagerIndex: React.FC = () => {
             marginBottom: 24,
           }}
         >
-          <Space direction="vertical" size={0}>
+          <Space orientation="vertical" size={0}>
             <Breadcrumb
               items={[
                 {

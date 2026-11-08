@@ -1,15 +1,24 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, InputNumber, Space, Typography, Card, Divider, ColorPicker } from "antd";
+import { Form, Input, Button, InputNumber, Space, Typography, Card, Divider, ColorPicker, Tooltip } from "antd";
 import { 
   PlusOutlined, 
   EditOutlined, 
   BlockOutlined,
   FormatPainterOutlined,
-  ArrowLeftOutlined
+  ArrowLeftOutlined,
+  CompassOutlined,
 } from "@ant-design/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as BrandIcons from "@fortawesome/free-brands-svg-icons";
+import * as SolidIcons from "@fortawesome/free-solid-svg-icons";
 import type { Skill, CreateSkillInput } from "../../../services/skillService";
 
 const { Text, Title } = Typography;
+
+const getFaIcon = (iconName: string) => {
+  if (!iconName) return null;
+  return (BrandIcons as any)[iconName] || (SolidIcons as any)[iconName] || null;
+};
 
 interface SkillFormProps {
   initialData?: Skill | null;
@@ -21,6 +30,8 @@ interface SkillFormProps {
 
 const SkillForm: React.FC<SkillFormProps> = ({ initialData, onSubmit, onCancel, submitting, defaultOrder }) => {
   const [form] = Form.useForm();
+  const watchedIcon = Form.useWatch("icon_name", form);
+  const previewFa = getFaIcon(watchedIcon);
 
   useEffect(() => {
     if (initialData) {
@@ -94,11 +105,47 @@ const SkillForm: React.FC<SkillFormProps> = ({ initialData, onSubmit, onCancel, 
         </Form.Item>
 
         <Form.Item
-          label={<Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '10px' }}>Icon (FA)</Text>}
+          label={
+            <div className="flex items-center justify-between w-full">
+              <Text strong style={{ color: 'rgba(255, 255, 255, 0.45)', textTransform: 'uppercase', fontSize: '10px' }}>
+                Icon (FontAwesome Name)
+              </Text>
+              <a
+                href="https://fontawesome.com/search?o=r&m=free"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 hover:text-indigo-300 transition-colors ml-3"
+              >
+                <CompassOutlined />
+                Browse Icons
+              </a>
+            </div>
+          }
           name="icon_name"
           rules={[{ required: true, message: 'Required' }]}
+          extra={
+            <Text style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.45)' }}>
+              e.g. <code className="text-indigo-300">faReact</code>, <code className="text-indigo-300">faNodeJs</code>, <code className="text-indigo-300">faPython</code>, <code className="text-indigo-300">faDocker</code>
+            </Text>
+          }
         >
-          <Input prefix={<FormatPainterOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} placeholder="faReact" />
+          <Input 
+            prefix={<FormatPainterOutlined style={{ color: 'rgba(255, 255, 255, 0.2)' }} />} 
+            suffix={
+              previewFa ? (
+                <Tooltip title="Valid icon!">
+                  <span className="flex items-center justify-center w-6 h-6 text-indigo-400 text-base">
+                    <FontAwesomeIcon icon={previewFa} />
+                  </span>
+                </Tooltip>
+              ) : watchedIcon ? (
+                <Tooltip title="Icon not recognized, please verify camelCase name on FontAwesome">
+                  <span className="text-[10px] text-yellow-500/90 font-mono">Unmatched</span>
+                </Tooltip>
+              ) : null
+            }
+            placeholder="e.g. faReact" 
+          />
         </Form.Item>
 
         <div className="flex gap-6">
@@ -118,7 +165,7 @@ const SkillForm: React.FC<SkillFormProps> = ({ initialData, onSubmit, onCancel, 
             </Form.Item>
         </div>
 
-        <Space direction="vertical" style={{ width: '100%', marginTop: 24 }} size="middle">
+        <Space orientation="vertical" style={{ width: '100%', marginTop: 24 }} size="middle">
             <Button 
                 type="primary" 
                 htmlType="submit" 

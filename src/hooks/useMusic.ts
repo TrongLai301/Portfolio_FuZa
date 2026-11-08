@@ -144,7 +144,7 @@ export const useMusic = () => {
     }
   };
 
-  const removeSong = async (id: string, audioUrl: string, coverUrl: string) => {
+  const removeSong = async (id: string, audioUrl?: string, coverUrl?: string) => {
     try {
       await musicService.deleteSong(id, audioUrl, coverUrl);
       toast.success("Song deleted.");

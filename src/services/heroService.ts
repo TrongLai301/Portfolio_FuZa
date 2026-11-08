@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabaseClient";
+import { supabase, resolveStorageUrl } from "../lib/supabaseClient";
 
 export interface HeroSettings {
   id: string;
@@ -50,7 +50,11 @@ export const fetchHeroData = async (): Promise<HeroData> => {
     if (textsError) throw textsError;
 
     return {
-      settings,
+      settings: settings ? {
+        ...settings,
+        orbit_image_url: resolveStorageUrl(settings.orbit_image_url),
+        video_bg_url: resolveStorageUrl(settings.video_bg_url),
+      } : null,
       typewriterTexts: texts || [],
     };
   } catch (error) {

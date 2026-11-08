@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 import type { CelebratePhoto } from "../types";
+import { isVideoUrl } from "../../../utils/mediaOptimizer";
+import AutoplayVideo from "../../../components/AutoplayVideo";
 
 interface CelebrateDetailProps {
   photo: CelebratePhoto;
@@ -14,26 +16,36 @@ export default function CelebrateDetail({
   photo,
   onBack,
 }: CelebrateDetailProps) {
+  const isVideo = isVideoUrl(photo.imageSrc);
+
   return (
-    <div className="fade-in-up w-full h-full p-4 md:p-8 flex flex-col md:flex-row gap-8 overflow-y-auto custom-scrollbar bg-linear-to-br from-[#0f1428] via-[#151b36] to-[#0f1428]">
-      {/* Left: Full Image (Priority) */}
-      <div className="w-full md:w-[60%] shrink-0 flex items-center justify-center p-2">
+    <div className="fade-in-up w-full min-h-[500px] p-4 sm:p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 rounded-3xl border border-cyan-500/25 bg-[#0a0f1d]/90 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(6,182,212,0.15)]">
+      {/* Left: Full Image / Video (Priority) */}
+      <div className="w-full md:w-[58%] shrink-0 flex items-center justify-center p-1 sm:p-2">
         <div className="relative group w-full h-full flex items-center justify-center">
-          <img
-            src={photo.imageSrc}
-            alt={photo.caption}
-            className="w-full h-auto max-h-[400px] md:max-h-[600px] rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] object-contain border border-white/10"
-          />
-          {/* Subtle glow behind image */}
-          <div className="absolute -inset-4 bg-indigo-500/10 blur-3xl -z-10 rounded-full"></div>
+          {isVideo ? (
+            <AutoplayVideo
+              src={photo.imageSrc}
+              className="w-full h-auto max-h-[380px] md:max-h-[560px] rounded-2xl md:rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] object-contain border border-white/10"
+            />
+          ) : (
+            <img
+              src={photo.imageSrc}
+              alt={photo.caption}
+              className="w-full h-auto max-h-[380px] md:max-h-[560px] rounded-2xl md:rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] object-contain border border-white/10"
+            />
+          )}
+          {/* Subtle cosmic glow behind image */}
+          <div className="absolute -inset-4 bg-cyan-500/15 blur-3xl -z-10 rounded-full pointer-events-none"></div>
         </div>
       </div>
 
       {/* Right: Info column */}
-      <div className="w-full md:w-[40%] flex flex-col justify-start">
+      <div className="w-full md:w-[42%] flex flex-col justify-start">
+        {/* Back Button with subtle cyan glow */}
         <button
           onClick={onBack}
-          className="mb-8 self-start px-5 py-2.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 rounded-xl transition-all duration-300 border border-indigo-500/30 shadow-lg flex items-center gap-3 text-sm font-semibold group"
+          className="mb-5 self-start px-4 sm:px-5 py-2 sm:py-2.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 rounded-xl transition-all duration-300 border border-cyan-500/30 hover:border-cyan-400/60 shadow-[0_0_15px_rgba(6,182,212,0.15)] flex items-center gap-2.5 text-xs sm:text-sm font-semibold group cursor-pointer"
         >
           <span className="group-hover:-translate-x-1 transition-transform duration-300">
             &larr;
@@ -41,19 +53,23 @@ export default function CelebrateDetail({
           <span>Back to List</span>
         </button>
 
-        <div className="mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-400 text-[10px] font-bold tracking-widest uppercase mb-4 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+        <div className="mb-4 sm:mb-6">
+          {/* Memory Highlight Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/15 border border-cyan-500/30 rounded-full text-cyan-300 text-[10px] font-mono font-bold tracking-widest uppercase mb-3 shadow-[0_0_10px_rgba(6,182,212,0.2)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#22d3ee]"></span>
             Memory Highlight
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 leading-tight drop-shadow-2xl">
+
+          {/* Title with drop shadow */}
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 leading-tight drop-shadow-[0_2px_15px_rgba(0,0,0,0.8)]">
             {photo.caption}
           </h2>
 
-          <div className="flex items-center gap-3 text-gray-400 text-base mb-8">
-            <div className="p-2 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
+          {/* Captured On Date Badge */}
+          <div className="flex items-center gap-3 text-gray-300 text-sm sm:text-base mb-6">
+            <div className="p-2 bg-cyan-500/10 rounded-xl border border-cyan-500/30 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.15)]">
               <svg
-                className="w-5 h-5 text-indigo-400"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -67,33 +83,29 @@ export default function CelebrateDetail({
               </svg>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase font-bold tracking-tighter text-indigo-500/70">
+              <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-cyan-400/80">
                 Captured On
               </span>
-              <span className="font-semibold text-gray-200">
+              <span className="font-semibold text-gray-100">
                 {formatDate(photo.date)}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="relative mt-2 p-6 md:p-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md shadow-2xl overflow-hidden min-h-[150px]">
-          {/* Decorative corner accent */}
-          <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full"></div>
+        {/* The Story Box */}
+        <div className="relative p-5 sm:p-7 md:p-8 rounded-2xl md:rounded-3xl border border-cyan-500/20 bg-white/[0.03] backdrop-blur-md shadow-xl overflow-hidden min-h-[140px]">
+          {/* Subtle cyan glow inside the card */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none"></div>
 
-          <h3 className="text-lg md:text-xl font-bold mb-4 text-indigo-300 flex items-center gap-2">
-            <span className="w-1 h-5 bg-indigo-500 rounded-full"></span>
-            The Story
+          <h3 className="text-base sm:text-lg md:text-xl font-bold mb-3 text-cyan-300 flex items-center gap-2.5">
+            <span className="w-1.5 h-5 bg-gradient-to-b from-cyan-400 to-indigo-500 rounded-full shadow-[0_0_8px_#22d3ee]"></span>
+            <span>The Story</span>
           </h3>
-          <p className="text-gray-300 leading-relaxed text-base md:text-lg text-justify font-medium">
+          <p className="text-gray-200 leading-relaxed text-sm sm:text-base md:text-lg font-normal">
             {photo.description ||
               "Every photo tells a story of a moment captured in time, preserving emotions and memories that define our journey."}
           </p>
-        </div>
-
-        <div className="mt-auto pt-8 flex items-center justify-between text-[11px] text-gray-500 font-mono tracking-widest uppercase opacity-40">
-          <span>{photo.id} • FUZA_ARCHIVE</span>
-          <span>© 2026</span>
         </div>
       </div>
     </div>

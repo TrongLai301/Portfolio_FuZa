@@ -7,9 +7,10 @@ interface OrbitIconProps {
   angle: number; // in degrees
   radius?: number; // distance from center in px
   color?: string;
+  onClick?: () => void;
 }
 
-const OrbitIcon = ({ icon, angle, radius = 170, color }: OrbitIconProps) => {
+const OrbitIcon = ({ icon, angle, radius = 170, color, onClick }: OrbitIconProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
 
@@ -33,7 +34,7 @@ const OrbitIcon = ({ icon, angle, radius = 170, color }: OrbitIconProps) => {
 
   return (
     <div 
-      className="orbit-item flex justify-center items-center animation opacity-0" 
+      className="orbit-item flex justify-center items-center animation opacity-0 cursor-pointer" 
       style={{ 
         left, 
         top,
@@ -41,6 +42,8 @@ const OrbitIcon = ({ icon, angle, radius = 170, color }: OrbitIconProps) => {
       } as React.CSSProperties}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
+      title="Click to toggle background video"
     >
       <FontAwesomeIcon 
         icon={icon} 

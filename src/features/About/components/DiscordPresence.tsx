@@ -88,6 +88,11 @@ export default function DiscordPresence() {
     }
   };
 
+  const getBadgeAssetUrl = (filename: string) => {
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    return `${base}/discord-badges/${filename}`;
+  };
+
   const getBadges = (flags: number, kv?: Record<string, string>) => {
     const badgesList: { id: string; icon: string; name: string }[] = [];
 
@@ -95,73 +100,73 @@ export default function DiscordPresence() {
       {
         bit: 0,
         id: "staff",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordstaff.svg",
+        icon: getBadgeAssetUrl("staff.svg"),
         name: "Discord Staff",
       },
       {
         bit: 1,
         id: "partner",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordpartner.svg",
+        icon: getBadgeAssetUrl("partnered_server_owner.svg"),
         name: "Partnered Server Owner",
       },
       {
         bit: 2,
         id: "hypesquad",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/hypesquadevents.svg",
+        icon: getBadgeAssetUrl("hypesquad_events.svg"),
         name: "HypeSquad Events",
       },
       {
         bit: 3,
         id: "bug_hunter_1",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordbughunter1.svg",
+        icon: getBadgeAssetUrl("bug_hunter_level_1.svg"),
         name: "Bug Hunter Level 1",
       },
       {
         bit: 6,
         id: "bravery",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/hypesquadbravery.svg",
+        icon: getBadgeAssetUrl("hypesquad_bravery.svg"),
         name: "HypeSquad Bravery",
       },
       {
         bit: 7,
         id: "brilliance",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/hypesquadbrilliance.svg",
+        icon: getBadgeAssetUrl("hypesquad_brilliance.svg"),
         name: "HypeSquad Brilliance",
       },
       {
         bit: 8,
         id: "balance",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/hypesquadbalance.svg",
+        icon: getBadgeAssetUrl("hypesquad_balance.svg"),
         name: "HypeSquad Balance",
       },
       {
         bit: 9,
         id: "early_supporter",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/earlysupporter.svg",
+        icon: getBadgeAssetUrl("early_supporter.svg"),
         name: "Early Supporter",
       },
       {
         bit: 14,
         id: "bug_hunter_2",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordbughunter2.svg",
+        icon: getBadgeAssetUrl("bug_hunter_level_2.svg"),
         name: "Bug Hunter Level 2",
       },
       {
         bit: 17,
         id: "dev",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordcertifieddev.svg",
+        icon: getBadgeAssetUrl("early_verified_developer.svg"),
         name: "Verified Developer",
       },
       {
         bit: 18,
         id: "mod",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordmod.svg",
+        icon: getBadgeAssetUrl("certified_moderator.svg"),
         name: "Certified Moderator",
       },
       {
         bit: 22,
         id: "active_dev",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/activedeveloper.svg",
+        icon: getBadgeAssetUrl("active_developer.svg"),
         name: "Active Developer",
       },
     ];
@@ -175,57 +180,57 @@ export default function DiscordPresence() {
     const kvBadgeKeys = [
       {
         key: "nitro",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordnitro.svg",
+        icon: getBadgeAssetUrl("nitro.svg"),
         name: "Discord Nitro",
       },
       {
         key: "booster",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordboost9.svg",
+        icon: getBadgeAssetUrl("boosting_9_months.svg"),
         name: "Server Booster",
       },
       {
         key: "staff",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordstaff.svg",
+        icon: getBadgeAssetUrl("staff.svg"),
         name: "Discord Staff",
       },
       {
         key: "partner",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordpartner.svg",
+        icon: getBadgeAssetUrl("partnered_server_owner.svg"),
         name: "Partnered Server Owner",
       },
       {
         key: "hypesquad_events",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/hypesquadevents.svg",
+        icon: getBadgeAssetUrl("hypesquad_events.svg"),
         name: "HypeSquad Events",
       },
       {
         key: "balance",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/hypesquadbalance.svg",
+        icon: getBadgeAssetUrl("hypesquad_balance.svg"),
         name: "HypeSquad Balance",
       },
       {
         key: "brilliance",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/hypesquadbrilliance.svg",
+        icon: getBadgeAssetUrl("hypesquad_brilliance.svg"),
         name: "HypeSquad Brilliance",
       },
       {
         key: "bravery",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/hypesquadbravery.svg",
+        icon: getBadgeAssetUrl("hypesquad_bravery.svg"),
         name: "HypeSquad Bravery",
       },
       {
         key: "early_supporter",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/earlysupporter.svg",
+        icon: getBadgeAssetUrl("early_supporter.svg"),
         name: "Early Supporter",
       },
       {
         key: "dev",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordcertifieddev.svg",
+        icon: getBadgeAssetUrl("early_verified_developer.svg"),
         name: "Verified Developer",
       },
       {
         key: "mod",
-        icon: "https://raw.githubusercontent.com/mezotv/discord-badges/main/assets/discordmod.svg",
+        icon: getBadgeAssetUrl("certified_moderator.svg"),
         name: "Certified Moderator",
       },
     ];
@@ -385,6 +390,9 @@ export default function DiscordPresence() {
                           src={badge.icon}
                           alt={badge.name}
                           className="w-3.5 h-3.5 sm:w-4 sm:h-4 drop-shadow-md hover:scale-110 transition-transform cursor-help"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = "none";
+                          }}
                         />
                       )}
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-[#111214] text-white text-[9px] font-bold rounded shadow-xl opacity-0 group-hover/badge:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 transform translate-y-1 group-hover/badge:translate-y-0">

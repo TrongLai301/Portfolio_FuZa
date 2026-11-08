@@ -1,14 +1,7 @@
-import { forwardRef, useState, useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 import GeneralContent from "./components/GeneralContent";
-import AnimeContent from "./components/AnimeContent";
-import GameContent from "./components/GameContent";
-import ValorantInfo from "./components/ValorantInfo";
-import CelebrateContent from "./components/CelebrateContent";
-
-type Tab = "general" | "anime" | "game" | "valorant" | "celebrates";
 
 const About = forwardRef<HTMLDivElement>((_, ref) => {
-  const [activeTab, setActiveTab] = useState<Tab>("general");
   const localRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,76 +24,33 @@ const About = forwardRef<HTMLDivElement>((_, ref) => {
     });
 
     return () => observer.disconnect();
-  }, [activeTab]);
-
-  const getTabClass = (tab: Tab) => {
-    const isActive = activeTab === tab;
-    return `px-2 sm:px-3 md:px-5 py-1.5 md:py-2 text-[10px] sm:text-xs md:text-sm font-semibold transition-all duration-300 cursor-pointer rounded-t-xl border border-b-0 relative z-10 -mb-px whitespace-nowrap ${
-      isActive
-        ? "border-white/15 bg-[rgba(15,20,40,0.80)] text-white"
-        : "border-transparent text-gray-400 hover:text-white hover:bg-white/5 hover:border-white/10"
-    }`;
-  };
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case "general":
-        return <GeneralContent onTabChange={setActiveTab} />;
-      case "anime":
-        return <AnimeContent />;
-      case "game":
-        return <GameContent />;
-      case "valorant":
-        return <ValorantInfo />;
-      case "celebrates":
-        return <CelebrateContent />;
-      default:
-        return null;
-    }
-  };
+  }, []);
 
   return (
     <section
-      className="snap-start flex flex-col items-center justify-center pt-20"
+      className="snap-start flex flex-col items-center justify-center pt-24 pb-20 w-full"
       id="about"
       style={{ minHeight: "100vh" }}
       ref={ref}
     >
-      <div className="w-full" ref={localRef}>
-        {/* Tiêu đề */}
-        <div className="animation opacity-0 text-center mb-10">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6" ref={localRef}>
+        {/* Title */}
+        <div className="animation opacity-0 text-center mb-10 md:mb-14">
           <span className="main-text">
             <span className="text-secondary-1">About</span>
             <span className="text-secondary-2"> Me</span>
           </span>
-          <p className="text-gray-400 mt-4 text-base font-medium tracking-wide">
-            Here's some information & personal interests about me.
+          <p className="text-gray-400 mt-4 text-sm sm:text-base font-medium tracking-wide">
+            Here's some information & personal background about me.
           </p>
         </div>
-        {/* Layout Khung */}
+
+        {/* Content (Frameless - Clean and seamless) */}
         <div
           className="animation opacity-0 w-full relative"
           style={{ animationDelay: "0.2s", animationFillMode: "both" }}
         >
-          {/* Menu Tabs */}
-          <div className="flex justify-start items-end -mb-px relative z-10">
-            {(
-              ["general", "anime", "game", "valorant", "celebrates"] as const
-            ).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={getTabClass(tab)}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          {/* Dynamic Content Area (Frame) */}
-          <div className="transition-all duration-500 w-full h-[520px] md:h-[680px] border border-white/15 rounded-2xl rounded-tl-none bg-[rgba(15,20,40,0.80)] p-4 md:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] relative z-0 overflow-hidden">
-            {activeTab === 'general' ? <GeneralContent onTabChange={setActiveTab} /> : renderContent()}
-          </div>
+          <GeneralContent />
         </div>
       </div>
     </section>

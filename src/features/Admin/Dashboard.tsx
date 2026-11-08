@@ -65,14 +65,14 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-5 duration-1000">
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Space orientation="vertical" size="large" style={{ width: '100%' }}>
         <div style={{ marginBottom: 20 }}>
           <Title level={2} style={{ color: '#fff', margin: 0, fontWeight: 900 }}>Profile Status</Title>
           <Text type="secondary">Monitoring the digital universe of FuZa. All systems are green.</Text>
         </div>
 
-        <Spin spinning={loading} tip="Syncing with master database...">
-          <Space direction="vertical" size="large" style={{ width: "100%" }}>
+        <Spin spinning={loading} description="Syncing with master database...">
+          <Space orientation="vertical" size="large" style={{ width: "100%" }}>
             <Row gutter={[24, 24]}>
               {stats.map((stat, i) => (
                 <Col xs={24} sm={12} lg={6} key={i}>
@@ -191,7 +191,7 @@ const Dashboard: React.FC = () => {
                   }}
                 >
                   <Space
-                    direction="vertical"
+                    orientation="vertical"
                     size="middle"
                     style={{ width: "100%" }}
                   >
