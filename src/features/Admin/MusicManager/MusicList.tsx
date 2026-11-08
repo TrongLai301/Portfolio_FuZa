@@ -329,6 +329,7 @@ const MusicList: React.FC<MusicListProps> = ({
             loading={loading}
             pagination={false}
             className="admin-table"
+            scroll={{ x: 650 }}
             components={{
               body: {
                 row: DraggableRow,

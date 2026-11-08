@@ -113,7 +113,7 @@ export const useMedia = () => {
     }
   };
 
-  const removeMedia = async (id: string, imageUrl: string) => {
+  const removeMedia = async (id: string, imageUrl?: string) => {
     try {
       await mediaService.deleteMedia(id, imageUrl);
       toast.success("Media deleted.");

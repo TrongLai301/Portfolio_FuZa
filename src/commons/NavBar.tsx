@@ -9,6 +9,8 @@ type NavbarProps = {
   activeId: string;
   onScrollToHome: () => void;
   onScrollToAbout: () => void;
+  onScrollToEntertainment: () => void;
+  onScrollToCelebrates: () => void;
   onScrollToSkill: () => void;
   onScrollToContact: () => void;
 };
@@ -17,6 +19,8 @@ export default function Navbar({
   activeId,
   onScrollToHome,
   onScrollToAbout,
+  onScrollToEntertainment,
+  onScrollToCelebrates,
   onScrollToSkill,
   onScrollToContact,
 }: NavbarProps) {
@@ -31,6 +35,8 @@ export default function Navbar({
   const navItems = [
     { id: "home", label: "Home", fn: onScrollToHome },
     { id: "about", label: "About", fn: onScrollToAbout },
+    { id: "entertainment", label: "Entertainment", fn: onScrollToEntertainment },
+    { id: "celebrates", label: "Celebrates", fn: onScrollToCelebrates },
     { id: "skills", label: "Skills", fn: onScrollToSkill },
     { id: "contact", label: "Contact", fn: onScrollToContact },
   ];
@@ -38,16 +44,20 @@ export default function Navbar({
   const logoText = siteSettings?.header_logo_text || "FuZa's profile";
   const isGradient = (val?: any) => Boolean(val && typeof val === "string" && val.includes("gradient"));
 
-  const logoTextStyle = isGradient(siteSettings?.header_logo_color)
+  const logoTextStyle: React.CSSProperties = isGradient(siteSettings?.header_logo_color)
     ? {
         background: siteSettings?.header_logo_color,
         WebkitBackgroundClip: "text",
         backgroundClip: "text",
         WebkitTextFillColor: "transparent",
         display: "inline-block",
+        paddingRight: "0.35em",
+        overflow: "visible",
       }
     : {
         color: siteSettings?.header_logo_color || "var(--color-signature)",
+        display: "inline-block",
+        paddingRight: "0.2em",
       };
 
   const logoSvgStyle = {
@@ -61,13 +71,13 @@ export default function Navbar({
       <div className="flex justify-between w-full lg:max-w-4/5 lg:mx-auto py-3 md:py-4 px-3 md:px-4 items-center">
         {/* Logo */}
         <div 
-          className="flex items-center gap-2 signature cursor-pointer" 
+          className="flex items-center gap-2 signature cursor-pointer select-none" 
           onClick={onScrollToHome}
         >
           <span className="blink-text text-nav" style={logoTextStyle}>
             {logoText}
           </span>
-          <FontAwesomeIcon className="text-nav" icon={faCode} style={logoSvgStyle} />
+          <FontAwesomeIcon className="text-nav shrink-0" icon={faCode} style={logoSvgStyle} />
         </div>
 
         {/* Desktop Menu */}

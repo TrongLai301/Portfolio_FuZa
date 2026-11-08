@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabaseClient";
+import { supabase, resolveStorageUrl } from "../lib/supabaseClient";
 import { deleteStorageFile } from "./storageService";
 
 export interface Celebration {
@@ -25,21 +25,31 @@ export const celebrationService = {
       .select("*")
       .order("date", { ascending: false });
 
-    if (error) throw error;
-    return data || [];
+    if (error) {
+      console.error("[celebrationService] Failed to fetch celebrations:", error);
+      throw error;
+    }
+    return (data || []).map((item) => ({
+      ...item,
+      image_url: resolveStorageUrl(item.image_url),
+    }));
   },
 
   async create(input: CreateCelebrationInput): Promise<Celebration> {
     let image_url = input.image_url || "";
 
     if (input.image_file) {
-      const fileExt = input.image_file.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const file = input.image_file;
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
       const filePath = `celebrations/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("portfolio")
-        .upload(filePath, input.image_file);
+        .upload(filePath, file, {
+          contentType: file.type || undefined,
+          upsert: true,
+        });
 
       if (uploadError) throw uploadError;
 
@@ -67,55 +77,92 @@ export const celebrationService = {
 
   async update(id: string, input: CreateCelebrationInput): Promise<Celebration> {
     let image_url = input.image_url || "";
-    const oldImageUrl = input.image_url;
+    let oldImageUrl = input.image_url;
+    let newlyUploadedUrl = "";
 
-    if (input.image_file) {
-      const fileExt = input.image_file.name.split(".").pop();
-      const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
-      const filePath = `celebrations/${fileName}`;
+    try {
+      if (input.image_file) {
+        // If oldImageUrl is not provided by caller, retrieve existing image from DB first
+        if (!oldImageUrl) {
+          const { data: existing } = await supabase
+            .from("celebrations")
+            .select("image_url")
+            .eq("id", id)
+            .maybeSingle();
+          oldImageUrl = existing?.image_url;
+        }
 
-      const { error: uploadError } = await supabase.storage
-        .from("portfolio")
-        .upload(filePath, input.image_file);
+        const file = input.image_file;
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+        const filePath = `celebrations/${fileName}`;
 
-      if (uploadError) throw uploadError;
+        const { error: uploadError } = await supabase.storage
+          .from("portfolio")
+          .upload(filePath, file, {
+            contentType: file.type || undefined,
+            upsert: true,
+          });
 
-      const { data: publicUrlData } = supabase.storage
-        .from("portfolio")
-        .getPublicUrl(filePath);
+        if (uploadError) throw uploadError;
 
-      image_url = publicUrlData.publicUrl;
+        const { data: publicUrlData } = supabase.storage
+          .from("portfolio")
+          .getPublicUrl(filePath);
 
-      // Delete old image from storage to avoid bloated storage
-      if (oldImageUrl) {
+        image_url = publicUrlData.publicUrl;
+        newlyUploadedUrl = image_url;
+      }
+
+      const { data, error } = await supabase
+        .from("celebrations")
+        .update({
+          image_url: image_url || undefined,
+          date: input.date,
+          caption: input.caption,
+          description: input.description,
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Clean up old image from storage only after DB update succeeds
+      if (newlyUploadedUrl && oldImageUrl) {
         await deleteStorageFile(oldImageUrl);
       }
+
+      return data;
+    } catch (err) {
+      // Rollback newly uploaded file on failure
+      if (newlyUploadedUrl) {
+        await deleteStorageFile(newlyUploadedUrl);
+      }
+      throw err;
     }
-
-    const { data, error } = await supabase
-      .from("celebrations")
-      .update({
-        image_url: image_url || undefined,
-        date: input.date,
-        caption: input.caption,
-        description: input.description,
-      })
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
   },
 
   async delete(id: string, imageUrl?: string): Promise<void> {
-    // Delete from DB
+    let targetImageUrl = imageUrl;
+
+    // If imageUrl was not provided by caller, query the record first to ensure the storage file is deleted
+    if (!targetImageUrl) {
+      const { data: existing } = await supabase
+        .from("celebrations")
+        .select("image_url")
+        .eq("id", id)
+        .maybeSingle();
+      targetImageUrl = existing?.image_url;
+    }
+
+    // 1. Delete from DB
     const { error } = await supabase.from("celebrations").delete().eq("id", id);
     if (error) throw error;
 
-    // Delete image from storage if applicable
-    if (imageUrl) {
-      await deleteStorageFile(imageUrl);
+    // 2. Delete media (image/video/gif) from storage
+    if (targetImageUrl) {
+      await deleteStorageFile(targetImageUrl);
     }
   }
 };

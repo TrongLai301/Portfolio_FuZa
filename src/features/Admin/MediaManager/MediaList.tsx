@@ -146,6 +146,7 @@ const MediaList: React.FC<MediaListProps> = ({ medias, loading, onEdit, onDelete
         loading={loading}
         pagination={{ pageSize: 8, hideOnSinglePage: true }}
         className="admin-table"
+        scroll={{ x: 650 }}
         locale={{
             emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<Text style={{ color: 'rgba(255,255,255,0.2)' }}>No media records found. Initialize database to visualize.</Text>} />
         }}

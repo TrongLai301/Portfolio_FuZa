@@ -26,10 +26,12 @@ import {
   CheckCircleFilled,
 } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faReact, faJs, faNodeJs, faGithub } from "@fortawesome/free-brands-svg-icons";
-import { faPlay } from "@fortawesome/free-solid-svg-icons";
+import { faReact, faJs, faGithub } from "@fortawesome/free-brands-svg-icons";
+import { usePasteImage } from "../../../hooks/usePasteImage";
 import ImageCropperModal from "../components/ImageCropperModal";
+import CosmicPlanetarySystem from "../../../components/CosmicPlanetarySystem";
 import nilou from "../../../assets/image/commons/nilouPr4.png";
+import { resolveStorageUrl } from "../../../lib/supabaseClient";
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -233,8 +235,8 @@ export const HeroForm: React.FC<HeroFormProps> = ({
           content_color: parseColorToPickerValue(t.content_color || "#6366f1"),
         })),
       });
-      setVideoPreview(initialValues.video_bg_url || "");
-      setOrbitPreview(initialValues.orbit_image_url || "");
+      setVideoPreview(resolveStorageUrl(initialValues.video_bg_url) || "");
+      setOrbitPreview(resolveStorageUrl(initialValues.orbit_image_url) || "");
     }
   }, [initialValues, typewriterTexts, form]);
 
@@ -270,6 +272,20 @@ export const HeroForm: React.FC<HeroFormProps> = ({
     setCropperOpen(true);
     return false;
   };
+
+  // Support pasting image (avatar) or video directly from clipboard (Ctrl+V / Cmd+V)
+  usePasteImage({
+    onPaste: (pastedFile) => {
+      if (pastedFile.type.startsWith("video/")) {
+        beforeUploadVideo(pastedFile);
+      } else {
+        beforeUploadOrbit(pastedFile);
+      }
+    },
+    enabled: true,
+    allowedTypes: ["image/", "video/"],
+    successMessage: "Đã dán tệp từ clipboard!",
+  });
 
   const handleOrbitCropped = (croppedFile: File) => {
     setOrbitFile(croppedFile);
@@ -431,6 +447,12 @@ export const HeroForm: React.FC<HeroFormProps> = ({
                             src={orbitPreview}
                             alt="Orbit Preview"
                             className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-75 transition-opacity"
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              if (target.src !== nilou) {
+                                target.src = nilou;
+                              }
+                            }}
                           />
                           <div className="relative z-10 flex flex-col items-center">
                             <PictureOutlined className="text-2xl text-indigo-400 mb-1" />
@@ -441,8 +463,9 @@ export const HeroForm: React.FC<HeroFormProps> = ({
                         </>
                       ) : (
                         <>
-                          <UploadOutlined className="text-3xl text-gray-500 mb-1.5" />
-                          <span className="text-xs text-gray-400 font-medium">Upload Orbit Avatar</span>
+                          <UploadOutlined className="text-3xl text-gray-500 mb-1" />
+                          <span className="text-xs text-gray-300 font-medium">Upload Orbit Avatar</span>
+                          <span className="text-[10px] text-indigo-400 font-mono mt-0.5">Dán ảnh (Ctrl+V / ⌘V)</span>
                         </>
                       )}
                     </div>
@@ -806,49 +829,14 @@ export const HeroForm: React.FC<HeroFormProps> = ({
                       </div>
                     </div>
 
-                    {/* Right: Orbit Avatar with Live Glow & Waves */}
-                    <div className="relative shrink-0 flex items-center justify-center p-4">
-                      {/* Outer Orbit Track Circle */}
-                      <div
-                        className="w-40 h-40 rounded-full border border-dashed border-white/15 absolute animate-spin"
-                        style={{ animationDuration: "30s" }}
-                      >
-                        {/* Orbiting Icons */}
-                        <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/80 border border-white/20 flex items-center justify-center text-blue-400 text-[10px] shadow-lg">
-                          <FontAwesomeIcon icon={faReact} />
-                        </span>
-                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-6 h-6 rounded-full bg-black/80 border border-white/20 flex items-center justify-center text-yellow-400 text-[10px] shadow-lg">
-                          <FontAwesomeIcon icon={faJs} />
-                        </span>
-                        <span className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/80 border border-white/20 flex items-center justify-center text-green-400 text-[10px] shadow-lg">
-                          <FontAwesomeIcon icon={faNodeJs} />
-                        </span>
-                      </div>
-
-                      {/* Main Avatar Circle with Dynamic Glow Shadow */}
-                      <div
-                        className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-white/20 flex items-center justify-center transition-all duration-500 group cursor-pointer"
-                        style={{
-                          boxShadow: `0 0 25px 8px ${
-                            typeof previewOrbitColor === "string" && previewOrbitColor.includes("gradient")
-                              ? "#6366f1"
-                              : previewOrbitColor || "#6366f1"
-                          }`,
-                        }}
-                      >
-                        <img
-                          src={orbitPreview || nilou}
-                          alt="Orbit Avatar"
-                          className="w-full h-full object-cover"
-                        />
-
-                        {/* Play Overlay */}
-                        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
-                            <FontAwesomeIcon icon={faPlay} className="text-white text-xs ml-0.5" />
-                          </div>
-                        </div>
-                      </div>
+                    {/* Right: Cosmic Planetary Solar System Preview */}
+                    <div className="relative shrink-0 flex items-center justify-center scale-75 md:scale-90 origin-center -my-6">
+                      <CosmicPlanetarySystem
+                        avatarUrl={orbitPreview || nilou}
+                        glowColor={typeof previewOrbitColor === "string" && !previewOrbitColor.includes("gradient") ? previewOrbitColor : "#38bdf8"}
+                        isPlayingMusic={true}
+                        isVideoPlaying={true}
+                      />
                     </div>
                   </div>
 

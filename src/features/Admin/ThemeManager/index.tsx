@@ -253,6 +253,8 @@ export const ThemeManager: React.FC = () => {
           WebkitTextFillColor: "transparent",
           color: "transparent",
           display: "inline-block",
+          paddingRight: "0.3em",
+          overflow: "visible",
           ...extraStyle,
         }}
       >

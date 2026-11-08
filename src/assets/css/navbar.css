@@ -14,8 +14,10 @@
 
 /* Signature */
 .signature {
-    font-family: 'Brush Script MT', cursive;
-    font-size: 2rem;
+    font-family: var(--font-signature, 'Caveat', cursive);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 .signature>svg {
@@ -29,6 +31,8 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     display: inline-block;
+    padding-right: 0.3em; /* Prevents trailing cursive glyphs like 'e' in Caveat from being clipped */
+    overflow: visible;
     transition: filter 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
 }
 

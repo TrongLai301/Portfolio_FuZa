@@ -277,3 +277,77 @@
     background-color: rgba(255, 255, 255, 0.05) !important;
     color: #fff !important;
 }
+
+/* ===================================================
+   MOBILE RESPONSIVE ADMIN STYLES (< 768px)
+=================================================== */
+.admin-table-container,
+.ant-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  .admin-card {
+    padding: 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .admin-glass-panel {
+    border-radius: 0 !important;
+  }
+
+  .ant-table {
+    font-size: 12px !important;
+  }
+
+  .ant-table-cell {
+    padding: 10px 8px !important;
+    white-space: nowrap;
+  }
+
+  /* Modals on Mobile */
+  .ant-modal {
+    max-width: 95vw !important;
+    margin: 12px auto !important;
+    top: 20px !important;
+  }
+
+  .ant-modal .ant-modal-content {
+    padding: 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .ant-modal-header {
+    margin-bottom: 12px !important;
+  }
+
+  /* Admin Header and Page Titles */
+  .admin-page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .admin-page-header .ant-space {
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Tabs on Mobile */
+  .admin-tabs .ant-tabs-nav {
+    margin-bottom: 16px !important;
+  }
+
+  .admin-tabs .ant-tabs-tab {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+
+  /* Forms & Buttons */
+  .admin-btn-primary {
+    padding: 0 20px !important;
+    height: 42px !important;
+  }
+}

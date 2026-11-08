@@ -85,6 +85,7 @@ function MainApp() {
       <div className="fixed inset-0 -z-50 bg-[#0a0a0a]">
         <video
           ref={videoRef}
+          src={heroSettings?.video_bg_url || undefined}
           autoPlay
           loop
           muted

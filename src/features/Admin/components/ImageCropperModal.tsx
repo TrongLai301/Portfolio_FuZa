@@ -157,20 +157,34 @@ export const ImageCropperModal: React.FC<ImageCropperModalProps> = ({
 
     ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
 
-    // Export blob as File
-    const mimeType = file.type === "image/png" ? "image/png" : "image/jpeg";
+    // Export compressed blob as WebP File (or fallback to JPEG)
+    const exportMime = "image/webp";
     outputCanvas.toBlob(
       (blob) => {
         if (blob) {
-          const croppedFile = new File([blob], file.name, {
-            type: mimeType,
+          const newName = file.name.replace(/\.[^.]+$/, ".webp");
+          const croppedFile = new File([blob], newName, {
+            type: exportMime,
             lastModified: Date.now(),
           });
           onCropComplete(croppedFile);
+        } else {
+          // Fallback if canvas.toBlob fails
+          const fallbackMime = "image/jpeg";
+          outputCanvas.toBlob((fallbackBlob) => {
+            if (fallbackBlob) {
+              const fallbackName = file.name.replace(/\.[^.]+$/, ".jpg");
+              const croppedFile = new File([fallbackBlob], fallbackName, {
+                type: fallbackMime,
+                lastModified: Date.now(),
+              });
+              onCropComplete(croppedFile);
+            }
+          }, fallbackMime, 0.85);
         }
       },
-      mimeType,
-      0.92
+      exportMime,
+      0.85
     );
   };
 
@@ -229,6 +243,15 @@ export const ImageCropperModal: React.FC<ImageCropperModalProps> = ({
       }}
     >
       <div className="py-2 flex flex-col gap-4">
+        {file && (file.type === "image/gif" || file.name.toLowerCase().endsWith(".gif")) && (
+          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2">
+            <span>⚠️</span>
+            <span>
+              <strong>Tệp là ảnh GIF động:</strong> Nếu Crop sẽ bị chuyển thành 1 ảnh tĩnh duy nhất (mất hiệu ứng động). Khuyên bạn nên bấm <strong>"Keep Original (No Crop)"</strong> bên dưới để giữ nguyên hoạt ảnh!
+            </span>
+          </div>
+        )}
+
         {/* Info header */}
         <div className="flex justify-between items-center text-xs text-gray-400">
           <span>

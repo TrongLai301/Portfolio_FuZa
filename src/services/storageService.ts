@@ -2,8 +2,9 @@ import { supabase } from "../lib/supabaseClient";
 
 /**
  * Extracts relative storage file path from any Supabase URL
- * Handles both production (https://<ref>.supabase.co/storage/v1/object/public/<bucket>/...)
- * and local development/proxy paths (/supabase-local/storage/v1/object/public/<bucket>/...)
+ * Handles production (https://<ref>.supabase.co/storage/v1/object/public/<bucket>/...),
+ * local development/proxy paths (/supabase-local/storage/v1/object/public/<bucket>/...),
+ * and direct relative bucket paths (e.g. "covers/abc.png", "audio/song.mp3", "celebrations/mem.jpg").
  */
 export const getStoragePathFromUrl = (url: string, bucket = "portfolio"): string | null => {
   if (!url) return null;
@@ -15,15 +16,57 @@ export const getStoragePathFromUrl = (url: string, bucket = "portfolio"): string
   const bucketPattern = new RegExp(`/${bucket}/(.+)$`);
   const match = cleanUrl.match(bucketPattern);
   if (match && match[1]) {
-    return decodeURIComponent(match[1]);
+    try {
+      return decodeURIComponent(match[1]);
+    } catch {
+      return match[1];
+    }
   }
 
   // If the input was already a relative path inside the bucket (e.g. "covers/abc.png")
   if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("/")) {
-    return url;
+    try {
+      return decodeURIComponent(url);
+    } catch {
+      return url;
+    }
   }
 
   return null;
+};
+
+/**
+ * Deletes multiple files from Supabase Storage by their public URLs or relative paths in a single batch request.
+ * Safe to call even if files are external or don't exist.
+ */
+export const deleteStorageFiles = async (
+  urlsOrPaths: (string | null | undefined)[],
+  bucket = "portfolio"
+): Promise<boolean> => {
+  if (!urlsOrPaths || urlsOrPaths.length === 0) return false;
+
+  const validPaths = Array.from(
+    new Set(
+      urlsOrPaths
+        .map((u) => (u ? getStoragePathFromUrl(u, bucket) : null))
+        .filter((p): p is string => Boolean(p))
+    )
+  );
+
+  if (validPaths.length === 0) return false;
+
+  try {
+    const { error } = await supabase.storage.from(bucket).remove(validPaths);
+    if (error) {
+      console.warn(`[StorageService] Could not remove files ${JSON.stringify(validPaths)}:`, error.message);
+      return false;
+    }
+    console.log(`[StorageService] Successfully removed files ${JSON.stringify(validPaths)} from bucket "${bucket}"`);
+    return true;
+  } catch (err: any) {
+    console.warn(`[StorageService] Error during batch deletion of files:`, err.message);
+    return false;
+  }
 };
 
 /**
@@ -35,23 +78,5 @@ export const deleteStorageFile = async (
   bucket = "portfolio"
 ): Promise<boolean> => {
   if (!urlOrPath) return false;
-
-  const path = getStoragePathFromUrl(urlOrPath, bucket);
-  if (!path) {
-    // If it's an external URL (e.g. imgur, external cdn), ignore deletion
-    return false;
-  }
-
-  try {
-    const { error } = await supabase.storage.from(bucket).remove([path]);
-    if (error) {
-      console.warn(`[StorageService] Could not remove file "${path}":`, error.message);
-      return false;
-    }
-    console.log(`[StorageService] Successfully removed old file "${path}"`);
-    return true;
-  } catch (err: any) {
-    console.warn(`[StorageService] Error during deletion of "${path}":`, err.message);
-    return false;
-  }
+  return deleteStorageFiles([urlOrPath], bucket);
 };

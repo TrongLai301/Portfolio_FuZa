@@ -8,7 +8,9 @@ import {
   CheckCircleFilled
 } from "@ant-design/icons";
 import type { Song } from "../../../services/musicService";
+import { resolveStorageUrl } from "../../../lib/supabaseClient";
 import ImageCropperModal from "../components/ImageCropperModal";
+import { usePasteImage } from "../../../hooks/usePasteImage";
 
 const { Text } = Typography;
 
@@ -39,8 +41,8 @@ const MusicForm: React.FC<MusicFormProps> = ({ initialData, onSubmit, submitting
         artist: initialData.artist,
         display_order: initialData.display_order,
       });
-      setAudioPreview(initialData.audio_url);
-      setCoverPreview(initialData.cover_url);
+      setAudioPreview(resolveStorageUrl(initialData.audio_url));
+      setCoverPreview(resolveStorageUrl(initialData.cover_url));
     } else {
       form.resetFields();
       form.setFieldsValue({ display_order: defaultOrder });
@@ -81,6 +83,16 @@ const MusicForm: React.FC<MusicFormProps> = ({ initialData, onSubmit, submitting
     setCropperOpen(true);
     return false; // Prevent automatic upload
   };
+
+  // Support pasting cover art directly from clipboard (Ctrl+V / Cmd+V)
+  usePasteImage({
+    onPaste: (pastedFile) => {
+      beforeCoverUpload(pastedFile);
+    },
+    enabled: !submitting,
+    allowedTypes: ["image/"],
+    successMessage: "Đã dán ảnh bìa từ clipboard!",
+  });
 
   const handleCropped = (croppedFile: File) => {
     setCoverFile(croppedFile);
@@ -187,12 +199,15 @@ const MusicForm: React.FC<MusicFormProps> = ({ initialData, onSubmit, submitting
                         </div>
                         </>
                      ) : (
-                        <>
-                        <PictureOutlined className="text-3xl opacity-10" />
-                        <Text strong style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 900 }}>
-                            Banner
-                        </Text>
-                        </>
+                        <div className="flex flex-col items-center gap-1.5 text-center px-2">
+                          <PictureOutlined className="text-2xl text-indigo-400/50" />
+                          <Text strong style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                            Cover Art
+                          </Text>
+                          <span className="text-[9px] text-indigo-300/90 font-mono">
+                            Dán ảnh (Ctrl+V / ⌘V)
+                          </span>
+                        </div>
                      )}
                 </div>
              </Upload>

@@ -20,19 +20,21 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  * we route them through Vite's proxy so mobile LAN access works too.
  */
 export function resolveStorageUrl(url: string): string {
-  if (!url) return url;
+  if (!url || typeof url !== "string") return url;
   
-  // Pattern to match any existing origin followed by our proxy path
-  // This handles http://localhost:5173/supabase-local, http://10.22.20.156:5173/supabase-local, etc.
+  // 1. If it already contains /supabase-local, ensure the origin matches current window.location.origin
   const proxyPattern = /https?:\/\/[^/]+\/supabase-local/;
-  
   if (proxyPattern.test(url)) {
-    // Force the current origin so it works on any device on the LAN
-    const resolved = url.replace(proxyPattern, `${window.location.origin}/supabase-local`);
-    return resolved;
+    return url.replace(proxyPattern, `${window.location.origin}/supabase-local`);
   }
 
-  // Fallback for raw local Supabase URLs (127.0.0.1:54321)
+  // 2. If it points to local Supabase port 54321 on any IP / hostname, route through dev proxy
+  const supabasePortPattern = /https?:\/\/[^/]+:54321/;
+  if (supabasePortPattern.test(url)) {
+    return url.replace(supabasePortPattern, `${window.location.origin}/supabase-local`);
+  }
+
+  // 3. Fallback for raw localhost or 127.0.0.1
   const localPattern = /https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?/;
   if (localPattern.test(url)) {
     return url.replace(localPattern, `${window.location.origin}/supabase-local`);

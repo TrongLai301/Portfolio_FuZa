@@ -173,6 +173,7 @@ const SocialLinkList: React.FC<Props> = ({ links, loading, onEdit, onDelete, onR
           rowKey="id"
           pagination={false}
           className="admin-antd-table"
+          scroll={{ x: 600 }}
           components={{
             body: {
               row: DraggableRow,

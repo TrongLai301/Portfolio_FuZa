@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabaseClient";
+import { supabase, resolveStorageUrl } from "../lib/supabaseClient";
 import { deleteStorageFile } from "./storageService";
 
 export type MediaType = 'anime' | 'game';
@@ -85,6 +85,7 @@ export const mediaService = {
 
     return data.map(item => ({
       ...item,
+      image_url: resolveStorageUrl(item.image_url),
       categories: item.media_categories?.map((mc: any) => mc.categories) || []
     })) as Media[];
   },
@@ -115,8 +116,20 @@ export const mediaService = {
     return newMedia;
   },
 
-  updateMedia: async (id: string, input: Partial<CreateMediaInput>) => {
+  updateMedia: async (id: string, input: Partial<CreateMediaInput>, oldImageUrl?: string) => {
     const { category_ids, ...mediaData } = input;
+
+    let targetOldImageUrl = oldImageUrl;
+    if (mediaData.image_url && !targetOldImageUrl) {
+      const { data: existing } = await supabase
+        .from("medias")
+        .select("image_url")
+        .eq("id", id)
+        .maybeSingle();
+      if (existing?.image_url && existing.image_url !== mediaData.image_url) {
+        targetOldImageUrl = existing.image_url;
+      }
+    }
 
     const { error: mediaError } = await supabase
       .from("medias")
@@ -136,14 +149,37 @@ export const mediaService = {
       }
     }
 
+    // Clean up replaced image from storage
+    if (targetOldImageUrl && mediaData.image_url && targetOldImageUrl !== mediaData.image_url) {
+      await deleteStorageFile(targetOldImageUrl);
+    }
+
     return true;
   },
 
-  deleteMedia: async (id: string, imageUrl: string) => {
+  deleteMedia: async (id: string, imageUrl?: string) => {
+    let targetImageUrl = imageUrl;
+
+    // If imageUrl was not provided by caller, query the record first so the image is never orphaned in storage
+    if (!targetImageUrl) {
+      const { data: existing } = await supabase
+        .from("medias")
+        .select("image_url")
+        .eq("id", id)
+        .maybeSingle();
+      targetImageUrl = existing?.image_url;
+    }
+
+    // 1. Delete relational links
+    await supabase.from("media_categories").delete().eq("media_id", id);
+
+    // 2. Delete record from DB
     const { error } = await supabase.from("medias").delete().eq("id", id);
     if (error) throw error;
-    if (imageUrl) {
-      await deleteStorageFile(imageUrl);
+
+    // 3. Delete media file from storage
+    if (targetImageUrl) {
+      await deleteStorageFile(targetImageUrl);
     }
     return true;
   }
