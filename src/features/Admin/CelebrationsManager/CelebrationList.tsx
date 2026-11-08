@@ -2,6 +2,8 @@ import React from "react";
 import { Table, Button, Space, Image, Typography, Tooltip, Popconfirm } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import type { Celebration } from "../../../services/celebrationService";
+import { isVideoUrl } from "../../../utils/mediaOptimizer";
+import AutoplayVideo from "../../../components/AutoplayVideo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -23,22 +25,33 @@ const CelebrationList: React.FC<CelebrationListProps> = ({ celebrations, loading
       dataIndex: "image_url",
       key: "image_url",
       width: 120,
-      render: (url: string) => (
-        <Image 
-          src={url} 
-          width={100} 
-          height={60} 
-          className="rounded-xl object-cover border border-white/5 shadow-lg"
-          fallback="https://via.placeholder.com/100x60?text=MEMORY"
-        />
-      ),
+      render: (url: string) => {
+        const isVideo = isVideoUrl(url);
+        if (isVideo) {
+          return (
+            <AutoplayVideo 
+              src={url} 
+              className="w-[100px] h-[60px] rounded-xl object-cover border border-white/5 shadow-lg" 
+            />
+          );
+        }
+        return (
+          <Image 
+            src={url} 
+            width={100} 
+            height={60} 
+            className="rounded-xl object-cover border border-white/5 shadow-lg"
+            fallback="https://via.placeholder.com/100x60?text=MEMORY"
+          />
+        );
+      },
     },
     {
       title: "Date",
       key: "timeline",
       width: 150,
       render: (_: any, record: Celebration) => (
-        <Space direction="vertical" size={0}>
+        <Space orientation="vertical" size={0}>
           <Text strong style={{ color: '#fff', fontSize: '14px' }}>
             {dayjs(record.date).format('MMM D, YYYY')}
           </Text>
@@ -102,6 +115,7 @@ const CelebrationList: React.FC<CelebrationListProps> = ({ celebrations, loading
         loading={loading}
         pagination={{ pageSize: 8 }}
         className="admin-table"
+        scroll={{ x: 600 }}
         style={{ 
             background: 'rgba(21, 21, 21, 0.8)', 
             borderRadius: '24px', 

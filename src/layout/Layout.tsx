@@ -3,8 +3,8 @@ import Navbar from "../commons/NavBar";
 import { useScroll } from "../commons/ScrollContext";
 import { useScrollSpy } from "../commons/useScrollSpy";
 export default function Layout() {
-  const { homeRef, aboutRef, skillRef, contactRef, scrollTo } = useScroll();
-  const refs = [homeRef, aboutRef, skillRef, contactRef];
+  const { homeRef, aboutRef, entertainmentRef, celebratesRef, skillRef, contactRef, scrollTo } = useScroll();
+  const refs = [homeRef, aboutRef, entertainmentRef, celebratesRef, skillRef, contactRef];
   const activeId = useScrollSpy(refs);
   return (
     <div className="w-full">
@@ -12,6 +12,8 @@ export default function Layout() {
         activeId={activeId}
         onScrollToHome={() => scrollTo(homeRef)}
         onScrollToAbout={() => scrollTo(aboutRef)}
+        onScrollToEntertainment={() => scrollTo(entertainmentRef)}
+        onScrollToCelebrates={() => scrollTo(celebratesRef)}
         onScrollToSkill={() => scrollTo(skillRef)}
         onScrollToContact={() => scrollTo(contactRef)}
       />

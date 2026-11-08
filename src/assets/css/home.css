@@ -6,19 +6,108 @@
     --size-icon: calc(var(--size-frame-icon) /2);
 }
 
-.main-text>.text-secondary-2 {
-    background: #bdc3c7;
-    background: -webkit-linear-gradient(to bottom, #2c3e50, #bdc3c7);
-    background: linear-gradient(to bottom, #333333, #ffffff);
-    filter: drop-shadow(2px 4px 8px black);
+.main-text>.text-secondary-1 {
+    background: var(--color-title-primary, #ffffff);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.main-text>.text-secondary-2 {
+    background: var(--color-title-secondary, #bdc3c7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    filter: drop-shadow(2px 4px 8px black);
 }
 
 .main-text {
+    font-family: var(--font-heading, 'Outfit', sans-serif);
     font-size: var(--font-size-text);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+/* Cosmic Cyber Glassmorphism & Micro-interactions */
+.cosmic-card {
+    background: rgba(14, 18, 30, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.08);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cosmic-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(99, 102, 241, 0.35);
+    box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.2), 0 0 20px 2px rgba(99, 102, 241, 0.1);
+}
+
+.cosmic-badge {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #a5b4fc;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cosmic-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 14px;
     font-weight: 700;
+    font-size: 14px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+}
+
+.cosmic-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
+    color: #ffffff;
+}
+
+.cosmic-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.cosmic-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    transform: translateY(-2px);
 }
 
 
@@ -344,13 +433,50 @@
     }
 }
 
+@keyframes marquee-reverse {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
 .animate-marquee {
     animation: marquee 30s linear infinite;
 }
 
+.animate-marquee-reverse {
+    animation: marquee-reverse 30s linear infinite;
+}
+
 /* Tạm dừng cả 2 dải khi hover dải cha */
-.marquee-container:hover .animate-marquee {
+.marquee-container:hover .animate-marquee,
+.marquee-container:hover .animate-marquee-reverse {
     animation-play-state: paused;
+}
+
+/* Polaroid Collage Entrance Animation */
+@keyframes polaroidPopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.65) rotate(0deg);
+        filter: blur(4px);
+    }
+    65% {
+        opacity: 1;
+        transform: translateY(-8px) scale(1.06) rotate(calc(var(--rot, 0deg) * 1.25));
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(var(--rot, 0deg));
+        filter: blur(0);
+    }
+}
+
+.polaroid-animate-pop {
+    animation: polaroidPopIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 /* ===== RESPONSIVE ===== */

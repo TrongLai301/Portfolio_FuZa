@@ -85,7 +85,7 @@ const MediaList: React.FC<MediaListProps> = ({ medias, loading, onEdit, onDelete
       onFilter: (value: any, record: Media) =>
         record.title.toLowerCase().includes(value.toLowerCase()),
       render: (_: any, record: Media) => (
-        <Space direction="vertical" size={2}>
+        <Space orientation="vertical" size={2}>
           <Text strong style={{ color: '#fff', fontSize: '14px' }}>{record.title}</Text>
           <Space size={4}>
             <CalendarOutlined style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px' }} />
@@ -146,6 +146,7 @@ const MediaList: React.FC<MediaListProps> = ({ medias, loading, onEdit, onDelete
         loading={loading}
         pagination={{ pageSize: 8, hideOnSinglePage: true }}
         className="admin-table"
+        scroll={{ x: 650 }}
         locale={{
             emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<Text style={{ color: 'rgba(255,255,255,0.2)' }}>No media records found. Initialize database to visualize.</Text>} />
         }}

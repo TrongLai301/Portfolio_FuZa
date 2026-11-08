@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { mediaService, type Media, type Category, type CreateMediaInput } from "../services/mediaService";
 import { musicService } from "../services/musicService"; // Re-use storage utility
+import { deleteStorageFile } from "../services/storageService";
 import { toast } from "sonner";
 
 export interface MediaSubmitInput extends Partial<CreateMediaInput> {
@@ -94,7 +95,7 @@ export const useMedia = () => {
 
       // 4. Cleanup old file
       if (uploadedImageUrl && input.existing_image_url) {
-        await musicService.deleteFileByUrl(input.existing_image_url, "covers");
+        await deleteStorageFile(input.existing_image_url);
       }
 
       toast.success("Media record updated!");
@@ -103,7 +104,7 @@ export const useMedia = () => {
     } catch (error: any) {
       // Rollback
       if (uploadedImageUrl) {
-        await musicService.deleteFileByUrl(uploadedImageUrl, "covers");
+        await deleteStorageFile(uploadedImageUrl);
       }
       toast.error("Update failed: " + error.message);
       return false;
@@ -112,7 +113,7 @@ export const useMedia = () => {
     }
   };
 
-  const removeMedia = async (id: string, imageUrl: string) => {
+  const removeMedia = async (id: string, imageUrl?: string) => {
     try {
       await mediaService.deleteMedia(id, imageUrl);
       toast.success("Media deleted.");

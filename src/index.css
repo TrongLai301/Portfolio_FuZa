@@ -1,12 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  font-family: Palatino, URW Palladio L, serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-signature: 'Caveat', cursive;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.9);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

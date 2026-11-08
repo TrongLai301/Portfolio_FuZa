@@ -4,6 +4,20 @@ Dự án Portfolio cá nhân được xây dựng với React, TypeScript và Vi
 
 ## 🚀 Lệnh Phát Triển (Development)
 
+Bạn có thể dùng `make` để chạy nhanh các lệnh hoặc dùng npm / supabase trực tiếp:
+
+```bash
+make help               # Xem danh sách tất cả các lệnh hỗ trợ
+```
+
+### Sử dụng Makefile tiện lợi
+- `make sb-start` (hoặc `make db-start`): Khởi động Supabase local
+- `make dev`: Chạy server Vite dev
+- `make sb-status`: Xem credentials và port của local Supabase
+- `make sb-reset`: Reset sạch DB và chạy lại migrations
+- `make sb-stop`: Tắt Supabase local
+- `make build`: Build dự án
+
 ### Frontend (NPM)
 Chạy ứng dụng ở môi trường local:
 ```bash

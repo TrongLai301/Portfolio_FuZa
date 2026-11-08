@@ -10,6 +10,10 @@ import {
   RocketOutlined
 } from "@ant-design/icons";
 import type { Media, Category } from "../../../services/mediaService";
+import { resolveStorageUrl } from "../../../lib/supabaseClient";
+import ImageCropperModal from "../components/ImageCropperModal";
+import { optimizeImage } from "../../../utils/mediaOptimizer";
+import { usePasteImage } from "../../../hooks/usePasteImage";
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -25,6 +29,8 @@ const MediaForm: React.FC<MediaFormProps> = ({ initialData, categories, onSubmit
   const [form] = Form.useForm();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropRawFile, setCropRawFile] = useState<File | null>(null);
   
   // Watch media type change
   const currentType = Form.useWatch('type', form);
@@ -43,7 +49,7 @@ const MediaForm: React.FC<MediaFormProps> = ({ initialData, categories, onSubmit
         description: initialData.description,
         category_ids: initialData.categories?.map(c => c.id) || [],
       });
-      setImagePreview(initialData.image_url);
+      setImagePreview(resolveStorageUrl(initialData.image_url));
     } else {
       form.resetFields();
       form.setFieldsValue({ type: 'anime' }); // Default
@@ -51,6 +57,16 @@ const MediaForm: React.FC<MediaFormProps> = ({ initialData, categories, onSubmit
       setImageFile(null);
     }
   }, [initialData, form]);
+
+  // Support pasting banner image directly from clipboard (Ctrl+V / Cmd+V)
+  usePasteImage({
+    onPaste: (pastedFile) => {
+      beforeUpload(pastedFile);
+    },
+    enabled: !submitting,
+    allowedTypes: ["image/"],
+    successMessage: "Đã dán ảnh banner từ clipboard!",
+  });
 
   // If type changes, clear selected categories to prevent mismatch
   const handleTypeChange = () => {
@@ -72,9 +88,16 @@ const MediaForm: React.FC<MediaFormProps> = ({ initialData, categories, onSubmit
   };
 
   const beforeUpload = (file: File) => {
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    setCropRawFile(file);
+    setCropperOpen(true);
     return false;
+  };
+
+  const handleCropped = async (croppedFile: File) => {
+    const optimized = await optimizeImage(croppedFile);
+    setImageFile(optimized);
+    setImagePreview(URL.createObjectURL(optimized));
+    setCropperOpen(false);
   };
 
   const isFormValid = initialData ? true : (imageFile);
@@ -132,12 +155,16 @@ const MediaForm: React.FC<MediaFormProps> = ({ initialData, categories, onSubmit
                                 </div>
                                 </>
                             ) : (
-                                <>
-                                <PictureOutlined className="text-4xl opacity-10" />
-                                <Text strong style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px' }}>
-                                    Target Banner signal
-                                </Text>
-                                </>
+                                <div className="flex flex-col items-center gap-2 text-center px-4">
+                                  <PictureOutlined className="text-3xl text-indigo-400/50" />
+                                  <Text strong style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                    Target Banner Signal
+                                  </Text>
+                                  <span className="text-[10px] text-indigo-300/90 bg-indigo-500/15 border border-indigo-500/30 px-3 py-1 rounded-full font-mono flex items-center gap-1.5 shadow-sm">
+                                    <span>📋</span>
+                                    <span>Chọn file hoặc dán ảnh (Ctrl+V / ⌘V)</span>
+                                  </span>
+                                </div>
                             )}
                         </div>
                     </Upload>
@@ -214,11 +241,21 @@ const MediaForm: React.FC<MediaFormProps> = ({ initialData, categories, onSubmit
             block 
             size="large"
             className="admin-btn-primary"
-            style={{ height: '54px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', border: 'none', marginTop: 12 }}
+            style={{ height: '48px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', borderRadius: '16px', marginTop: 16 }}
         >
-            Save
+            {initialData ? "Update Media" : "Save New Media"}
         </Button>
       </Form>
+
+      <ImageCropperModal
+        open={cropperOpen}
+        file={cropRawFile}
+        defaultAspect={3 / 4}
+        title="Crop Media Cover (Recommended 3:4)"
+        onCropComplete={handleCropped}
+        onCancel={() => setCropperOpen(false)}
+        onSkipCrop={(original) => handleCropped(original)}
+      />
     </div>
   );
 };

@@ -3,6 +3,8 @@ import { createContext, useContext } from "react";
 type ScrollContextType = {
   homeRef: React.RefObject<HTMLDivElement | null>;
   aboutRef: React.RefObject<HTMLDivElement | null>;
+  entertainmentRef: React.RefObject<HTMLDivElement | null>;
+  celebratesRef: React.RefObject<HTMLDivElement | null>;
   skillRef: React.RefObject<HTMLDivElement | null>;
   contactRef: React.RefObject<HTMLDivElement | null>;
   scrollTo: (ref: React.RefObject<HTMLDivElement | null>) => void;

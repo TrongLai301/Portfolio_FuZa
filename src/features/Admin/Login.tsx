@@ -55,7 +55,7 @@ const Login: React.FC = () => {
           borderRadius: 32,
         }}
       >
-        <Space direction="vertical" align="center" style={{ width: '100%', marginBottom: 32 }}>
+        <Space orientation="vertical" align="center" style={{ width: '100%', marginBottom: 32 }}>
           <div style={{ width: 64, height: 64, background: '#6366f1', borderRadius: 20, display: 'flex', alignItems: 'center', justifySelf: 'center', justifyContent: 'center', boxShadow: '0 0 30px rgba(99, 102, 241, 0.3)' }}>
              <LockOutlined style={{ fontSize: 28, color: '#fff' }} />
           </div>
